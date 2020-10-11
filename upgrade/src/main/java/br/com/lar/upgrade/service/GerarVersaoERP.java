@@ -14,7 +14,7 @@ import br.com.sysdesc.util.vo.VersaoERPVO;
 
 public class GerarVersaoERP {
 
-	private static final String URL_VERSOES = "https://github.com/leandroZanatta/Lar/raw/develop/versoes/";
+	private static final String URL_VERSOES = "https://github.com/leandroZanatta/systrans/raw/master/versoes/";
 
 	private String versaoERP;
 
@@ -43,7 +43,7 @@ public class GerarVersaoERP {
 			VersaoERPVO versaoVO = new Gson().fromJson(versao, VersaoERPVO.class);
 			String novaVersao = versaoService.adicionarVersao(this.versaoERP);
 
-			File atualizacao = new File(pathDir, "atualizacao\\target\\lar.jar");
+			File atualizacao = new File(pathDir, "atualizacao\\target\\systrans.jar");
 
 			versaoService.changeMavenVersion(pathDir, novaVersao);
 
