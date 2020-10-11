@@ -17,11 +17,10 @@ import com.google.gson.Gson;
 import br.com.lar.upgrade.changelog.core.Changelog;
 import br.com.lar.upgrade.changelog.core.Conexao;
 import br.com.lar.upgrade.service.GerarVersaoERP;
-import br.com.lar.upgrade.service.GerarVersaoServidor;
 import br.com.lar.upgrade.util.classes.LookAndFeelUtil;
+import br.com.lar.upgrade.util.classes.StringUtil;
 import br.com.lar.upgrade.util.resources.Configuracoes;
 import br.com.lar.upgrade.vo.VersaoERPVO;
-import br.com.lar.upgrade.vo.VersaoServidorVO;
 
 public class FrmPrincipal extends JFrame {
 
@@ -29,16 +28,13 @@ public class FrmPrincipal extends JFrame {
 
 	private JLabel lbVersaoERP;
 	private JLabel lbConfiguracao;
-	private JLabel lbVersaoServidor;
 
 	private JTextField txConfiguracao;
 	private JTextField txVersaoErp;
-	private JTextField txVersaoServidor;
 
 	private JButton btAtualizarBt;
 	private JButton btGerarVersao;
 	private JButton btUpgade;
-	private JButton btGerarServidor;
 
 	public FrmPrincipal() {
 
@@ -50,13 +46,10 @@ public class FrmPrincipal extends JFrame {
 
 		lbConfiguracao = new JLabel("Arquivo de Configuração:");
 		lbVersaoERP = new JLabel("Versão ERP:");
-		lbVersaoServidor = new JLabel("Versão Servidor:");
 
 		txConfiguracao = new JTextField();
 		txVersaoErp = new JTextField();
-		txVersaoServidor = new JTextField();
 
-		btGerarServidor = new JButton("Gerar Servidor");
 		btGerarVersao = new JButton("Gerar ERP");
 		btAtualizarBt = new JButton("Atualizar DB");
 		btUpgade = new JButton("Upgade");
@@ -64,15 +57,11 @@ public class FrmPrincipal extends JFrame {
 		btAtualizarBt.addActionListener(e -> new FrmConexao(txConfiguracao.getText()).setVisible(true));
 		btUpgade.addActionListener(e -> executarUpgade());
 		btGerarVersao.addActionListener(e -> atualizarVersaoERP());
-		btGerarServidor.addActionListener(e -> atualizarVersaoServidor());
 
 		VersaoERPVO versaoVO = buscarVersoes();
 
-		VersaoServidorVO versaoServidorVO = buscarVersoesServidor();
-
 		txConfiguracao.setText(new File(System.getProperty("user.dir")).getParent() + "\\interface\\config\\config.01");
 		txVersaoErp.setText(versaoVO.getVersaoERP());
-		txVersaoServidor.setText(versaoServidorVO.getVersao());
 
 		btAtualizarBt.setBounds(103, 80, 104, 34);
 		txConfiguracao.setBounds(10, 29, 408, 20);
@@ -81,9 +70,6 @@ public class FrmPrincipal extends JFrame {
 		btGerarVersao.setBounds(36, 190, 104, 34);
 		lbConfiguracao.setBounds(10, 11, 145, 14);
 		btUpgade.setBounds(223, 80, 104, 34);
-		lbVersaoServidor.setBounds(223, 142, 130, 14);
-		txVersaoServidor.setBounds(223, 159, 185, 20);
-		btGerarServidor.setBounds(264, 190, 104, 34);
 
 		getContentPane().add(btAtualizarBt);
 		getContentPane().add(txConfiguracao);
@@ -92,15 +78,7 @@ public class FrmPrincipal extends JFrame {
 		getContentPane().add(btGerarVersao);
 		getContentPane().add(lbConfiguracao);
 		getContentPane().add(btUpgade);
-		getContentPane().add(lbVersaoServidor);
-		getContentPane().add(txVersaoServidor);
-		getContentPane().add(btGerarServidor);
 
-	}
-
-	private void atualizarVersaoServidor() {
-
-		txVersaoServidor.setText(new GerarVersaoServidor(txVersaoServidor.getText()).build());
 	}
 
 	private void atualizarVersaoERP() {
@@ -130,28 +108,16 @@ public class FrmPrincipal extends JFrame {
 			String arquivoJson = FileUtils.readFileToString(new File(pathDir, "versoes\\versao.json"),
 					Charset.defaultCharset());
 
+			if (StringUtil.isNullOrEmpty(arquivoJson)) {
+
+				return new VersaoERPVO();
+			}
+
 			return new Gson().fromJson(arquivoJson, VersaoERPVO.class);
 
 		} catch (IOException e) {
 
 			return new VersaoERPVO();
-		}
-	}
-
-	private VersaoServidorVO buscarVersoesServidor() {
-
-		try {
-
-			File pathDir = new File(System.getProperty("user.dir")).getParentFile();
-
-			String arquivoJson = FileUtils.readFileToString(new File(pathDir, "versoes\\versaoservidor.json"),
-					Charset.defaultCharset());
-
-			return new Gson().fromJson(arquivoJson, VersaoServidorVO.class);
-
-		} catch (IOException e) {
-
-			return new VersaoServidorVO();
 		}
 	}
 
