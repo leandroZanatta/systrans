@@ -5,7 +5,7 @@ public enum TipoConexaoEnum {
 	POSTGRES("org.postgresql.Driver", "jdbc:postgresql://localhost",
 			"SELECT datname FROM pg_database WHERE datistemplate = false", "postgres", 5432),
 
-	H2("org.h2.Driver", "jdbc:h2:file:./sysdesc", "", "", 0);
+	H2("org.h2.Driver", "jdbc:h2:file:./sysTrans", "", "", 0);
 
 	private String driver;
 

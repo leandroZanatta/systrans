@@ -17,6 +17,7 @@ import javax.naming.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 
 import br.com.lar.atualizacao.enumeradores.TipoConexaoEnum;
+import br.com.lar.atualizacao.ui.FrmConexao;
 import br.com.sysdesc.util.classes.CryptoUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.resources.Configuracoes;
@@ -46,6 +47,11 @@ public class Conexao {
 	public static Connection buscarConexao() {
 
 		try {
+
+			if (!isconfigured()) {
+
+				new FrmConexao().setVisible(true);
+			}
 
 			Properties propertiesConexao = buscarPropertiesConexao();
 
