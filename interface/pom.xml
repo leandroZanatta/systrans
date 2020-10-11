@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.systrans</groupId>
+		<artifactId>systrans</artifactId>
+		<version>0.0.1</version>
+	</parent>
+
+	<artifactId>interface</artifactId>
+
+	<name>Systrans Interface</name>
+	<description>User Interface</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-util</artifactId>
+			<version>${sysdesc.util.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-pesquisa-repository</artifactId>
+			<version>${sysdesc.pesquisa.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-pesquisa-service</artifactId>
+			<version>${sysdesc.pesquisa.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-pesquisa-interface</artifactId>
+			<version>${sysdesc.pesquisa.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.systrans</groupId>
+			<artifactId>atualizacao</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.systrans</groupId>
+			<artifactId>service</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.toedter</groupId>
+			<artifactId>jcalendar</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swingx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.sarxos</groupId>
+			<artifactId>webcam-capture</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>br.com.sysdesc</groupId>
+				<artifactId>sysdesc-libraries</artifactId>
+				<version>${sysdesc.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources-2</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/upgrade</outputDirectory>
+							<resources>
+								<resource>
+									<directory>upgrade</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>br.com.lar.startup.StartUp</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

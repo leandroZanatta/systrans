@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190626_115100" author="Leandro Zanatta">
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="1" />
+			<column name="tx_descricao" value="USUÁRIOS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="2" />
+			<column name="tx_descricao" value="PERFIS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="3" />
+			<column name="tx_descricao" value="ESTADOS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="6" />
+			<column name="tx_descricao" value="FUNCIONÁRIOS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="7" />
+			<column name="tx_descricao" value="GRUPOS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="8" />
+			<column name="tx_descricao" value="CIDADES GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="9" />
+			<column name="tx_descricao" value="CLIENTES GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="10" />
+			<column name="tx_descricao" value="PESQUISA GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+	</changeSet>
+
+</databaseChangeLog>

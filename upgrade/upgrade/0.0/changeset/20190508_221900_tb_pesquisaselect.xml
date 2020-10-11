@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_221900" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_pesquisaselect" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_pesquisaselect">
+
+			<column name="id_pesquisaselect" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="pesquisaselect_pk" nullable="false" />
+			</column>
+
+			<column name="cd_pesquisa" type="${numeric.18x0}" remarks="CÓDIGO DA PESQUISA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_pesquisaavancada" type="${boolean}" remarks="USA PROJECTIONS E SELECT PERSONALIZADO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_select" type="${blob.text}" remarks="SELECT DA PESQUISA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="bl_projection" type="${blob.binary}" remarks="CLASSE DA PROJECTION">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="cd_pesquisa" baseTableName="tb_pesquisaselect" constraintName="fk_select_pesquisa"
+			onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_pesquisa" referencedTableName="tb_pesquisa" />
+
+
+		<createSequence sequenceName="gen_pesquisaselect" />
+	</changeSet>
+
+</databaseChangeLog>

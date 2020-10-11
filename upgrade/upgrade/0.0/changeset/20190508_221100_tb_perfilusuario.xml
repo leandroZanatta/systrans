@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_221100" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_perfilusuario" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_perfilusuario">
+
+			<column name="cd_usuario" type="${numeric.18x0}" remarks="CÓDIGO DO USUÁRIO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_perfil" type="${numeric.18x0}" remarks="CÓDIGO DO PERFIL">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<addPrimaryKey columnNames="cd_usuario, cd_perfil" constraintName="pk_perfil_usuario" tableName="tb_perfilusuario" />
+
+		<addForeignKeyConstraint baseColumnNames="cd_usuario" baseTableName="tb_perfilusuario" constraintName="fk_perfil_usuario"
+			onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_usuario" referencedTableName="tb_usuario" />
+
+		<addForeignKeyConstraint baseColumnNames="cd_perfil" baseTableName="tb_perfilusuario" constraintName="fk_usuario_perfil"
+			onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_perfil" referencedTableName="tb_perfil" />
+
+	</changeSet>
+
+
+
+</databaseChangeLog>

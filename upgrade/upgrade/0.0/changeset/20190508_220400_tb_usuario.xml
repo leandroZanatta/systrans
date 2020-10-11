@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_220400" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_usuario" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_usuario">
+
+			<column name="id_usuario" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="usuario_pk" nullable="false" />
+			</column>
+
+			<column name="tx_usuario" type="${varchar.100}" remarks="NOME DO USUÁRIO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_senha" type="${varchar.40}" remarks="SENHA DO USUÁRIO">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
+				<constraints nullable="false" foreignKeyName="usuario_cliente_fk" references="tb_cliente(id_cliente)" />
+			</column>
+		
+		</createTable>
+		
+		<createSequence sequenceName="gen_usuario" startValue="2"/>
+	</changeSet>
+
+
+
+</databaseChangeLog>

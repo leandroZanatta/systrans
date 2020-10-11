@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190626_113800" author="Leandro Zanatta">
+
+		<insert tableName="tb_estado">
+			<column name="id_estado" value="1" />
+			<column name="tx_descricao" value="Santa Catarina" />
+			<column name="tx_uf" value="SC" />
+		</insert>
+
+		<insert tableName="tb_cidade">
+			<column name="id_cidade" value="1" />
+			<column name="cd_estado" value="1" />
+			<column name="tx_descricao" value="Descanso" />
+		</insert>
+
+		<insert tableName="tb_cliente">
+			<column name="id_cliente" value="1" />
+			<column name="fl_tipocliente" value="F" />
+			<column name="tx_cgc" value="064.175.649-67" />
+			<column name="tx_nome" value="Leandro Zanatta" />
+			<column name="tx_rg" value="5.102.688" />
+			<column name="cd_cidade" value="1" />
+			<column name="tx_endereco" value="Rua Padre Franscisco Massure" />
+			<column name="tx_numero" value="236" />
+			<column name="tx_bairro" value="Centro" />
+			<column name="tx_cep" value="89910-000" />
+			<column name="tx_telefone" value="(49) 99103-7809" />
+			<column name="fl_sexo" value="M" />
+			<column name="nr_situacao" value="1" />
+		</insert>
+
+		<insert tableName="tb_usuario">
+			<column name="id_usuario" value="1" />
+			<column name="cd_cliente" value="1" />
+			<column name="tx_usuario" value="admin" />
+			<column name="tx_senha" value="e10adc3949ba59abbe56e057f20f883e" />
+		</insert>
+
+	</changeSet>
+</databaseChangeLog>

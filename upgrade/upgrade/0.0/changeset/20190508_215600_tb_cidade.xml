@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190508_215600" author="leandro">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_cidade" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_cidade">
+
+			<column name="id_cidade" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="cidade_pk" nullable="false" />
+			</column>
+
+			<column name="cd_estado" type="${numeric.18x0}" remarks="CÓDIGO DO ESTADO">
+				<constraints nullable="false" foreignKeyName="cidade_estado_fk" references="tb_estado(id_estado)" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="DESCRIÇÃO DA CIDADE">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_cidade" startValue="2" />
+
+		<addForeignKeyConstraint baseColumnNames="cd_estado" baseTableName="tb_cidade" constraintName="fk_cidade_estado"
+			onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_estado" referencedTableName="tb_estado" />
+
+
+	</changeSet>
+</databaseChangeLog>

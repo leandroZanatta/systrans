@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.systrans</groupId>
+		<artifactId>systrans</artifactId>
+		<version>0.0.1</version>
+	</parent>
+
+	<artifactId>service</artifactId>
+
+	<name>Systrans Service</name>
+	<description>Regras de Negócio do Aplicativo</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-util</artifactId>
+			<version>${sysdesc.util.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.sysdesc</groupId>
+			<artifactId>sysdesc-pesquisa-service</artifactId>
+			<version>${sysdesc.pesquisa.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.systrans</groupId>
+			<artifactId>repository</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.overviewproject</groupId>
+			<artifactId>mime-types</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jrimum</groupId>
+			<artifactId>jrimum-texgit</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jrimum</groupId>
+					<artifactId>jrimum-utilix</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>br.com.sysdesc</groupId>
+				<artifactId>sysdesc-libraries</artifactId>
+				<version>${sysdesc.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>jrimum.org</id>
+			<url>http://jrimum.org/maven/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+</project>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_223000" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_pesquisacampo" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_pesquisacampo">
+
+			<column name="id_pesquisacampo" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="pesquisacampo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_pesquisa" type="${numeric.18x0}" remarks="CÓDIGO DA PESQUISA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_formatacao" type="${numeric.18x0}" remarks="TIPO DE FORMATAÇÃO DO CAMPO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_tipodado" type="${numeric.18x0}" remarks="TIPO DE DADO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_tipotamanho" type="${numeric.18x0}" remarks="TIPO DE TAMANHO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_ordem" type="${numeric.18x0}" remarks="ORDEM DE EXIBIÇÃO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_tamanho" type="${numeric.18x0}" remarks="TAMANHO DO CAMPO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_campo" type="${varchar.100}" remarks="NOME DO FIELD">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_alias" type="${varchar.50}" remarks="ALIAS DO SELECT">
+				<constraints nullable="true" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.50}" remarks="DESCRIÇÃO DO CAMPO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_formato" type="${varchar.50}" remarks="FORMATAÇÃO DO CAMPO">
+				<constraints nullable="true" />
+			</column>
+
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="cd_pesquisa" baseTableName="tb_pesquisacampo" constraintName="fk_campo_pesquisa"
+			onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_pesquisa" referencedTableName="tb_pesquisa" />
+
+		<createSequence sequenceName="gen_pesquisacampo" />
+	</changeSet>
+
+</databaseChangeLog>

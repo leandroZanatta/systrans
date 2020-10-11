@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_223300" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_permissaopesquisa" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_permissaopesquisa">
+
+			<column name="id_permissaopesquisa" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="permissaopesquisa_pk" nullable="false" />
+			</column>
+
+			<column name="cd_pesquisa" type="${numeric.18x0}" remarks="CÓDIGO DA PESQUISA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_usuario" type="${numeric.18x0}" remarks="CÓDIGO DO USUÁRIO">
+				<constraints nullable="true" />
+			</column>
+
+			<column name="cd_perfil" type="${numeric.18x0}" remarks="CÓDIGO DO PERFIL">
+				<constraints nullable="true" />
+			</column>
+
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="cd_pesquisa" baseTableName="tb_permissaopesquisa"
+			constraintName="fk_permissao_pesquisa" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_pesquisa" referencedTableName="tb_pesquisa" />
+
+		<addForeignKeyConstraint baseColumnNames="cd_perfil" baseTableName="tb_permissaopesquisa"
+			constraintName="fk_pesquisa_perfil" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_perfil" referencedTableName="tb_perfil" />
+
+		<addForeignKeyConstraint baseColumnNames="cd_usuario" baseTableName="tb_permissaopesquisa"
+			constraintName="fk_pesquisa_usuario" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id_usuario" referencedTableName="tb_usuario" />
+
+		<createSequence sequenceName="gen_permissaopesquisa" />
+	</changeSet>
+
+
+
+</databaseChangeLog>

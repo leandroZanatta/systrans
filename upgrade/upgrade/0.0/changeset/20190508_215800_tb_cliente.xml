@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_215800" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_cliente" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_cliente">
+
+			<column name="id_cliente" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="cliente_pk" nullable="false" />
+			</column>
+
+			<column name="fl_tipocliente" type="${varchar.1}" remarks="TIPO DE CLIENTE (FÍSICA-F OU JURÍDICA-J)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_cgc" type="${varchar.18}" remarks="DOCUMENTO DO CLIENTE(CPF OU CNPJ)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_grupo" type="${numeric.2x0}" remarks="GRUPO DO CLIENTE">
+				<constraints foreignKeyName="cliente_grupo_fk" references="tb_grupo(id_grupo)" />
+			</column>
+
+			<column name="tx_nome" type="${varchar.100}" remarks="NOME DO CLIENTE OU RAZÃO SOCIAL">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_rg" type="${varchar.30}" remarks="REGISTRO GERAL DO CLIENTE OU INSCRIÇÃO ESTADUAL" />
+
+			<column name="dt_nascimento" type="${date}" remarks="DATA DE NASCIMENTO OU DATA DE FUNDAÇÃO" />
+
+			<column name="cd_cidade" type="${numeric.18x0}" remarks="CÓDIGO DA CIDADE">
+				<constraints foreignKeyName="cliente_cidade_fk" references="tb_cidade(id_cidade)" />
+			</column>
+
+			<column name="cd_naturalidade" type="${numeric.18x0}" remarks="NATURALIDADE">
+				<constraints foreignKeyName="naturalidade_cidade_fk" references="tb_cidade(id_cidade)" />
+			</column>
+
+			<column name="tx_endereco" type="${varchar.255}" remarks="ENDEREÇO" />
+
+			<column name="tx_numero" type="${varchar.5}" remarks="NÚMERO" />
+
+			<column name="tx_bairro" type="${varchar.255}" remarks="BAIRRO" />
+
+			<column name="tx_cep" type="${varchar.9}" remarks="CEP" />
+
+			<column name="tx_telefone" type="${varchar.20}" remarks="TELEFONE" />
+
+			<column name="tx_email" type="${varchar.100}" remarks="E-MAIL" />
+
+			<column name="nr_estadocivil" type="${numeric.2x0}" remarks="ESTADO CIVIL" />
+
+			<column name="fl_sexo" type="${varchar.1}" remarks="SEXO (MASCULINO-M FEMININO-F OUTROS-O))" />
+
+			<column name="tx_nomepai" type="${varchar.100}" remarks="NOME DO PAI" />
+
+			<column name="tx_nomemae" type="${varchar.100}" remarks="NOME DA MÃE" />
+
+			<column name="nr_cor" type="${numeric.2x0}" remarks="RAÇA/COR" />
+
+			<column name="nr_escolaridade" type="${numeric.2x0}" remarks="ESCOLARIDADE" />
+
+			<column name="nr_religiao" type="${numeric.2x0}" remarks="RELIGIAO" />
+
+			<column name="nr_situacao" type="${numeric.2x0}" remarks="SITUAÇÕES DO CLIENTE">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_cliente" startValue="2" />
+	</changeSet>
+
+
+
+</databaseChangeLog>

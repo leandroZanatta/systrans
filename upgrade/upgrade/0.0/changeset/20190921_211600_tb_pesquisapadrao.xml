@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190921_211600" author="Leandro Zanatta">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_pesquisapadrao" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_pesquisapadrao">
+
+			<column name="cd_pesquisa" type="${numeric.18x0}" remarks="CÓDIGO DA PESQUISA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_usuario" type="${numeric.18x0}" remarks="CODIGO DO USUÁRIO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<addPrimaryKey columnNames="cd_pesquisa, cd_usuario" constraintName="pesquisapadrao_pk" tableName="tb_pesquisapadrao" />
+
+	</changeSet>
+</databaseChangeLog>

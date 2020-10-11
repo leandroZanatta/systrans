@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_220000" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_perfil" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_perfil">
+
+			<column name="id_perfil" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="perfil_pk" nullable="false" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="NOME DO PERFIL">
+				<constraints nullable="false" />
+			</column>
+		
+		</createTable>
+		
+		<createSequence sequenceName="gen_perfil" />
+	</changeSet>
+
+
+
+</databaseChangeLog>

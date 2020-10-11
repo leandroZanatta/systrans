@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190630_230800" author="Leandro Zanatta">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_versao" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_versao">
+			<column name="id_versao" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="versao_pk" nullable="false" />
+			</column>
+
+			<column name="nr_versao" type="${varchar.20}" remarks="VERSÃO DO SISTEMA" />
+
+			<column name="dt_atualizacao" type="${timestamp}" remarks="DATA DE ATUALIZACAO" />
+		</createTable>
+
+		<createSequence sequenceName="gen_versao" />
+	</changeSet>
+</databaseChangeLog>

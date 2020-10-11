@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="20190508_215700" author="leandro" logicalFilePath="20190508_215700_tb_grupo.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_grupo" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_grupo">
+
+			<column name="id_grupo" type="${numeric.2x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="grupo_pk" nullable="false" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="DESCRIÇÃO DO GRUPO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_configuracao" type="${blob.text}" remarks="Configurações do grupo">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_grupo" />
+	</changeSet>
+
+
+
+</databaseChangeLog>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+	<property name="varchar.1" value="varchar(1)" dbms="postgresql,h2" />
+	<property name="varchar.2" value="varchar(2)" dbms="postgresql,h2" />
+	<property name="varchar.5" value="varchar(5)" dbms="postgresql,h2" />
+	<property name="varchar.9" value="varchar(9)" dbms="postgresql,h2" />
+	<property name="varchar.10" value="varchar(10)" dbms="postgresql,h2" />
+	<property name="varchar.18" value="varchar(18)" dbms="postgresql,h2" />
+	<property name="varchar.20" value="varchar(20)" dbms="postgresql,h2" />
+	<property name="varchar.30" value="varchar(30)" dbms="postgresql,h2" />
+	<property name="varchar.40" value="varchar(40)" dbms="postgresql,h2" />
+	<property name="varchar.50" value="varchar(50)" dbms="postgresql,h2" />
+	<property name="varchar.100" value="varchar(100)" dbms="postgresql,h2" />
+	<property name="varchar.255" value="varchar(255)" dbms="postgresql,h2" />
+	
+
+	<property name="numeric.18x0" value="numeric(18,0)" dbms="postgresql" />
+	<property name="numeric.18x2" value="numeric(18,2)" dbms="postgresql" />
+	<property name="numeric.2x0" value="numeric(2,0)" dbms="postgresql" />
+	<property name="numeric.3x0" value="numeric(3,0)" dbms="postgresql" />
+	<property name="numeric.5x0" value="numeric(5,0)" dbms="postgresql" />
+
+	<property name="blob.binary" value="bytea" dbms="postgresql" />
+	<property name="blob.text" value="text" dbms="postgresql" />
+
+	<property name="numeric.18x0" value="decimal(18,0)" dbms="h2" />
+	<property name="numeric.18x2" value="decimal(18,2)" dbms="h2" />
+	<property name="numeric.2x0" value="decimal(2,0)" dbms="h2" />
+	<property name="numeric.3x0" value="decimal(3,0)" dbms="h2" />
+	<property name="numeric.5x0" value="decimal(5,0)" dbms="h2" />
+	
+	<property name="blob.binary" value="binary" dbms="h2" />
+	<property name="blob.text" value="varchar(5000)" dbms="h2" />
+
+
+	<property name="date" value="date" dbms="postgresql,h2" />
+	<property name="time" value="time" dbms="postgresql,h2" />
+	<property name="timestamp" value="timestamp" dbms="postgresql,h2" />
+	<property name="boolean" value="boolean" dbms="postgresql,h2" />
+
+</databaseChangeLog>

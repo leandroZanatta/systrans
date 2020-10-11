@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190626_113900" author="Leandro Zanatta">
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="1" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MN_CADASTRO" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="2" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="2" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_PERFIS" />
+			<column name="tx_icone" value="perfil.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="3" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="3" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_ESTADOS" />
+			<column name="tx_icone" value="estado.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="4" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="4" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CIDADES" />
+			<column name="tx_icone" value="cidade.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="5" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="6" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CLIENTES" />
+			<column name="tx_icone" value="cliente.png" />
+			<column name="fl_acessorapido" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="6" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="1" />
+			<column name="nr_ordem" value="7" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_USUARIOS" />
+			<column name="fl_acessorapido" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="7" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="6" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MN_PESQUISA" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="8" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="1" />
+			<column name="cd_programa" value="7" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_PESQUISA_BASICA" />
+			<column name="tx_icone" value="pesquisa.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="9" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="1" />
+			<column name="cd_programa" value="6" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CADASTRO_USUARIOS" />
+			<column name="tx_icone" value="usuario.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="10" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="2" />
+			<column name="cd_programa" value="6" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_PERMISSAO_MENUS" />
+			<column name="tx_icone" value="permissao.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="13" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="9" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_FUNCIONARIO" />
+			<column name="tx_icone" value="funcionario.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="14" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="5" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_GRUPOS" />
+			<column name="tx_icone" value="grupo.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+	</changeSet>
+
+</databaseChangeLog>
