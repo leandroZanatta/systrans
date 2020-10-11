@@ -131,7 +131,7 @@ public class FrmFuncionario extends AbstractInternalFrame {
 		};
 
 		panelActions = new PanelActions<Funcionario>(this, funcionarioService,
-				PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), alterarSalario) {
+				PesquisaEnum.PES_FUNCIONARIOS.getCodigoPesquisa(), alterarSalario) {
 
 			private static final long serialVersionUID = 1L;
 

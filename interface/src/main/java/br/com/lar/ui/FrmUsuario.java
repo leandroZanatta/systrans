@@ -190,7 +190,10 @@ public class FrmUsuario extends AbstractInternalFrame {
 
 					objetoPesquisa.setCodigoCliente(pesquisaCliente.getObjetoPesquisado().getIdCliente());
 				}
-				pesquisaPerfis.getObjetosPesquisado().forEach(objetoPesquisa::addPerfilUsuario);
+				if (pesquisaPerfis.getObjetosPesquisado() != null) {
+
+					pesquisaPerfis.getObjetosPesquisado().forEach(objetoPesquisa::addPerfilUsuario);
+				}
 
 				if (StringUtil.isNullOrEmpty(objetoPesquisa.getSenha())) {
 

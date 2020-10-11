@@ -18,6 +18,8 @@
 	<include file="0.0/changeset/20190508_221900_tb_pesquisaselect.xml" />
 	<include file="0.0/changeset/20190630_230800_tb_versao.xml" />
 	<include file="0.0/changeset/20190921_211600_tb_pesquisapadrao.xml" />
+	<include file="0.0/changeset/20200210_211100_tb_funcionario.xml" />
+	<include file="0.0/changeset/20200210_214600_tb_salario.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />
