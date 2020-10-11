@@ -7,6 +7,7 @@ import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_LOG_VERSA
 import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_THREAD_VERSAO_INTEROMPIDA;
 import static br.com.sysdesc.util.resources.Configuracoes.FOLDER_VERSOES;
 import static br.com.sysdesc.util.resources.Configuracoes.VERSAO;
+import static br.com.sysdesc.util.resources.Resources.APPLICATION_VERSOES;
 import static br.com.sysdesc.util.resources.Resources.OPTION_VALIDACAO;
 import static br.com.sysdesc.util.resources.Resources.translate;
 
@@ -48,7 +49,7 @@ public class AtualizacaoThread extends Thread {
 
 	private String versaoBase;
 
-	private static final String URLVERSAO = "https://raw.githubusercontent.com/leandroZanatta/Lar/develop/versoes/versao.json";
+	private static final String URLVERSAO = translate(APPLICATION_VERSOES);
 
 	private VersaoDAO versaoDAO = new VersaoDAO();
 
