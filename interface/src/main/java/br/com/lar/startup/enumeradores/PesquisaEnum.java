@@ -8,6 +8,7 @@ import com.mysema.query.types.path.EntityPathBase;
 import br.com.lar.repository.model.QCidade;
 import br.com.lar.repository.model.QCliente;
 import br.com.lar.repository.model.QEstado;
+import br.com.lar.repository.model.QFuncionario;
 import br.com.lar.repository.model.QGrupo;
 import br.com.sysdesc.pesquisa.repository.model.QPerfil;
 import br.com.sysdesc.pesquisa.repository.model.QPesquisa;
@@ -20,6 +21,8 @@ public enum PesquisaEnum {
 	PES_PERFIL(2L, "Perfis", QPerfil.class),
 
 	PES_ESTADOS(3L, "Estados", QEstado.class),
+
+	PES_FUNCIONARIOS(6L, "Funcionários", QFuncionario.class),
 
 	PES_GRUPO(7L, "Grupos", QGrupo.class),
 
