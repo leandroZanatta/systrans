@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201012_105400" author="Leandro Zanatta" logicalFilePath="20201012_105400_tb_veiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_veiculo" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_veiculo">
+
+			<column name="id_veiculo" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="veiculo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_tipoveiculo" type="${numeric.2x0}" remarks="TIPO DE VEÍCULO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_placa" type="${varchar.10}" remarks="PLACA DO VEÍCULO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_capacidade" type="${numeric.18x2}" remarks="CAPACIDADE DO TANQUE">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_veiculo" />
+
+	</changeSet>
+</databaseChangeLog>

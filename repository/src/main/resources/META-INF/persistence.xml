@@ -18,6 +18,7 @@
 		<class>br.com.sysdesc.pesquisa.repository.model.Usuario</class>
 		<class>br.com.sysdesc.pesquisa.repository.model.Perfil</class>
 		<class>br.com.sysdesc.pesquisa.repository.model.PerfilUsuario</class>
+		<class>br.com.lar.repository.model.Veiculo</class>
 	</persistence-unit>
 
 </persistence>

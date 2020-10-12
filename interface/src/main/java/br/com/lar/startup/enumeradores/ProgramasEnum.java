@@ -12,6 +12,7 @@ import br.com.lar.ui.FrmGrupo;
 import br.com.lar.ui.FrmPerfil;
 import br.com.lar.ui.FrmPermissoes;
 import br.com.lar.ui.FrmUsuario;
+import br.com.lar.ui.FrmVeiculo;
 import br.com.sysdesc.components.AbstractInternalFrame;
 
 public enum ProgramasEnum {
@@ -29,6 +30,8 @@ public enum ProgramasEnum {
 	CADASTRO_USUARIOS(9L, FrmUsuario.class),
 
 	CADASTRO_PERMISSOES(10L, FrmPermissoes.class),
+
+	CADASTRO_VEICULOS(11L, FrmVeiculo.class),
 
 	CADASTRO_FUNCIONARIOS(13L, FrmFuncionario.class),
 

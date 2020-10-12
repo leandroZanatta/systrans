@@ -100,6 +100,16 @@
 		</insert>
 
 		<insert tableName="tb_programa">
+			<column name="id_programa" value="11" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="7" />
+			<column name="cd_programa" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_VEICULOS" />
+			<column name="tx_icone" value="veiculos.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
 			<column name="id_programa" value="13" />
 			<column name="cd_aplicativo" value="1" />
 			<column name="nr_ordem" value="9" />
