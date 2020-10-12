@@ -78,20 +78,20 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 		lbField = new JLabel("Field:");
 		lbDescricao = new JLabel("Descrição:");
 		lbTipoTamanho = new JLabel("Tipo Tamanho:");
-		cbField = new JComboBox<FieldPesquisaVO>();
+		cbField = new JComboBox<>();
 		lbTamanho = new JLabel("Tamanho:");
 		txDescricao = new JTextField();
-		cbTipoTamanho = new JComboBox<TipoTamanhoEnum>();
+		cbTipoTamanho = new JComboBox<>();
 		txTamanho = new JNumericField();
 		lbFormatacao = new JLabel("Formatação:");
 		lbTipoFormatacao = new JLabel("Tipo de formatação:");
-		cbFormatacao = new JComboBox<FormatoPesquisaEnum>();
+		cbFormatacao = new JComboBox<>();
 		panel = new JPanel();
 		btOk = new JButton("Ok");
 		btCancelar = new JButton("Cancelar");
 		componentFormatacao = new LongFormatter();
 
-		EntityPathUtil.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getCodigoPesquisa()).getEntityPath())
+		EntityPathUtil.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getPesquisa().getCodigoPesquisa()).getEntityPath())
 				.forEach(cbField::addItem);
 		Arrays.asList(TipoTamanhoEnum.values()).forEach(cbTipoTamanho::addItem);
 
@@ -131,7 +131,7 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 		if (!StringUtil.isNullOrEmpty(pesquisaCampo.getCampo())) {
 
 			Optional<FieldPesquisaVO> fieldPesquisaVO = EntityPathUtil
-					.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getCodigoPesquisa()).getEntityPath())
+					.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getPesquisa().getCodigoPesquisa()).getEntityPath())
 					.stream().filter(x -> x.getName().equals(pesquisaCampo.getCampo())).findFirst();
 
 			if (fieldPesquisaVO.isPresent()) {
