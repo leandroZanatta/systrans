@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,6 +26,10 @@ public class Veiculo implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_VEICULO")
 	@Column(name = "id_veiculo")
 	private Long idVeiculo;
+
+	@ManyToOne
+	@JoinColumn(name = "cd_motorista")
+	private Motorista motorista;
 
 	@Column(name = "cd_tipoveiculo")
 	private Long tipoVeiculo;

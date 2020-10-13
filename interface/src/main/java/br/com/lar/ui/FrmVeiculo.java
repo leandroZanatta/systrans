@@ -6,7 +6,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import br.com.lar.repository.model.Motorista;
 import br.com.lar.repository.model.Veiculo;
+import br.com.lar.service.motorista.MotoristaService;
 import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.lar.startup.enumeradores.TipoVeiculoEnum;
@@ -14,6 +16,7 @@ import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
+import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import net.miginfocom.swing.MigLayout;
 
@@ -28,10 +31,13 @@ public class FrmVeiculo extends AbstractInternalFrame {
 	private JLabel lbPlaca;
 	private JTextFieldMaiusculo txPlaca;
 	private PanelActions<Veiculo> panelActions;
+	private MotoristaService motoristaService = new MotoristaService();
 	private VeiculoService veiculoService = new VeiculoService();
 	private JComboBox<TipoVeiculoEnum> cbTipoVeiculo;
 	private JLabel lbCapacidade;
 	private JMoneyField txCapacidade;
+	private JLabel lblMotorista;
+	private CampoPesquisa<Motorista> pesquisaMotorista;
 
 	public FrmVeiculo(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -41,7 +47,7 @@ public class FrmVeiculo extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(450, 230);
+		setSize(450, 260);
 		setClosable(Boolean.TRUE);
 		setTitle("CADASTRO DE VEÍCULOS");
 
@@ -54,8 +60,19 @@ public class FrmVeiculo extends AbstractInternalFrame {
 		txCapacidade = new JMoneyField();
 		cbTipoVeiculo = new JComboBox<>();
 		lbCapacidade = new JLabel("Capacidade:");
+		lblMotorista = new JLabel("Motorista:");
+		pesquisaMotorista = new CampoPesquisa<Motorista>(motoristaService, PesquisaEnum.PES_MOTORISTA.getCodigoPesquisa(),
+				getCodigoUsuario()) {
 
-		painelContent.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][][grow]"));
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String formatarValorCampo(Motorista objeto) {
+				return String.format("%d - %s", objeto.getIdMotorista(), objeto.getFuncionario().getCliente().getNome());
+			}
+		};
+
+		painelContent.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][][][][grow]"));
 		getContentPane().add(painelContent);
 		painelContent.add(lblCodigo, "cell 0 0");
 		painelContent.add(txCodigo, "cell 0 1,width 50:100:100");
@@ -65,6 +82,8 @@ public class FrmVeiculo extends AbstractInternalFrame {
 		painelContent.add(lbPlaca, "cell 0 4,growx");
 		painelContent.add(lbCapacidade, "cell 1 4");
 		painelContent.add(txPlaca, "cell 0 5,growx");
+		painelContent.add(lblMotorista, "cell 0 6");
+		painelContent.add(pesquisaMotorista, "cell 0 7 2 1,growx");
 
 		Arrays.asList(TipoVeiculoEnum.values()).forEach(cbTipoVeiculo::addItem);
 
@@ -78,6 +97,7 @@ public class FrmVeiculo extends AbstractInternalFrame {
 				cbTipoVeiculo.setSelectedItem(TipoVeiculoEnum.forValue(objeto.getTipoVeiculo()));
 				txPlaca.setText(objeto.getPlaca());
 				txCapacidade.setValue(objeto.getCapacidade());
+				pesquisaMotorista.setValue(objeto.getMotorista());
 			}
 
 			@Override
@@ -87,6 +107,7 @@ public class FrmVeiculo extends AbstractInternalFrame {
 				objetoPesquisa.setTipoVeiculo(null);
 				objetoPesquisa.setPlaca(txPlaca.getText());
 				objetoPesquisa.setCapacidade(txCapacidade.getValue());
+				objetoPesquisa.setMotorista(pesquisaMotorista.getObjetoPesquisado());
 
 				if (cbTipoVeiculo.getSelectedIndex() >= 0) {
 
@@ -100,7 +121,7 @@ public class FrmVeiculo extends AbstractInternalFrame {
 
 		panelActions.addSaveListener(objeto -> txCodigo.setValue(objeto.getIdVeiculo()));
 
-		painelContent.add(panelActions, "cell 0 6 2 1,growx,aligny bottom");
+		painelContent.add(panelActions, "cell 0 8 2 1,growx,aligny bottom");
 	}
 
 }

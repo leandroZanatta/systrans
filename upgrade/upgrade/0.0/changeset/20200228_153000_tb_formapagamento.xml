@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20200228_153000" author="Leandro Zanatta" logicalFilePath="20200228_153000_tb_formapagamento.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_formapagamento" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_formapagamento">
+			<column name="id_formapagamento" type="NUMBER(18,0)" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="formapagamento_pk" nullable="false" />
+			</column>
+
+			<column name="tx_descricao" type="VARCHAR(100)" remarks="DESCRIÇÃO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_formapagamento" type="NUMBER(18,0)" remarks="IDENTIGICADOR GERAL DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_permitetroco" type="BOOLEAN" remarks="PERMITE TROCO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_usatef" type="BOOLEAN" remarks="USA TEF">
+				<constraints nullable="true" />
+			</column>
+
+			<column name="fl_permitepagamentoprazo" type="BOOLEAN" remarks="PERMITE PAGAMENTO Á PRAZO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_maximoparcelas" type="NUMBER(3,0)" remarks="NÚMERO MÁXIMO DE PARCELAS">
+				<constraints nullable="true" />
+			</column>
+
+			<column name="nr_valorminimopagamento" type="NUMBER(18,2)" remarks="VALOR MÍNIMO DE PAGAMENTO">
+				<constraints nullable="true" />
+			</column>
+
+			<column name="nr_diasparapagamento" type="NUMBER(3,0)" remarks="NUMERO DE DIAS PARA PAGAMENTO DAS PARCELAS">
+				<constraints nullable="true" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_formapagamento" />
+	</changeSet>
+</databaseChangeLog>

@@ -235,13 +235,15 @@ public class FrmCadastroPesquisa extends AbstractInternalFrame {
 		}
 
 		PesquisaCampo pesquisaCampo = new PesquisaCampo();
-		pesquisaCampo.setCodigoPesquisa(((PesquisaEnum) cbPesquisa.getSelectedItem()).getCodigoPesquisa());
+		Long codigoPesquisa = ((PesquisaEnum) cbPesquisa.getSelectedItem()).getCodigoPesquisa();
+
+		pesquisaCampo.setCodigoPesquisa(codigoPesquisa);
 
 		if (pesquisaCampoEdicao != null) {
 			pesquisaCampo = pesquisaCampoEdicao;
 		}
 
-		FrmPesquisaBasicaCampo frmPesquisaBasicaCampo = new FrmPesquisaBasicaCampo(pesquisaCampo);
+		FrmPesquisaBasicaCampo frmPesquisaBasicaCampo = new FrmPesquisaBasicaCampo(codigoPesquisa, pesquisaCampo);
 
 		frmPesquisaBasicaCampo.setVisible(Boolean.TRUE);
 

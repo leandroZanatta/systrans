@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201012_171300" author="Leandro Zanatta" logicalFilePath="20201012_171300_tb_historico.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_historico" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_historico">
+
+			<column name="id_historico" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="historico_pk" nullable="false" />
+			</column>
+
+			<column name="cd_tipohistorico" type="${numeric.2x0}" remarks="TIPO DE HISTÓRICO (1 - CONTAS A PAGAR, 2 - CONTAS A RECEBER)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="DESCRIÇÃO DO HISTÓRICO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_historico" />
+
+	</changeSet>
+</databaseChangeLog>
