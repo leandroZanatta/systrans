@@ -1,5 +1,5 @@
 {
 	"versaoERP": "0.0.2",
-	"arquivoERP": "https://github.com/leandroZanatta/systrans/raw/develop/versoes/0.0.2-erp.zip",
-	"arquivoAtualizacao": "https://github.com/leandroZanatta/systrans/raw/develop/versoes/0.0.2-atualizacao.zip"
+	"arquivoERP": "https://github.com/leandroZanatta/systrans/raw/master/versoes/0.0.2-erp.zip",
+	"arquivoAtualizacao": "https://github.com/leandroZanatta/systrans/raw/master/versoes/0.0.2-atualizacao.zip"
 }
