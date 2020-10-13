@@ -21,6 +21,11 @@
 	<include file="0.0/changeset/20200210_211100_tb_funcionario.xml" />
 	<include file="0.0/changeset/20200210_214600_tb_salario.xml" />
 	<include file="0.0/changeset/20201012_105400_tb_veiculo.xml" />
+	<include file="0.0/changeset/20200228_153000_tb_formapagamento.xml" />
+	<include file="0.0/changeset/20201012_171300_tb_historico.xml" />
+	<include file="0.0/changeset/20201012_172100_tb_motorista.xml" />
+	<include file="0.0/changeset/20201012_191800_add_campo_tb_veiculo.xml" />
+	<include file="0.0/changeset/20201012_215200_tb_contasreceber.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

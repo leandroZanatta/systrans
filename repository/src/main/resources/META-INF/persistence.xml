@@ -19,6 +19,10 @@
 		<class>br.com.sysdesc.pesquisa.repository.model.Perfil</class>
 		<class>br.com.sysdesc.pesquisa.repository.model.PerfilUsuario</class>
 		<class>br.com.lar.repository.model.Veiculo</class>
+		<class>br.com.lar.repository.model.FormasPagamento</class>
+		<class>br.com.lar.repository.model.ContasReceber</class>
+		<class>br.com.lar.repository.model.Historico</class>
+		<class>br.com.lar.repository.model.Motorista</class>
 	</persistence-unit>
 
 </persistence>

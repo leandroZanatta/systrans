@@ -41,6 +41,7 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private final PesquisaCampo pesquisaCampo;
+	private final Long codigoPesquisa;
 
 	private Boolean sucesso = Boolean.FALSE;
 	private JLabel lbDescricao;
@@ -59,8 +60,9 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 	private JButton btOk;
 	private JButton btCancelar;
 
-	public FrmPesquisaBasicaCampo(PesquisaCampo pesquisaCampo) {
+	public FrmPesquisaBasicaCampo(Long codigoPesquisa, PesquisaCampo pesquisaCampo) {
 		this.pesquisaCampo = pesquisaCampo;
+		this.codigoPesquisa = codigoPesquisa;
 
 		initComponents();
 
@@ -91,7 +93,7 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 		btCancelar = new JButton("Cancelar");
 		componentFormatacao = new LongFormatter();
 
-		EntityPathUtil.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getPesquisa().getCodigoPesquisa()).getEntityPath())
+		EntityPathUtil.getAllFieldsFromEntity(PesquisaEnum.forValue(codigoPesquisa).getEntityPath())
 				.forEach(cbField::addItem);
 		Arrays.asList(TipoTamanhoEnum.values()).forEach(cbTipoTamanho::addItem);
 
@@ -131,7 +133,7 @@ public class FrmPesquisaBasicaCampo extends JDialog {
 		if (!StringUtil.isNullOrEmpty(pesquisaCampo.getCampo())) {
 
 			Optional<FieldPesquisaVO> fieldPesquisaVO = EntityPathUtil
-					.getAllFieldsFromEntity(PesquisaEnum.forValue(pesquisaCampo.getPesquisa().getCodigoPesquisa()).getEntityPath())
+					.getAllFieldsFromEntity(PesquisaEnum.forValue(codigoPesquisa).getEntityPath())
 					.stream().filter(x -> x.getName().equals(pesquisaCampo.getCampo())).findFirst();
 
 			if (fieldPesquisaVO.isPresent()) {
