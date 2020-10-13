@@ -28,12 +28,12 @@ public class FormasPagamentoService extends AbstractPesquisableServiceImpl<Forma
 	@Override
 	public void validar(FormasPagamento objetoPersistir) {
 
-		if (StringUtil.isNullOrEmpty(objetoPersistir.getDescricao())) {
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
+		if (LongUtil.isNullOrZero(objetoPersistir.getCodigoFormaPagamento())) {
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORMA_PAGAMAMENTO);
 		}
 
-		if (objetoPersistir.isFlagPermitePagamentoPrazo()) {
-			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORMA_PAGAMAMENTO);
+		if (StringUtil.isNullOrEmpty(objetoPersistir.getDescricao())) {
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
 		}
 
 		if (objetoPersistir.isFlagPermitePagamentoPrazo()) {

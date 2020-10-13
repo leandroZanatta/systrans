@@ -14,6 +14,7 @@ import br.com.lar.repository.model.ContasReceber;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.LongUtil;
+import br.com.sysdesc.util.classes.StringUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.vo.PesquisaContasReceberVO;
 
@@ -46,6 +47,10 @@ public class ContasReceberDAO extends PesquisableDAOImpl<ContasReceber> {
 	private BooleanBuilder montarClausulasFiltroContasReceber(PesquisaContasReceberVO pesquisaContasReceberVO) {
 
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+		if (!StringUtil.isNullOrEmpty(pesquisaContasReceberVO.getCodigoDocumento())) {
+			booleanBuilder.and(contasReceber.documento.eq(pesquisaContasReceberVO.getCodigoDocumento()));
+		}
 
 		if (!LongUtil.isNullOrZero(pesquisaContasReceberVO.getCodigoContasReceber())) {
 			booleanBuilder.and(contasReceber.idContasReceber.eq(pesquisaContasReceberVO.getCodigoContasReceber()));

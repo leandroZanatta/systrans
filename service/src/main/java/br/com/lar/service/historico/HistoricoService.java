@@ -1,5 +1,7 @@
 package br.com.lar.service.historico;
 
+import com.mysema.query.BooleanBuilder;
+
 import br.com.lar.repository.dao.HistoricoDAO;
 import br.com.lar.repository.model.Historico;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
@@ -10,8 +12,16 @@ import br.com.sysdesc.util.exception.SysDescException;
 
 public class HistoricoService extends AbstractPesquisableServiceImpl<Historico> {
 
+	private HistoricoDAO historicoDAO;
+
 	public HistoricoService() {
-		super(new HistoricoDAO(), Historico::getIdHistorico);
+		this(new HistoricoDAO());
+	}
+
+	public HistoricoService(HistoricoDAO historicoDAO) {
+		super(historicoDAO, Historico::getIdHistorico);
+
+		this.historicoDAO = historicoDAO;
 	}
 
 	@Override
@@ -27,6 +37,11 @@ public class HistoricoService extends AbstractPesquisableServiceImpl<Historico> 
 			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
 		}
 
+	}
+
+	public BooleanBuilder buscarHistoricosAReceber() {
+
+		return historicoDAO.buscarHistoricosAReceber();
 	}
 
 }

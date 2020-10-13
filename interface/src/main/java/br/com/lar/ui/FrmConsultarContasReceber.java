@@ -19,8 +19,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -35,6 +33,7 @@ import br.com.lar.tablemodels.ContasReceberTableModel;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
+import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.util.classes.SomaUtil;
 import br.com.sysdesc.util.vo.PesquisaContasReceberVO;
@@ -67,6 +66,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 	private JLabel lbAcrescimo;
 	private JLabel lbTotalPago;
 	private JLabel lbValorLiquido;
+	private JTextFieldMaiusculo txDocumento;
 
 	public FrmConsultarContasReceber(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -84,7 +84,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		container.add(txCodigo);
 		txCodigo.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Cliente:");
+		JLabel lblNewLabel_1 = new JLabel("Fornecedor:");
 		lblNewLabel_1.setBounds(255, 10, 68, 14);
 		container.add(lblNewLabel_1);
 
@@ -113,8 +113,8 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 
 		container.add(pesquisaCliente);
 
-		JLabel lblNewLabel_5 = new JLabel("Programa:");
-		lblNewLabel_5.setBounds(10, 35, 55, 14);
+		JLabel lblNewLabel_5 = new JLabel("Documento:");
+		lblNewLabel_5.setBounds(10, 35, 68, 14);
 		container.add(lblNewLabel_5);
 
 		JLabel lblNewLabel_4 = new JLabel("Pagamento:");
@@ -249,16 +249,17 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		panel.add(btnNewButton);
 
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		txDocumento = new JTextFieldMaiusculo();
+		txDocumento.setBounds(77, 32, 168, 20);
+		container.add(txDocumento);
+		txDocumento.setColumns(10);
 		ListSelectionModel rowSelMod = table.getSelectionModel();
 
-		rowSelMod.addListSelectionListener(new ListSelectionListener() {
+		rowSelMod.addListSelectionListener(e -> {
 
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-
-				if (!e.getValueIsAdjusting()) {
-					ajustarPainelTotalizador();
-				}
+			if (!e.getValueIsAdjusting()) {
+				ajustarPainelTotalizador();
 			}
 		});
 
@@ -274,9 +275,10 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		dtVencimentoInicial.addPropertyChangeListener(e -> filtrarContasReceber());
 		dtVencimentoFinal.addPropertyChangeListener(e -> filtrarContasReceber());
 		txValorInicial.addFocusListener(focusAdapter);
+		txDocumento.addFocusListener(focusAdapter);
 		txValorFinal.addFocusListener(focusAdapter);
-		pesquisaPagamento.addChangeListener((value) -> filtrarContasReceber());
-		pesquisaCliente.addChangeListener((value) -> filtrarContasReceber());
+		pesquisaPagamento.addChangeListener(value -> filtrarContasReceber());
+		pesquisaCliente.addChangeListener(value -> filtrarContasReceber());
 
 		initComponents();
 
@@ -295,6 +297,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		pesquisaContasReceberVO.setDocumentoBaixado(chBaixado.isSelected());
 		pesquisaContasReceberVO.setValorParcelaInicial(txValorInicial.getValue());
 		pesquisaContasReceberVO.setValorParcelaFinal(txValorFinal.getValue());
+		pesquisaContasReceberVO.setCodigoDocumento(txDocumento.getText());
 
 		List<ContasReceber> contasRecebers = contasReceberService.filtrarContasReceber(pesquisaContasReceberVO);
 
