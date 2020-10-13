@@ -200,7 +200,7 @@
 			<column name="id_programa" value="12" />
 			<column name="cd_aplicativo" value="1" />
 			<column name="cd_programa" value="1" />
-			<column name="nr_ordem" value="9" />
+			<column name="nr_ordem" value="10" />
 			<column name="tx_descricao" value="FRMAPPLICATION_MI_MOTORISTAS" />
 			<column name="tx_icone" value="motorista.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />

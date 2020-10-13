@@ -2,6 +2,8 @@ package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QHistorico.historico;
 
+import com.mysema.query.BooleanBuilder;
+
 import br.com.lar.repository.model.Historico;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 
@@ -11,6 +13,11 @@ public class HistoricoDAO extends PesquisableDAOImpl<Historico> {
 
 	public HistoricoDAO() {
 		super(historico, historico.idHistorico);
+	}
+
+	public BooleanBuilder buscarHistoricosAReceber() {
+
+		return new BooleanBuilder(historico.tipoHistorico.eq(2L));
 	}
 
 }

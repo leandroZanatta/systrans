@@ -28,6 +28,7 @@ import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
+import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import net.miginfocom.swing.MigLayout;
 
@@ -77,7 +78,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(600, 404);
+		setSize(600, 380);
 		setClosable(Boolean.TRUE);
 		setTitle("CADASTRO DE CONTAS Á RECEBER");
 
@@ -127,7 +128,8 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 			}
 		};
 
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa(), getCodigoUsuario(),
+				historicoService.buscarHistoricosAReceber()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -158,6 +160,13 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 			}
 		};
 
+		pesquisaPagamento.addChangeListener(pagamento -> {
+
+			if (pagamento != null && dtVencimento.getDate() == null) {
+				dtVencimento.setDate(DateUtil.addDays(dtMovimento.getDate(), pagamento.getNumeroDiasPagamento()));
+			}
+		});
+		pesquisaVeiculo.addChangeListener(veiculo -> pesquisaMotorista.setValue(veiculo == null ? null : veiculo.getMotorista()));
 		txCodigo.setColumns(10);
 
 		container.add(lbCodigo, "cell 0 0,growx,aligny center");
