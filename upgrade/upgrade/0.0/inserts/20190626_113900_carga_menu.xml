@@ -220,21 +220,139 @@
 			<column name="nr_ordem" value="6" />
 			<where>id_programa='5'</where>
 		</update>
-		
+
 		<update tableName="tb_programa">
 			<column name="nr_ordem" value="8" />
 			<where>id_programa='13'</where>
 		</update>
-		
+
 		<update tableName="tb_programa">
 			<column name="nr_ordem" value="2" />
 			<where>id_programa='27'</where>
 		</update>
-		
+
 		<update tableName="tb_programa">
 			<column name="nr_ordem" value="9" />
 			<where>id_programa='11'</where>
 		</update>
 	</changeSet>
 
+
+	<changeSet id="20201017_172000" author="Leandro Zanatta">
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="22" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="4" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MN_CONTABILIDADE" />
+			<column name="tx_icone" value="contabilidade.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="23" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="22" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_PLANO_CONTAS" />
+			<column name="tx_icone" value="planocontas.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="21" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="17" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CAIXA" />
+			<column name="tx_icone" value="caixa.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="25" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="21" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CAIXA_ABERTURA" />
+			<column name="tx_icone" value="caixa-abertura.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="33" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="21" />
+			<column name="nr_ordem" value="3" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CAIXA_FECHAMENTO" />
+			<column name="tx_icone" value="caixa-fechamento.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="34" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="21" />
+			<column name="nr_ordem" value="4" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CAIXA_RESUMO" />
+			<column name="tx_icone" value="caixa-resumo.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="28" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MN_FATURAMENTO" />
+			<column name="tx_icone" value="faturamento.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="29" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="28" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_OPERACOES" />
+			<column name="tx_icone" value="operacoes.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="30" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="29" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_OPERACOES-CADASTRO" />
+			<column name="tx_icone" value="operacoes-cadastro.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="31" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="29" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_OPERACOES-HISTORICO" />
+			<column name="tx_icone" value="operacoes-historico.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="32" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="28" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_LANCAMENTOS" />
+			<column name="tx_icone" value="operacoes-lancamento.png" />
+			<column name="fl_acessorapido" valueBoolean="true" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="35" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="21" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CAIXA_CADASTRO" />
+			<column name="tx_icone" value="caixa-cadastro.png" />
+			<column name="fl_acessorapido" valueBoolean="true" />
+		</insert>
+
+		<delete tableName="tb_permissaoprograma">
+			<where>cd_programa=20</where>
+		</delete>
+
+		<delete tableName="tb_programa">
+			<where>id_programa=20</where>
+		</delete>
+	</changeSet>
 </databaseChangeLog>

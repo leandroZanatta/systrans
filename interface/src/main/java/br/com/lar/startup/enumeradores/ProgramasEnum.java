@@ -3,19 +3,26 @@ package br.com.lar.startup.enumeradores;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.lar.ui.FrmAberturaCaixa;
+import br.com.lar.ui.FrmCadastroOperacoes;
 import br.com.lar.ui.FrmCadastroPesquisa;
+import br.com.lar.ui.FrmCaixa;
 import br.com.lar.ui.FrmCidade;
 import br.com.lar.ui.FrmCliente;
 import br.com.lar.ui.FrmConsultarContasReceber;
 import br.com.lar.ui.FrmEstado;
+import br.com.lar.ui.FrmFechamentoCaixa;
 import br.com.lar.ui.FrmFormasPagamento;
 import br.com.lar.ui.FrmFuncionario;
 import br.com.lar.ui.FrmGerarContasReceber;
 import br.com.lar.ui.FrmGrupo;
-import br.com.lar.ui.FrmHistorico;
+import br.com.lar.ui.FrmHistoricoOperacoes;
+import br.com.lar.ui.FrmLancamento;
 import br.com.lar.ui.FrmMotorista;
 import br.com.lar.ui.FrmPerfil;
 import br.com.lar.ui.FrmPermissoes;
+import br.com.lar.ui.FrmPlanoContas;
+import br.com.lar.ui.FrmResumoCaixa;
 import br.com.lar.ui.FrmUsuario;
 import br.com.lar.ui.FrmVeiculo;
 import br.com.sysdesc.components.AbstractInternalFrame;
@@ -46,11 +53,25 @@ public enum ProgramasEnum {
 
 	CADASTRO_FORMAS_PAGAMENTO(19L, FrmFormasPagamento.class),
 
-	CADASTRO_HISTORICOS(20L, FrmHistorico.class),
+	CADASTRO_PLANO_CONTAS(23L, FrmPlanoContas.class),
 
 	CADASTRO_CONTAS_RECEBER(26L, FrmGerarContasReceber.class),
 
-	CONSULTA_CONTAS_RECEBER(27L, FrmConsultarContasReceber.class);
+	HISTORICO_OPERACOES(30L, FrmCadastroOperacoes.class),
+
+	PAGAMENTO_OPERACOES(31L, FrmHistoricoOperacoes.class),
+
+	LANCAMENTOS(32L, FrmLancamento.class),
+
+	ABERTURA_CAIXA(25L, FrmAberturaCaixa.class),
+
+	FECHAMENTO_CAIXA(33L, FrmFechamentoCaixa.class),
+
+	RESUMO_CAIXA(34L, FrmResumoCaixa.class),
+
+	CONSULTA_CONTAS_RECEBER(27L, FrmConsultarContasReceber.class),
+
+	CADASTRO_CAIXA(35L, FrmCaixa.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

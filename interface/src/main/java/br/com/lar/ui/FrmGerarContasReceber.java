@@ -129,7 +129,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		};
 
 		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa(), getCodigoUsuario(),
-				historicoService.buscarHistoricosAReceber()) {
+				historicoService.getHistoricosCredores()) {
 
 			private static final long serialVersionUID = 1L;
 

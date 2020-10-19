@@ -6,26 +6,26 @@ import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public enum TipoHistoricoEnum {
+public enum TipoHistoricoOperacaoEnum {
 
-	CONTAS_PAGAR(1L, "Contas á Pagar"),
+	CREDOR(1L, "Credor"),
 
-	CONTAS_RECEBER(2L, "Contas á Receber");
+	DEVEDOR(2L, "Devedor");
 
 	private final Long codigo;
 
 	private final String descricao;
 
-	private static Map<Long, TipoHistoricoEnum> mapa = new HashMap<>();
+	private static Map<Long, TipoHistoricoOperacaoEnum> mapa = new HashMap<>();
 
 	static {
 
-		for (TipoHistoricoEnum tipoVeiculo : TipoHistoricoEnum.values()) {
+		for (TipoHistoricoOperacaoEnum tipoVeiculo : TipoHistoricoOperacaoEnum.values()) {
 			mapa.put(tipoVeiculo.getCodigo(), tipoVeiculo);
 		}
 	}
 
-	private TipoHistoricoEnum(Long codigo, String descricao) {
+	private TipoHistoricoOperacaoEnum(Long codigo, String descricao) {
 		this.codigo = codigo;
 		this.descricao = descricao;
 	}
@@ -36,7 +36,7 @@ public enum TipoHistoricoEnum {
 		return this.descricao;
 	}
 
-	public static TipoHistoricoEnum forValue(Long codigo) {
+	public static TipoHistoricoOperacaoEnum forValue(Long codigo) {
 
 		return mapa.get(codigo);
 	}

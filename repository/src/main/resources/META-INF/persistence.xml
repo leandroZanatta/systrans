@@ -23,6 +23,17 @@
 		<class>br.com.lar.repository.model.ContasReceber</class>
 		<class>br.com.lar.repository.model.Historico</class>
 		<class>br.com.lar.repository.model.Motorista</class>
+		<class>br.com.lar.repository.model.PlanoContas</class>
+		<class>br.com.lar.repository.model.Operacao</class>
+		<class>br.com.lar.repository.model.Faturamento</class>
+		<class>br.com.lar.repository.model.FaturamentoPagamento</class>
+		<class>br.com.lar.repository.model.FaturamentoTransporte</class>
+		<class>br.com.lar.repository.model.Caixa</class>
+		<class>br.com.lar.repository.model.CaixaCabecalho</class>
+		<class>br.com.lar.repository.model.CaixaDetalhe</class>
+		<class>br.com.lar.repository.model.CaixaSaldo</class>
+		<class>br.com.lar.repository.model.DiarioCabecalho</class>
+		<class>br.com.lar.repository.model.DiarioDetalhe</class>
 	</persistence-unit>
 
 </persistence>

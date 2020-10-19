@@ -15,9 +15,9 @@ public class HistoricoDAO extends PesquisableDAOImpl<Historico> {
 		super(historico, historico.idHistorico);
 	}
 
-	public BooleanBuilder buscarHistoricosAReceber() {
+	public BooleanBuilder getHistoricosCredores() {
 
-		return new BooleanBuilder(historico.tipoHistorico.eq(2L));
+		return new BooleanBuilder(historico.tipoHistorico.eq(1L));
 	}
 
 }

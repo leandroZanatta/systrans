@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201017_182800" author="Leandro Zanatta" logicalFilePath="20201017_182800_tb_operacao.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_operacao" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_operacao">
+
+			<column name="id_operacao" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="operacao_pk" nullable="false" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTÓRICO">
+				<constraints nullable="false" foreignKeyName="operacao_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+			<column name="cd_formapagamento" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="operacao_pagamento_fk" references="tb_formapagamento(id_formapagamento)" />
+			</column>
+
+			<column name="cd_contacredora" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="historicooperacao_contacredora_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="cd_contadevedora" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="historicooperacao_contadevedora_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="DESCRIÇÃO DO HISTÓRICO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_operacao" />
+
+	</changeSet>
+</databaseChangeLog>

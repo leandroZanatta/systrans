@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_174100" author="Leandro Zanatta" logicalFilePath="20201018_174100_tb_faturamentotransporte.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_faturamentotransporte" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_faturamentotransporte">
+
+			<column name="cd_faturamento" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="faturamentotransporte_pk" nullable="false"
+					foreignKeyName="faturamentotrasporte_faturamento_fk" references="tb_faturamento(id_faturamento)" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
+				<constraints nullable="false" foreignKeyName="faturamentotransporte_veiculo_fk" references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
+				<constraints nullable="false" foreignKeyName="faturamentotransporte_motorista_fk" references="tb_motorista(id_motorista)" />
+			</column>
+
+			<column name="nr_odometroinicial" type="${numeric.18x0}" remarks="ODÔMETRO INICIAL" />
+
+			<column name="nr_odometrofinal" type="${numeric.18x0}" remarks="ODÔMETRO FINAL" />
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

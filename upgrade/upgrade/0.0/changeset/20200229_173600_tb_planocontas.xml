@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20190827_191100" author="Leandro Zanatta" logicalFilePath="20190827_191100_tb_planocontas.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_planocontas" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_planocontas">
+
+			<column name="id_planocontas" type="NUMBER(18,0)" remarks="CÓDIGO IDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="planocontas_pk" nullable="false" />
+			</column>
+
+			<column name="cd_contaprincipal" type="NUMBER(18,0)" remarks="CONTA PRINCIPAL">
+				<constraints foreignKeyName="conta_principal_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="tx_identificador" type="VARCHAR(100)" remarks="IDENTIFICADOR DA CONTA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="tx_descricao" type="VARCHAR(100)" remarks="DESCRIÇÃO DA CONTA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_contaanalitica" type="BOOLEAN" remarks="CONTA ANALÍTICA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="fl_saldo" type="VARCHAR(1)" remarks="TIPO DE SALDO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="dt_cadastro" type="TIMESTAMP" remarks="DATA DE CADASTRO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="dt_manutencao" type="TIMESTAMP" remarks="DATA DE MANUTENÇÃO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_situacao" type="NUMERIC (3,0)" remarks="CÓDIGO DA SITUAÇÃO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_planocontas" startValue="94" />
+	</changeSet>
+</databaseChangeLog>

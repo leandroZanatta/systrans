@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_194900" author="Leandro Zanatta" logicalFilePath="20201018_194900_tb_diariocabecalho.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_diariocabecalho" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_diariocabecalho">
+
+			<column name="id_diariocabecalho" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="diariocabecalho_pk" nullable="false" />
+			</column>
+
+			<column name="dt_movimento" type="${timestamp}" remarks="DATA DO MOVIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO HISTÓRICO">
+				<constraints nullable="false" foreignKeyName="diariocabecalho_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_diariocabecalho" />
+
+	</changeSet>
+</databaseChangeLog>
