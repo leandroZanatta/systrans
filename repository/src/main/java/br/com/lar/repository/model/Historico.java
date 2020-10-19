@@ -1,12 +1,14 @@
 package br.com.lar.repository.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -29,4 +31,11 @@ public class Historico implements Serializable {
 
 	@Column(name = "tx_descricao")
 	private String descricao;
+
+	@OneToMany(mappedBy = "historico")
+	private List<Operacao> operacoes;
+
+	@OneToMany(mappedBy = "historico")
+	private List<Faturamento> faturamentos;
+
 }

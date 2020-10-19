@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_195200" author="Leandro Zanatta" logicalFilePath="20201018_195200_tb_diariodetalhe.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_diariodetalhe" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_diariodetalhe">
+
+			<column name="id_diariodetalhe" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="diariodetalhe_pk" nullable="false" />
+			</column>
+
+			<column name="nr_tiposaldo" type="${numeric.2x0}" remarks="TIPO DE SALDO (CREDOR/DEVEDOR)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="cd_diariocabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CABEÇALHO DO DIÁRIO">
+				<constraints nullable="false" foreignKeyName="diariodetalhe_diariocabecalho_fk" references="tb_diariocabecalho(id_diariocabecalho)" />
+			</column>
+
+			<column name="cd_planocontas" type="${numeric.18x0}" remarks="CÓDIGO DO PLANO DE CONTAS">
+				<constraints nullable="false" foreignKeyName="diariodetalhe_planocontas_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="vl_detalhe" type="${numeric.18x2}" remarks="VALOR DO PAGAMENTO/RECEBIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_diariodetalhe" />
+
+	</changeSet>
+</databaseChangeLog>

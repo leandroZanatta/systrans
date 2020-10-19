@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_193900" author="Leandro Zanatta" logicalFilePath="20201018_193900_tb_caixadetalhe.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_caixadetalhe" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_caixadetalhe">
+
+			<column name="id_caixadetalhe" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="caixadetalhe_pk" nullable="false" />
+			</column>
+
+			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO MOVIMENTO DE CAIXA">
+				<constraints nullable="false" foreignKeyName="caixadetalhe_caixacabecalho_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
+			</column>
+
+			<column name="cd_planocontas" type="${numeric.18x0}" remarks="CÓDIGO DO PLANO DE CONTAS">
+				<constraints nullable="false" foreignKeyName="caixadetalhe_planocontas_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="dt_movimento" type="${timestamp}" remarks="DATA DO MOVIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_tiposaldo" type="${numeric.2x0}" remarks="TIPO DE SALDO (CREDOR/DEVEDOR)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_detalhe" type="${numeric.18x2}" remarks="VALOR DO PAGAMENTO/RECEBIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_caixadetalhe" />
+
+	</changeSet>
+</databaseChangeLog>

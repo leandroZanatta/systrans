@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_193400" author="Leandro Zanatta" logicalFilePath="20201018_193400_tb_caixacabecalho.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_caixacabecalho" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_caixacabecalho">
+
+			<column name="id_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="caixacabecalho_pk" nullable="false" />
+			</column>
+
+			<column name="cd_caixa" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
+				<constraints nullable="false" foreignKeyName="caixacabecalho_caixa_fk" references="tb_caixa(id_caixa)" />
+			</column>
+
+			<column name="dt_movimento" type="${date}" remarks="DATA DO MOVIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="dt_abertura" type="${timestamp}" remarks="DATA DE ABERTURA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="dt_fechamento" type="${timestamp}" remarks="DATA DE FECHAMENTO" />
+		</createTable>
+
+		<createSequence sequenceName="gen_caixacabecalho" />
+
+	</changeSet>
+</databaseChangeLog>

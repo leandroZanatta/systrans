@@ -54,4 +54,10 @@ public class FormasPagamento implements Serializable {
 	@OneToMany(mappedBy = "formasPagamento")
 	private List<ContasReceber> contasReceber;
 
+	@OneToMany(mappedBy = "formasPagamento")
+	private List<Operacao> operacoes;
+
+	@OneToMany(mappedBy = "formasPagamento")
+	private List<FaturamentoPagamento> faturamentoPagamentos;
+
 }

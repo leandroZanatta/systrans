@@ -1,6 +1,7 @@
 package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QFormasPagamento.formasPagamento;
+import static br.com.lar.repository.model.QOperacao.operacao;
 
 import com.mysema.query.BooleanBuilder;
 
@@ -20,6 +21,13 @@ public class FormasPagamentoDAO extends PesquisableDAOImpl<FormasPagamento> {
 
 		return new BooleanBuilder(formasPagamento.codigoFormaPagamento.eq(FormaPagamentoEnum.BOLETO.getCodigo())
 				.or(formasPagamento.flagPermitePagamentoPrazo.eq(true)));
+	}
+
+	public BooleanBuilder buscarPagamentosComHistorico(Long codigoHistorico) {
+
+		return new BooleanBuilder(subQuery().from(operacao)
+				.where(formasPagamento.idFormaPagamento.eq(operacao.codigoFormaPagamento).and(operacao.codigoHistorico.eq(codigoHistorico)))
+				.exists());
 	}
 
 }

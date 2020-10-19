@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_175100" author="Leandro Zanatta" logicalFilePath="20201018_175100_tb_faturamentopagamento.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_faturamentopagamento" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_faturamentopagamento">
+
+			<column name="id_faturamentopagamento" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="faturamentopagamento_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamento" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="faturamentopagamento_faturamento_fk" references="tb_faturamento(id_faturamento)" />
+			</column>
+
+			<column name="cd_formapagamento" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="faturamentopagamento_formapagamento_fk"
+					references="tb_formapagamento(id_formapagamento)" />
+			</column>
+
+			<column name="dt_lancamento" type="${timestamp}" remarks="DATA DE LANÇAMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="dt_vencimento" type="${date}" remarks="DATA DE VENCIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_parcela" type="${numeric.18x0}" remarks="NÚMERO DA PARCELA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_parcela" type="${numeric.18x2}" remarks="VALOR DA PARCELA">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_faturamentopagamento" />
+
+	</changeSet>
+</databaseChangeLog>

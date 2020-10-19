@@ -5,15 +5,19 @@ import java.util.Map;
 
 import com.mysema.query.types.path.EntityPathBase;
 
+import br.com.lar.repository.model.QCaixa;
 import br.com.lar.repository.model.QCidade;
 import br.com.lar.repository.model.QCliente;
 import br.com.lar.repository.model.QContasReceber;
 import br.com.lar.repository.model.QEstado;
+import br.com.lar.repository.model.QFaturamento;
 import br.com.lar.repository.model.QFormasPagamento;
 import br.com.lar.repository.model.QFuncionario;
 import br.com.lar.repository.model.QGrupo;
 import br.com.lar.repository.model.QHistorico;
 import br.com.lar.repository.model.QMotorista;
+import br.com.lar.repository.model.QOperacao;
+import br.com.lar.repository.model.QPlanoContas;
 import br.com.lar.repository.model.QVeiculo;
 import br.com.sysdesc.pesquisa.repository.model.QPerfil;
 import br.com.sysdesc.pesquisa.repository.model.QPesquisa;
@@ -45,7 +49,15 @@ public enum PesquisaEnum {
 
 	PES_FORMAS_PAGAMENTO(12L, "Formas de Pagamento", QFormasPagamento.class),
 
-	PES_CONTAS_RECEBER(15L, "Contas Ã¡ Receber", QContasReceber.class);
+	PES_PLANOCONTAS(14L, "Plano de Contas", QPlanoContas.class),
+
+	PES_CONTAS_RECEBER(15L, "Contas Á Receber", QContasReceber.class),
+
+	PES_OPERACOES(16L, "Operações", QOperacao.class),
+
+	PES_FATURAMENTO(17L, "Faturamento", QFaturamento.class),
+
+	PES_CAIXA(18L, "Caixa", QCaixa.class);
 
 	private static Map<Long, PesquisaEnum> map = new HashMap<>();
 

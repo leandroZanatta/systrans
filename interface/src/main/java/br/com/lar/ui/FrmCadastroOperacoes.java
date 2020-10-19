@@ -9,14 +9,14 @@ import javax.swing.JPanel;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
-import br.com.lar.startup.enumeradores.TipoHistoricoEnum;
+import br.com.lar.startup.enumeradores.TipoHistoricoOperacaoEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import net.miginfocom.swing.MigLayout;
 
-public class FrmHistorico extends AbstractInternalFrame {
+public class FrmCadastroOperacoes extends AbstractInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,9 +28,9 @@ public class FrmHistorico extends AbstractInternalFrame {
 	private JTextFieldMaiusculo txDescricao;
 	private PanelActions<Historico> panelActions;
 	private HistoricoService historicoService = new HistoricoService();
-	private JComboBox<TipoHistoricoEnum> cbTipoHistorico;
+	private JComboBox<TipoHistoricoOperacaoEnum> cbTipoHistorico;
 
-	public FrmHistorico(Long permissaoPrograma, Long codigoUsuario) {
+	public FrmCadastroOperacoes(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
 
 		initComponents();
@@ -40,7 +40,7 @@ public class FrmHistorico extends AbstractInternalFrame {
 
 		setSize(450, 230);
 		setClosable(Boolean.TRUE);
-		setTitle("CADASTRO DE HISTÓRICOS");
+		setTitle("CADASTRO DE OPERAÇÕES");
 
 		painelContent = new JPanel();
 		txCodigo = new JTextFieldId();
@@ -54,12 +54,12 @@ public class FrmHistorico extends AbstractInternalFrame {
 		getContentPane().add(painelContent);
 		painelContent.add(lblCodigo, "cell 0 0");
 		painelContent.add(txCodigo, "cell 0 1,width 50:100:100");
-		painelContent.add(lbTipoHistorico, "cell 0 2");
-		painelContent.add(cbTipoHistorico, "cell 0 3,growx");
-		painelContent.add(lbDescricao, "cell 0 4,growx");
-		painelContent.add(txDescricao, "cell 0 5,growx");
+		painelContent.add(lbDescricao, "cell 0 2");
+		painelContent.add(txDescricao, "cell 0 3,growx");
+		painelContent.add(lbTipoHistorico, "cell 0 4,growx");
+		painelContent.add(cbTipoHistorico, "cell 0 5,growx");
 
-		Arrays.asList(TipoHistoricoEnum.values()).forEach(cbTipoHistorico::addItem);
+		Arrays.asList(TipoHistoricoOperacaoEnum.values()).forEach(cbTipoHistorico::addItem);
 
 		panelActions = new PanelActions<Historico>(this, historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa()) {
 
@@ -68,7 +68,7 @@ public class FrmHistorico extends AbstractInternalFrame {
 			@Override
 			public void carregarObjeto(Historico objeto) {
 				txCodigo.setValue(objeto.getIdHistorico());
-				cbTipoHistorico.setSelectedItem(TipoHistoricoEnum.forValue(objeto.getTipoHistorico()));
+				cbTipoHistorico.setSelectedItem(TipoHistoricoOperacaoEnum.forValue(objeto.getTipoHistorico()));
 				txDescricao.setText(objeto.getDescricao());
 			}
 
@@ -81,7 +81,7 @@ public class FrmHistorico extends AbstractInternalFrame {
 
 				if (cbTipoHistorico.getSelectedIndex() >= 0) {
 
-					objetoPesquisa.setTipoHistorico(((TipoHistoricoEnum) cbTipoHistorico.getSelectedItem()).getCodigo());
+					objetoPesquisa.setTipoHistorico(((TipoHistoricoOperacaoEnum) cbTipoHistorico.getSelectedItem()).getCodigo());
 				}
 
 				return true;

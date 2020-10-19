@@ -5,6 +5,7 @@ import static br.com.sysdesc.util.resources.Resources.translate;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.lang.reflect.Constructor;
 import java.util.Comparator;
 import java.util.List;
@@ -19,9 +20,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.border.EtchedBorder;
 
+import br.com.lar.repository.dao.CaixaDAO;
 import br.com.lar.repository.model.PermissaoPrograma;
 import br.com.lar.repository.model.Programa;
+import br.com.lar.repository.projection.CaixaAbertoProjection;
 import br.com.lar.service.main.MainService;
 import br.com.lar.startup.enumeradores.ProgramasEnum;
 import br.com.lar.thread.AtualizacaoThread;
@@ -40,12 +44,13 @@ import net.miginfocom.swing.MigLayout;
 public class FrmApplication extends JFrame {
 
 	private static final String SYS_DESC = "SysTrans - Forcelini Comércio e Tranportes Ltda ME";
-
+	private EtchedBorder border = new EtchedBorder(EtchedBorder.LOWERED);
 	private static final long serialVersionUID = 1L;
 
 	private static Usuario usuario;
 	private static FrmApplication frmApplication;
 	private JLabel lbUsuario;
+	private JLabel lbCaixa;
 	private JMenuBar menuBar;
 	private JDesktopPane desktopPane;
 	private JToolBar toolBar;
@@ -68,22 +73,29 @@ public class FrmApplication extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 		contentPane.add(desktopPane, BorderLayout.CENTER);
 		contentPane.add(toolBar, BorderLayout.NORTH);
-		panel.setLayout(new MigLayout("", "[grow][][][]", "[]"));
+		panel.setLayout(new MigLayout("", "[][grow][][]", "[20px]"));
 
 		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, "cell 0 0,alignx left,aligny center");
-		lbUsuario = new JLabel();
-		panel_1.add(lbUsuario);
-
 		JPanel panel_3 = new JPanel();
-		panel.add(panel_3, "cell 1 0,alignx center");
-
 		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, "cell 2 0,alignx center");
-
 		JPanel panel_4 = new JPanel();
-		panel.add(panel_4, "cell 3 0,alignx right");
+
+		lbUsuario = new JLabel();
+		lbCaixa = new JLabel("");
 		JLabel lbHorario = new JLabel();
+
+		configurarBorda(panel_1);
+		configurarBorda(panel_2);
+		configurarBorda(panel_3);
+		configurarBorda(panel_4);
+
+		panel.add(panel_1, "flowx,cell 0 0,grow");
+		panel.add(panel_2, "cell 2 0,alignx center,growy");
+		panel.add(panel_4, "cell 3 0,alignx right,growy");
+		panel.add(panel_3, "cell 1 0,grow");
+
+		panel_3.add(lbCaixa);
+		panel_1.add(lbUsuario);
 		panel_4.add(lbHorario);
 
 		TimerThread timerThread = new TimerThread(lbHorario);
@@ -109,12 +121,18 @@ public class FrmApplication extends JFrame {
 
 		setJMenuBar(menuBar);
 		setTitle(SYS_DESC);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(1024, 600);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
 		setContentPane(contentPane);
+	}
 
+	private void configurarBorda(JPanel panel) {
+
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setVgap(0);
+		panel.setBorder(border);
 	}
 
 	private void getSingleInstance(Class<? extends AbstractInternalFrame> frame, PermissaoPrograma permissaoPrograma) {
@@ -191,6 +209,24 @@ public class FrmApplication extends JFrame {
 		String formattedUser = String.format(" %s - %s", usuario.getIdUsuario(), usuario.getNomeUsuario());
 
 		lbUsuario.setText(translate(FRMAPPLICATION_LB_USUARIO) + formattedUser);
+
+		setarLabelCaixa();
+	}
+
+	public void setarLabelCaixa() {
+
+		String descricaoCaixa = "";
+
+		CaixaAbertoProjection caixaProjection = new CaixaDAO().obterCaixaAberto(usuario.getIdUsuario());
+
+		if (caixaProjection != null) {
+
+			descricaoCaixa = String.format("%s - %s", caixaProjection.getDescricao(),
+					caixaProjection.isCaixaAberto() ? "ABERTO" : "FECHADO");
+		}
+
+		lbCaixa.setText(descricaoCaixa);
+
 	}
 
 	private void createMenus() {
@@ -275,8 +311,11 @@ public class FrmApplication extends JFrame {
 		return menu.getCodigoAplicativo() == null || menu.getCodigoAplicativo().equals(1L);
 	}
 
+	public static Usuario getUsuario() {
+		return usuario;
+	}
+
 	public JDesktopPane getDesktopPane() {
 		return desktopPane;
 	}
-
 }

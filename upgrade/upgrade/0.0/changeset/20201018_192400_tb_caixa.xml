@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201018_192400" author="Leandro Zanatta" logicalFilePath="20201018_192400_tb_caixa.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_caixa" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_caixa">
+
+			<column name="id_caixa" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="caixa_pk" nullable="false" />
+			</column>
+
+			<column name="cd_usuario" type="${numeric.18x0}" remarks="CÓDIGO DO USUÁRIO">
+				<constraints nullable="false" foreignKeyName="caixa_usuario_fk" references="tb_usuario(id_usuario)" />
+			</column>
+
+			<column name="tx_descricao" type="${varchar.100}" remarks="DESCRIÇÃO/NOME DO CAIXA">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_caixa" />
+
+	</changeSet>
+</databaseChangeLog>

@@ -39,9 +39,9 @@ public class HistoricoService extends AbstractPesquisableServiceImpl<Historico> 
 
 	}
 
-	public BooleanBuilder buscarHistoricosAReceber() {
+	public BooleanBuilder getHistoricosCredores() {
 
-		return historicoDAO.buscarHistoricosAReceber();
+		return historicoDAO.getHistoricosCredores();
 	}
 
 }

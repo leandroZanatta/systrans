@@ -47,4 +47,7 @@ public class Motorista implements Serializable {
 
 	@OneToMany(mappedBy = "motorista")
 	private List<Veiculo> veiculos;
+
+	@OneToMany(mappedBy = "motorista")
+	private List<FaturamentoTransporte> faturamentoTransportes;
 }
