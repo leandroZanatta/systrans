@@ -20,15 +20,15 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_caixa")
-@SequenceGenerator(name = "GEN_CAIXA", sequenceName = "GEN_CAIXA", allocationSize = 1)
+@Table(name = "tb_caixadetalhe")
+@SequenceGenerator(name = "GEN_CAIXADETALHE", sequenceName = "GEN_CAIXADETALHE", allocationSize = 1)
 public class CaixaDetalhe implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_CAIXA")
-	@Column(name = "id_caixa")
-	private Long idCaixa;
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_CAIXADETALHE")
+	@Column(name = "id_caixadetalhe")
+	private Long idCaixaDetalhe;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
