@@ -489,7 +489,7 @@ public class FrmLancamento extends AbstractInternalFrame {
 		JLabel lblHistorico = new JLabel("Histórico:");
 
 		txCodigo = new JTextFieldId();
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa(),
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
 				getCodigoUsuario(), historicoService.getHistoricosCredores()) {
 
 			private static final long serialVersionUID = 1L;

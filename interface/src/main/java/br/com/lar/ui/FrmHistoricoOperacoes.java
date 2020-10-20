@@ -72,7 +72,7 @@ public class FrmHistoricoOperacoes extends AbstractInternalFrame {
 		txDescricao = new JTextFieldMaiusculo();
 		txCodigo = new JTextFieldId();
 
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa(),
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICOOPERACOES.getCodigoPesquisa(),
 				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;

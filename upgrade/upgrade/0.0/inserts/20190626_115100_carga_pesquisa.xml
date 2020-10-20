@@ -70,4 +70,80 @@
 
 	</changeSet>
 
+	<changeSet id="20201020_201100" author="Leandro Zanatta">
+	
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="4" />
+			<column name="tx_descricao" value="VEÍCULOS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="11" />
+			<column name="tx_descricao" value="OPERAÇÕES GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+		
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="12" />
+			<column name="tx_descricao" value="FORMAS DE PAGAMENTO GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+		
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="13" />
+			<column name="tx_descricao" value="MOTORISTA GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="14" />
+			<column name="tx_descricao" value="PLANO DE CONTAS GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="15" />
+			<column name="tx_descricao" value="CONTAS Á RECEBER GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="16" />
+			<column name="tx_descricao" value="HISTÓRICO DE OPERAÇÕES GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="17" />
+			<column name="tx_descricao" value="FATURAMENTO GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+		<insert tableName="tb_pesquisa">
+			<column name="id_pesquisa" valueComputed="nextval('gen_pesquisa')" />
+			<column name="cd_pesquisa" value="18" />
+			<column name="tx_descricao" value="CADASTRO DE CAIXA GERAL" />
+			<column name="nr_paginacao" value="20" />
+			<column name="cd_tipo" value="0" />
+		</insert>
+
+	</changeSet>
+
 </databaseChangeLog>

@@ -61,7 +61,8 @@ public class FrmCadastroOperacoes extends AbstractInternalFrame {
 
 		Arrays.asList(TipoHistoricoOperacaoEnum.values()).forEach(cbTipoHistorico::addItem);
 
-		panelActions = new PanelActions<Historico>(this, historicoService, PesquisaEnum.PES_HISTORICO.getCodigoPesquisa()) {
+		panelActions = new PanelActions<Historico>(this, historicoService,
+				PesquisaEnum.PES_OPERACOES.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -81,7 +82,8 @@ public class FrmCadastroOperacoes extends AbstractInternalFrame {
 
 				if (cbTipoHistorico.getSelectedIndex() >= 0) {
 
-					objetoPesquisa.setTipoHistorico(((TipoHistoricoOperacaoEnum) cbTipoHistorico.getSelectedItem()).getCodigo());
+					objetoPesquisa.setTipoHistorico(
+							((TipoHistoricoOperacaoEnum) cbTipoHistorico.getSelectedItem()).getCodigo());
 				}
 
 				return true;
