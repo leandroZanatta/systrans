@@ -45,7 +45,7 @@ public enum PesquisaEnum {
 
 	PES_MOTORISTA(13L, "Motoristas", QMotorista.class),
 
-	PES_HISTORICO(11L, "Histórico", QHistorico.class),
+	PES_OPERACOES(11L, "Operações", QHistorico.class),
 
 	PES_FORMAS_PAGAMENTO(12L, "Formas de Pagamento", QFormasPagamento.class),
 
@@ -53,7 +53,7 @@ public enum PesquisaEnum {
 
 	PES_CONTAS_RECEBER(15L, "Contas Á Receber", QContasReceber.class),
 
-	PES_OPERACOES(16L, "Operações", QOperacao.class),
+	PES_HISTORICOOPERACOES(16L, "Histórico de Operações", QOperacao.class),
 
 	PES_FATURAMENTO(17L, "Faturamento", QFaturamento.class),
 
