@@ -6,8 +6,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import br.com.lar.service.caixa.ResumoCaixaService;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
+import br.com.systrans.util.vo.ResumoCaixaVO;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmResumoCaixa extends AbstractInternalFrame {
@@ -15,20 +17,21 @@ public class FrmResumoCaixa extends AbstractInternalFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel painelContent;
-	private JMoneyField textField;
-	private JMoneyField textField_1;
+	private JMoneyField txMovimentoCredito;
+	private JMoneyField txMovimentoDebito;
 	private JLabel lblTotalDeCrditos;
 	private JLabel lblTotalDeDbitos;
 	private JLabel lblSaldoMovimentado;
 	private JLabel lblSaldoDeContas;
 	private JLabel lblSobrafalta;
-	private JMoneyField textField_2;
-	private JMoneyField textField_3;
-	private JMoneyField textField_4;
-	private JMoneyField textField_5;
-	private JMoneyField textField_6;
+	private JMoneyField txTotalCredito;
+	private JMoneyField txTotalDebito;
+	private JMoneyField txSaldoMovimentado;
+	private JMoneyField txSaldoContas;
+	private JMoneyField txSobraFalta;
 	private JPanel panel;
 	private JButton btnFechar;
+	private ResumoCaixaService resumoCaixaService = new ResumoCaixaService();
 
 	public FrmResumoCaixa(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -50,48 +53,48 @@ public class FrmResumoCaixa extends AbstractInternalFrame {
 		JLabel lblTotalMovimentado = new JLabel("Total Movimentado Crédito:");
 		painelContent.add(lblTotalMovimentado, "cell 0 0,alignx left");
 
-		textField = new JMoneyField();
-		textField.setForeground(Color.BLUE);
-		painelContent.add(textField, "cell 1 0,growx");
+		txMovimentoCredito = new JMoneyField();
+		txMovimentoCredito.setForeground(Color.BLUE);
+		painelContent.add(txMovimentoCredito, "cell 1 0,growx");
 
 		JLabel lblTotalMovimentadoDebito = new JLabel("Total Movimentado Débito:");
 		painelContent.add(lblTotalMovimentadoDebito, "cell 0 1,alignx left");
 
-		textField_1 = new JMoneyField();
-		textField_1.setForeground(Color.RED);
-		painelContent.add(textField_1, "cell 1 1,growx");
+		txMovimentoDebito = new JMoneyField();
+		txMovimentoDebito.setForeground(Color.RED);
+		painelContent.add(txMovimentoDebito, "cell 1 1,growx");
 
 		lblTotalDeCrditos = new JLabel("Total de Créditos:");
 		painelContent.add(lblTotalDeCrditos, "cell 0 2,alignx left");
 
-		textField_2 = new JMoneyField();
-		textField_2.setForeground(Color.BLUE);
-		painelContent.add(textField_2, "cell 1 2,growx");
+		txTotalCredito = new JMoneyField();
+		txTotalCredito.setForeground(Color.BLUE);
+		painelContent.add(txTotalCredito, "cell 1 2,growx");
 
 		lblTotalDeDbitos = new JLabel("Total de Débitos:");
 		painelContent.add(lblTotalDeDbitos, "cell 0 3,alignx left");
 
-		textField_3 = new JMoneyField();
-		textField_3.setForeground(Color.RED);
-		painelContent.add(textField_3, "cell 1 3,growx");
+		txTotalDebito = new JMoneyField();
+		txTotalDebito.setForeground(Color.RED);
+		painelContent.add(txTotalDebito, "cell 1 3,growx");
 
 		lblSaldoMovimentado = new JLabel("Saldo Movimentado:");
 		painelContent.add(lblSaldoMovimentado, "cell 0 4,alignx left");
 
-		textField_4 = new JMoneyField();
-		painelContent.add(textField_4, "cell 1 4,growx");
+		txSaldoMovimentado = new JMoneyField();
+		painelContent.add(txSaldoMovimentado, "cell 1 4,growx");
 
 		lblSaldoDeContas = new JLabel("Saldo de Contas:");
 		painelContent.add(lblSaldoDeContas, "cell 0 5,alignx left");
 
-		textField_5 = new JMoneyField();
-		painelContent.add(textField_5, "cell 1 5,growx");
+		txSaldoContas = new JMoneyField();
+		painelContent.add(txSaldoContas, "cell 1 5,growx");
 
 		lblSobrafalta = new JLabel("Sobra/Falta:");
 		painelContent.add(lblSobrafalta, "cell 0 6,alignx left");
 
-		textField_6 = new JMoneyField();
-		painelContent.add(textField_6, "cell 1 6,growx");
+		txSobraFalta = new JMoneyField();
+		painelContent.add(txSobraFalta, "cell 1 6,growx");
 
 		panel = new JPanel();
 		painelContent.add(panel, "cell 0 7 2 1,growx,aligny bottom");
@@ -100,6 +103,17 @@ public class FrmResumoCaixa extends AbstractInternalFrame {
 		btnFechar.addActionListener(e -> dispose());
 		panel.add(btnFechar);
 
+		preencherCampos();
+	}
+
+	private void preencherCampos() {
+		ResumoCaixaVO resumoCaixaVO = resumoCaixaService.obterResumoCaixa(FrmApplication.getUsuario());
+		txMovimentoCredito.setValue(resumoCaixaVO.getValorMovimentoCredito());
+		txTotalCredito.setValue(resumoCaixaVO.getValorPagamentosCredito());
+
+		txSaldoMovimentado.setValue(txMovimentoCredito.getValue().subtract(txMovimentoDebito.getValue()));
+		txSaldoContas.setValue(txTotalCredito.getValue().subtract(txTotalDebito.getValue()));
+		txSobraFalta.setValue(txSaldoContas.getValue().subtract(txSaldoMovimentado.getValue()));
 	}
 
 }

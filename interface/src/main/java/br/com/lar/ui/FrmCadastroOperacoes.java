@@ -9,11 +9,11 @@ import javax.swing.JPanel;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
-import br.com.lar.startup.enumeradores.TipoHistoricoOperacaoEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
+import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmCadastroOperacoes extends AbstractInternalFrame {

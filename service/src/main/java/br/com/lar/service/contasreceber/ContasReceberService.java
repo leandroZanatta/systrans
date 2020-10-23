@@ -2,18 +2,28 @@ package br.com.lar.service.contasreceber;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import br.com.lar.repository.dao.ContasReceberDAO;
+import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasReceber;
+import br.com.lar.repository.model.DiarioCabecalho;
+import br.com.lar.service.caixa.CaixaService;
+import br.com.lar.service.caixa.FaturamentoCaixa;
+import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.vo.PesquisaContasReceberVO;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasReceber> {
 
 	private ContasReceberDAO contasReceberDAO;
+	private DiarioService faturamentoDiario = new DiarioService();
+	private FaturamentoCaixa faturamentoCaixa = new FaturamentoCaixa();
+	private CaixaService caixaService = new CaixaService();
 
 	public ContasReceberService() {
 		this(new ContasReceberDAO());
@@ -61,6 +71,30 @@ public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasR
 		if (BigDecimalUtil.isNullOrZero(objetoPersistir.getValorParcela())) {
 
 			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_VALOR_PARCELA);
+		}
+	}
+
+	@Override
+	public void salvar(ContasReceber objetoPersistir) {
+		caixaService.verificarCaixaAberto(objetoPersistir.getCaixaCabecalho());
+
+		DiarioCabecalho diarioCabecalho = faturamentoDiario.registrarDiarioContasReceber(objetoPersistir);
+		List<CaixaDetalhe> caixaDetalhes = faturamentoCaixa.registrarCaixaContasReceber(objetoPersistir);
+
+		EntityManager entityManager = contasReceberDAO.getEntityManager();
+
+		try {
+
+			entityManager.getTransaction().begin();
+
+			entityManager.persist(objetoPersistir);
+
+			entityManager.persist(diarioCabecalho);
+
+			caixaDetalhes.forEach(entityManager::persist);
+
+		} finally {
+			entityManager.getTransaction().commit();
 		}
 	}
 

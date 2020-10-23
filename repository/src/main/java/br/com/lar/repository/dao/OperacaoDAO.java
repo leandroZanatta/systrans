@@ -2,6 +2,8 @@ package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QOperacao.operacao;
 
+import java.util.List;
+
 import com.mysema.query.BooleanBuilder;
 
 import br.com.lar.repository.model.Operacao;
@@ -28,6 +30,11 @@ public class OperacaoDAO extends PesquisableDAOImpl<Operacao> {
 		}
 
 		return from().where(booleanBuilder).exists();
+	}
+
+	public List<Operacao> buscarOperacao(Long codigoHistorico, List<Long> codigoPagamentos) {
+
+		return from().where(operacao.codigoHistorico.eq(codigoHistorico).and(operacao.codigoFormaPagamento.in(codigoPagamentos))).list(operacao);
 	}
 
 }

@@ -9,9 +9,9 @@ import br.com.lar.repository.model.PlanoContas;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.LongUtil;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.enumeradores.TipoSaldoEnum;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class PlanoContasService extends AbstractPesquisableServiceImpl<PlanoContas> {
 

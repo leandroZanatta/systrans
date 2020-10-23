@@ -30,6 +30,9 @@ public class CaixaDetalhe implements Serializable {
 	@Column(name = "id_caixadetalhe")
 	private Long idCaixaDetalhe;
 
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
@@ -37,6 +40,9 @@ public class CaixaDetalhe implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cd_planocontas")
 	private PlanoContas planoContas;
+
+	@Column(name = "cd_planocontas", insertable = false, updatable = false)
+	private Long codigoPlanoContas;
 
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.TIMESTAMP)

@@ -8,8 +8,8 @@ import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.LongUtil;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class FormasPagamentoService extends AbstractPesquisableServiceImpl<FormasPagamento> {
 
@@ -52,13 +52,18 @@ public class FormasPagamentoService extends AbstractPesquisableServiceImpl<Forma
 		}
 	}
 
-	public BooleanBuilder pesquisarApenasAPrazo() {
-
-		return formasPagamentoDAO.pesquisarApenasAPrazo();
-	}
-
 	public BooleanBuilder buscarPagamentosComHistorico(Long codigoHistorico) {
 
 		return formasPagamentoDAO.buscarPagamentosComHistorico(codigoHistorico);
+	}
+
+	public BooleanBuilder buscarPagamentosComHistoricoAPrazo(Long codigoHistorico) {
+
+		return formasPagamentoDAO.buscarPagamentosComHistoricoAPrazo(codigoHistorico);
+	}
+
+	public BooleanBuilder pesquisarApenasAPrazo() {
+
+		return formasPagamentoDAO.pesquisarApenasAPrazo();
 	}
 }

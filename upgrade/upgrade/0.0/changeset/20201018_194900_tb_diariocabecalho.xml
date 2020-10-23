@@ -14,6 +14,10 @@
 				<constraints primaryKey="true" primaryKeyName="diariocabecalho_pk" nullable="false" />
 			</column>
 
+			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
+				<constraints nullable="false" foreignKeyName="contasreceber_caixa_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
+			</column>
+
 			<column name="dt_movimento" type="${timestamp}" remarks="DATA DO MOVIMENTO">
 				<constraints nullable="false" />
 			</column>

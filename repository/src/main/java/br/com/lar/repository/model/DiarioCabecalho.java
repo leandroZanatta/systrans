@@ -32,6 +32,13 @@ public class DiarioCabecalho implements Serializable {
 	@Column(name = "id_diariocabecalho")
 	private Long idDiarioCabecalho;
 
+	@ManyToOne
+	@JoinColumn(name = "cd_caixacabecalho")
+	private CaixaCabecalho caixaCabecalho;
+
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataMovimento;

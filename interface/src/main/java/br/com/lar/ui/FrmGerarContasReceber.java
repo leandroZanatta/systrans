@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.Cliente;
@@ -15,6 +16,7 @@ import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Motorista;
 import br.com.lar.repository.model.Veiculo;
+import br.com.lar.service.caixa.CaixaCabecalhoService;
 import br.com.lar.service.cliente.ClienteService;
 import br.com.lar.service.contasreceber.ContasReceberService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
@@ -30,6 +32,8 @@ import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
+import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmGerarContasReceber extends AbstractInternalFrame {
@@ -42,10 +46,11 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 	private MotoristaService motoristaService = new MotoristaService();
 	private ClienteService clienteService = new ClienteService();
 	private HistoricoService historicoService = new HistoricoService();
+	private CaixaCabecalhoService cabecalhoService = new CaixaCabecalhoService();
 	private JPanel container;
 	private JLabel lbCodigo;
 	private JTextFieldId txCodigo;
-	private JLabel lbFornecedor;
+	private JLabel lbCliente;
 	private CampoPesquisa<Cliente> pesquisaCliente;
 	private CampoPesquisa<FormasPagamento> pesquisaPagamento;
 	private CampoPesquisa<Veiculo> pesquisaVeiculo;
@@ -97,7 +102,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		lbAcrescimo = new JLabel("Acréscimo:");
 		lbDesconto = new JLabel("Desconto:");
 		lblDocumento = new JLabel("Documento:");
-		lbFornecedor = new JLabel("Fornecedor:");
+		lbCliente = new JLabel("Cliente:");
 		lbPagamento = new JLabel("Pagamento:");
 		lblDataDeMovimento = new JLabel("Data de Movimento:");
 
@@ -150,13 +155,23 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		};
 
 		pesquisaPagamento = new CampoPesquisa<FormasPagamento>(formasPagamentoService, PesquisaEnum.PES_FORMAS_PAGAMENTO.getCodigoPesquisa(),
-				getCodigoUsuario(), formasPagamentoService.pesquisarApenasAPrazo()) {
+				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public String formatarValorCampo(FormasPagamento objeto) {
 				return String.format(FORMATO_PESQUISA, objeto.getIdFormaPagamento(), objeto.getDescricao());
+			}
+
+			@Override
+			public BooleanBuilder getPreFilter() {
+
+				if (pesquisaHistorico.getObjetoPesquisado() == null) {
+					throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
+				}
+
+				return formasPagamentoService.buscarPagamentosComHistoricoAPrazo(pesquisaHistorico.getObjetoPesquisado().getIdHistorico());
 			}
 		};
 
@@ -173,16 +188,16 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		container.add(lblDocumento, "cell 4 0");
 		container.add(txCodigo, "cell 0 1,alignx left,aligny center");
 		container.add(txDocumento, "cell 4 1,growx");
-		container.add(lbFornecedor, "cell 0 2,alignx left,aligny center");
-		container.add(pesquisaPagamento, "cell 0 5 5 1,grow");
+		container.add(lbCliente, "cell 0 2,alignx left,aligny center");
+		container.add(pesquisaHistorico, "cell 0 5 5 1,grow");
 		container.add(lblVeculo, "cell 0 6");
 		container.add(lblMotorista, "cell 2 6");
 		container.add(pesquisaVeiculo, "cell 0 7 2 1,growx");
 		container.add(pesquisaMotorista, "cell 2 7 3 1,growx");
-		container.add(lblHistorico, "cell 0 8");
+		container.add(lbPagamento, "cell 0 8");
 		container.add(pesquisaCliente, "cell 0 3 5 1,grow");
-		container.add(lbPagamento, "cell 0 4,alignx left,aligny center");
-		container.add(pesquisaHistorico, "cell 0 9 5 1,growx");
+		container.add(lblHistorico, "cell 0 4,alignx left,aligny center");
+		container.add(pesquisaPagamento, "cell 0 9 5 1,growx");
 		container.add(lblDataDeMovimento, "cell 0 10");
 		container.add(lbVencimento, "cell 1 10");
 		container.add(lbValorParcela, "cell 2 10");
@@ -236,11 +251,14 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		container.add(panelActions, "cell 0 12 5 1,growx,aligny bottom");
 		panelActions.addSaveListener(objeto -> txCodigo.setValue(objeto.getIdContasReceber()));
 		panelActions.addNewListener(conta -> {
+
+			conta.setCaixaCabecalho(cabecalhoService.obterCaixa(FrmApplication.getUsuario()));
 			conta.setValorJuros(BigDecimal.ZERO);
 			conta.setBaixado(false);
 			conta.setValorPago(BigDecimal.ZERO);
 			conta.setDataCadastro(new Date());
 			conta.setCodigoStatus(TipoStatusEnum.ATIVO.getCodigo());
+			conta.setCaixaCabecalho(cabecalhoService.obterCaixa(FrmApplication.getUsuario()));
 
 			dtMovimento.setDate(new Date());
 		});

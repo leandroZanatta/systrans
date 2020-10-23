@@ -1,11 +1,11 @@
 package br.com.lar.ui.dialogs;
 
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_INSIRA_TAMANHO_VALIDO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_SELECIONE_FIELD;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_SELECIONE_FORMATACAO;
 import static br.com.sysdesc.util.resources.Resources.OPTION_VALIDACAO;
 import static br.com.sysdesc.util.resources.Resources.translate;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_INSIRA_TAMANHO_VALIDO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_SELECIONE_FIELD;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_SELECIONE_FORMATACAO;
 
 import java.awt.BorderLayout;
 import java.util.Arrays;

@@ -39,10 +39,10 @@ import br.com.sysdesc.pesquisa.service.perfil.PerfilService;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.util.classes.ImageUtil;
 import br.com.sysdesc.util.classes.ListUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.resources.Resources;
 import br.com.sysdesc.util.vo.PermissaoPesquisaVO;
 import br.com.sysdesc.util.vo.PermissaoProgramaVO;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class FrmPermissoes extends AbstractInternalFrame {
 

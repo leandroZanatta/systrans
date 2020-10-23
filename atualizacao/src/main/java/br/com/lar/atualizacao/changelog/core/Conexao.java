@@ -1,7 +1,7 @@
 package br.com.lar.atualizacao.changelog.core;
 
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_CONFIGURACOES_INVALIDAS;
 import static br.com.sysdesc.util.resources.Resources.translate;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_CONFIGURACOES_INVALIDAS;
 import static java.sql.DriverManager.getConnection;
 
 import java.io.File;
@@ -21,9 +21,7 @@ import br.com.lar.atualizacao.ui.FrmConexao;
 import br.com.sysdesc.util.classes.CryptoUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.resources.Configuracoes;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class Conexao {
 
 	private Conexao() {

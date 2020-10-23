@@ -30,6 +30,13 @@ public class ContasReceber implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_CONTASRECEBER")
 	private Long idContasReceber;
 
+	@ManyToOne
+	@JoinColumn(name = "cd_caixacabecalho")
+	private CaixaCabecalho caixaCabecalho;
+
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
 	@Column(name = "cd_cliente", insertable = false, updatable = false)
 	private Long codigoCliente;
 

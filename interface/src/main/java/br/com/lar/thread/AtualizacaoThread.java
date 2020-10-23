@@ -1,15 +1,15 @@
 package br.com.lar.thread;
 
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_ATUALIZAR_VERSAO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_LOG_ARQUIVO_DA_VERSAO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_LOG_GERANDO_ARQUIVO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_LOG_VERSAO_NAO_PODE_SER_GERADO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_THREAD_VERSAO_INTEROMPIDA;
 import static br.com.sysdesc.util.resources.Configuracoes.FOLDER_VERSOES;
 import static br.com.sysdesc.util.resources.Configuracoes.VERSAO;
 import static br.com.sysdesc.util.resources.Resources.APPLICATION_VERSOES;
 import static br.com.sysdesc.util.resources.Resources.OPTION_VALIDACAO;
 import static br.com.sysdesc.util.resources.Resources.translate;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_ATUALIZAR_VERSAO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_LOG_ARQUIVO_DA_VERSAO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_LOG_GERANDO_ARQUIVO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_LOG_VERSAO_NAO_PODE_SER_GERADO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_THREAD_VERSAO_INTEROMPIDA;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

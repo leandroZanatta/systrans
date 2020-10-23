@@ -17,17 +17,25 @@ public class FormasPagamentoDAO extends PesquisableDAOImpl<FormasPagamento> {
 		super(formasPagamento, formasPagamento.idFormaPagamento);
 	}
 
-	public BooleanBuilder pesquisarApenasAPrazo() {
-
-		return new BooleanBuilder(formasPagamento.codigoFormaPagamento.eq(FormaPagamentoEnum.BOLETO.getCodigo())
-				.or(formasPagamento.flagPermitePagamentoPrazo.eq(true)));
-	}
-
 	public BooleanBuilder buscarPagamentosComHistorico(Long codigoHistorico) {
 
 		return new BooleanBuilder(subQuery().from(operacao)
 				.where(formasPagamento.idFormaPagamento.eq(operacao.codigoFormaPagamento).and(operacao.codigoHistorico.eq(codigoHistorico)))
 				.exists());
+	}
+
+	public BooleanBuilder buscarPagamentosComHistoricoAPrazo(Long codigoHistorico) {
+
+		return new BooleanBuilder(subQuery().from(operacao)
+				.where(formasPagamento.idFormaPagamento.eq(operacao.codigoFormaPagamento).and(operacao.codigoHistorico.eq(codigoHistorico)))
+				.exists()).and(formasPagamento.codigoFormaPagamento.eq(FormaPagamentoEnum.BOLETO.getCodigo())
+						.or(formasPagamento.flagPermitePagamentoPrazo.eq(true)));
+	}
+
+	public BooleanBuilder pesquisarApenasAPrazo() {
+
+		return new BooleanBuilder(formasPagamento.codigoFormaPagamento.eq(FormaPagamentoEnum.BOLETO.getCodigo())
+				.or(formasPagamento.flagPermitePagamentoPrazo.eq(true)));
 	}
 
 }

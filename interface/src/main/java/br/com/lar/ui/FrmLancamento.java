@@ -26,6 +26,7 @@ import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Motorista;
 import br.com.lar.repository.model.Veiculo;
+import br.com.lar.service.caixa.CaixaCabecalhoService;
 import br.com.lar.service.cliente.ClienteService;
 import br.com.lar.service.faturamento.FaturamentoService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
@@ -43,8 +44,8 @@ import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.DateUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmLancamento extends AbstractInternalFrame {
@@ -80,6 +81,7 @@ public class FrmLancamento extends AbstractInternalFrame {
 	private MotoristaService motoristaService = new MotoristaService();
 	private PagamentoTableModel pagamentoTableModel = new PagamentoTableModel();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
+	private CaixaCabecalhoService caixaCabecalhoService = new CaixaCabecalhoService();
 
 	public FrmLancamento(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -149,6 +151,7 @@ public class FrmLancamento extends AbstractInternalFrame {
 			@Override
 			public boolean preencherObjeto(Faturamento objetoPesquisa) {
 
+				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixa(FrmApplication.getUsuario()));
 				objetoPesquisa.setIdFaturamento(txCodigo.getValue());
 				objetoPesquisa.setHistorico(pesquisaHistorico.getObjetoPesquisado());
 				objetoPesquisa.setCliente(pesquisaCliente.getObjetoPesquisado());
