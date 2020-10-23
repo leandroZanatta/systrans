@@ -25,6 +25,7 @@ public class FaturamentoContasReceber {
 
 			ContasReceber contasReceber = new ContasReceber();
 			contasReceber.setBaixado(false);
+			contasReceber.setCaixaCabecalho(faturamento.getCaixaCabecalho());
 			contasReceber.setCliente(faturamento.getCliente());
 			contasReceber.setCodigoStatus(TipoStatusEnum.ATIVO.getCodigo());
 			contasReceber.setDataCadastro(new Date());
