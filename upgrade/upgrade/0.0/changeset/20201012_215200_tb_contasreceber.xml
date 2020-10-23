@@ -16,10 +16,6 @@
 				<constraints primaryKey="true" primaryKeyName="contasreceber_pk" nullable="false" />
 			</column>
 
-			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
-				<constraints nullable="false" foreignKeyName="contasreceber_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
-			</column>
-
 			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
 				<constraints nullable="false" foreignKeyName="cliente_contasreceber_fk" references="tb_cliente(id_cliente)" />
 			</column>

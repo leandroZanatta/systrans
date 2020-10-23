@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201022_231200" author="Leandro Zanatta" logicalFilePath="20201022_231200_add_campo_tb_caixacabecalho.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_contasreceber" columnName="cd_caixacabecalho" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_contasreceber">
+			<column name="cd_caixacabecalho" type="${numeric.18x0}">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addForeignKeyConstraint constraintName="contaseceber_caixacabecalho_fk" baseTableName="tb_contasreceber"
+			baseColumnNames="cd_caixacabecalho" referencedTableName="tb_caixacabecalho" referencedColumnNames="id_caixacabecalho" />
+
+	</changeSet>
+</databaseChangeLog>

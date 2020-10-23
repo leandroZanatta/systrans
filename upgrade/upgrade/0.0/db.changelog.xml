@@ -37,6 +37,7 @@
 	<include file="0.0/changeset/20201018_175100_tb_faturamentopagamento.xml" />
 	<include file="0.0/changeset/20201018_194900_tb_diariocabecalho.xml" />
 	<include file="0.0/changeset/20201018_195200_tb_diariodetalhe.xml" />
+	<include file="0.0/changeset/20201022_231200_add_campo_tb_caixacabecalho.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />
