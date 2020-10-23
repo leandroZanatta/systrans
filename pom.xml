@@ -15,6 +15,7 @@
 	</properties>
 
 	<modules>
+		<module>util</module>
 		<module>atualizacao</module>
 		<module>upgrade</module>
 		<module>repository</module>

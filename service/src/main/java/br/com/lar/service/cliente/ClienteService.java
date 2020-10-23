@@ -8,10 +8,10 @@ import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.CPFUtil;
 import br.com.sysdesc.util.classes.LongUtil;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.enumeradores.TipoClienteEnum;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.vo.CampoClientesHabilitadosVO;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class ClienteService extends AbstractPesquisableServiceImpl<Cliente> {
 

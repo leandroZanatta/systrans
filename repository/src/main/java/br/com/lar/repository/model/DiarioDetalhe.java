@@ -31,9 +31,18 @@ public class DiarioDetalhe implements Serializable {
 	@JoinColumn(name = "cd_diariocabecalho")
 	private DiarioCabecalho diarioCabecalho;
 
+	@Column(name = "cd_diariocabecalho", insertable = false, updatable = false)
+	private Long codigoDiarioCabecalho;
+
 	@ManyToOne
 	@JoinColumn(name = "cd_planocontas")
 	private PlanoContas planoContas;
+
+	@Column(name = "cd_planocontas", insertable = false, updatable = false)
+	private Long codigoPlanoContas;
+
+	@Column(name = "nr_tiposaldo")
+	private Long tipoSaldo;
 
 	@Column(name = "vl_detalhe")
 	private BigDecimal valorDetalhe;

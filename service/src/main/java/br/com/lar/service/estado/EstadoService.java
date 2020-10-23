@@ -6,8 +6,8 @@ import br.com.lar.repository.dao.EstadoDAO;
 import br.com.lar.repository.model.Estado;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class EstadoService extends AbstractPesquisableServiceImpl<Estado> {
 

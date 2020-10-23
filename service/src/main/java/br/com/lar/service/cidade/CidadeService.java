@@ -6,8 +6,8 @@ import br.com.lar.repository.dao.CidadeDAO;
 import br.com.lar.repository.model.Cidade;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class CidadeService extends AbstractPesquisableServiceImpl<Cidade> {
 

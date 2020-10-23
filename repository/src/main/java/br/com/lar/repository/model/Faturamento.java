@@ -35,6 +35,10 @@ public class Faturamento implements Serializable {
 	private Long idFaturamento;
 
 	@ManyToOne
+	@JoinColumn(name = "cd_caixacabecalho")
+	private CaixaCabecalho caixaCabecalho;
+
+	@ManyToOne
 	@JoinColumn(name = "cd_historico")
 	private Historico historico;
 

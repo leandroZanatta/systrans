@@ -27,7 +27,7 @@
 			<column name="tx_campo" value="nomeUsuario" />
 			<column name="tx_descricao" value="Usuário" />
 		</insert>
-	
+
 		<insert tableName="tb_pesquisacampo">
 			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
 			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=2)" />
@@ -246,4 +246,344 @@
 		</insert>
 
 	</changeSet>
+
+	<changeSet id="20190626_115101" author="Leandro Zanatta">
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=1)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idUsuario" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=1)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="nomeUsuario" />
+			<column name="tx_descricao" value="Usuário" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=2)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idPerfil" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=2)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="descricao" />
+			<column name="tx_descricao" value="Perfil" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=3)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idEstado" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=3)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="descricao" />
+			<column name="tx_descricao" value="Estado" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=3)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="3" />
+			<column name="nr_tamanho" value="100" />
+			<column name="tx_campo" value="uf" />
+			<column name="tx_descricao" value="UF" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=6)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idFuncionario" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=6)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="2" />
+			<column name="tx_campo" value="cliente.nome" />
+			<column name="tx_descricao" value="Nome" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=6)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="3" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="cargo" />
+			<column name="tx_descricao" value="Cargo" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=7)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="100" />
+			<column name="tx_campo" value="idGrupo" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=7)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="descricao" />
+			<column name="tx_descricao" value="Descrição" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=8)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idCidade" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=8)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="estado.descricao" />
+			<column name="tx_descricao" value="Estado" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=8)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="3" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="descricao" />
+			<column name="tx_descricao" value="Cidade" />
+		</insert>
+
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=9)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idCliente" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=9)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="nome" />
+			<column name="tx_descricao" value="Descricao" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=9)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="3" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="cgc" />
+			<column name="tx_descricao" value="CPF/CNPJ" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=10)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="1" />
+			<column name="fl_tipotamanho" value="1" />
+			<column name="fl_ordem" value="1" />
+			<column name="nr_tamanho" value="120" />
+			<column name="tx_campo" value="idPesquisa" />
+			<column name="tx_descricao" value="Código" />
+		</insert>
+
+		<insert tableName="tb_pesquisacampo">
+			<column name="id_pesquisacampo" valueComputed="nextval('gen_pesquisacampo')" />
+			<column name="cd_pesquisa" valueComputed="(select id_pesquisa from tb_pesquisa where cd_pesquisa=10)" />
+			<column name="fl_formatacao" value="0" />
+			<column name="fl_tipodado" value="2" />
+			<column name="fl_tipotamanho" value="2" />
+			<column name="fl_ordem" value="2" />
+			<column name="nr_tamanho" value="1" />
+			<column name="tx_campo" value="descricao" />
+			<column name="tx_descricao" value="Descrição" />
+		</insert>
+
+	</changeSet>
+
+
+
+	<changeSet id="20201020_221200" author="Leandro Zanatta">
+
+		<sql splitStatements="true" stripComments="true">
+
+		<![CDATA[
+		
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=4), 1, 1, 1, 1, 120, 'idVeiculo', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=4), 0, 2, 1, 2, 150, 'placa', null, 'Placa', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=4), 0, 2, 2, 3, 1, 'motorista.funcionario.cliente.nome', null, 'Motorista', '');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=11), 1, 1, 1, 1, 120, 'idHistorico', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=11), 0, 2, 2, 2, 1, 'descricao', null, 'Descrição', '');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=12), 1, 1, 1, 1, 120, 'idFormaPagamento', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=12), 0, 2, 2, 2, 1, 'descricao', null, 'Descrição', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=12), 0, 6, 1, 3, 120, 'flagPermitePagamentoPrazo', null, 'Á Prazo', '');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=13), 1, 1, 1, 1, 120, 'idMotorista', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=13), 0, 2, 2, 2, 1, 'funcionario.cliente.nome', null, 'Nome', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=13), 0, 2, 1, 3, 120, 'cnh', null, 'CNH', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=13), 2, 4, 1, 4, 150, 'dataVencimento', null, 'Vencimento', '1');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=14), 1, 1, 2, 1, 1, 'idPlanoContas', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=14), 0, 2, 1, 2, 150, 'identificador', null, 'Identificador', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=14), 0, 2, 2, 3, 1, 'descricao', null, 'Descrição', '');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=15), 1, 1, 1, 1, 100, 'idContasReceber', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=15), 0, 2, 2, 2, 2, 'cliente.nome', null, 'Cliente', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=15), 0, 2, 2, 3, 1, 'formasPagamento.descricao', null, 'Forma de Pagamento', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=15), 2, 4, 1, 4, 110, 'dataMovimento', null, 'Data Movimento', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=15), 3, 3, 1, 5, 120, 'valorParcela', null, 'Valor', '2');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=16), 1, 1, 1, 1, 120, 'idOperacao', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=16), 0, 2, 2, 2, 1, 'descricao', null, 'Descrição', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=16), 0, 2, 2, 3, 1, 'formasPagamento.descricao', null, 'Forma de Pagamento', '');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=17), 1, 1, 1, 1, 120, 'idFaturamento', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=17), 0, 2, 2, 3, 1, 'cliente.nome', null, 'Cliente', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=17), 0, 2, 1, 2, 120, 'numeroDocumento', null, 'Documento', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=17), 2, 4, 1, 4, 110, 'dataMovimento', null, 'Data Movimento', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=17), 3, 3, 1, 5, 150, 'valorBruto', null, 'Valor', '2');
+
+
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=18), 1, 1, 1, 1, 120, 'idCaixa', null, 'Código', '1');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=18), 0, 2, 2, 2, 1, 'usuario.nomeUsuario', null, 'Usuário', '');
+INSERT INTO TB_PESQUISACAMPO (ID_PESQUISACAMPO,CD_PESQUISA,FL_FORMATACAO,FL_TIPODADO,FL_TIPOTAMANHO,FL_ORDEM,NR_TAMANHO,TX_CAMPO,TX_ALIAS,TX_DESCRICAO,TX_FORMATO) 
+values(nextval('gen_pesquisacampo'),(select id_pesquisa from tb_pesquisa where cd_pesquisa=18), 0, 2, 2, 3, 2, 'descricao', null, 'Descrição', '');
+
+	
+		]]>
+
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

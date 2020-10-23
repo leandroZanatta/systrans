@@ -14,15 +14,15 @@ import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.service.operacao.OperacaoService;
 import br.com.lar.service.planocontas.PlanoContasService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
-import br.com.lar.startup.enumeradores.TipoHistoricoOperacaoEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.resources.Resources;
+import br.com.systrans.util.constants.MensagemConstants;
+import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmHistoricoOperacoes extends AbstractInternalFrame {
@@ -165,7 +165,7 @@ public class FrmHistoricoOperacoes extends AbstractInternalFrame {
 		painelContent.add(pesquisaHistoricoCredor, "cell 0 9,growx");
 		painelContent.add(pesquisaHistoricoDevedor, "cell 0 11,growx");
 
-		painelBotoes = new PanelActions<Operacao>(this, operacaoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa()) {
+		painelBotoes = new PanelActions<Operacao>(this, operacaoService, PesquisaEnum.PES_HISTORICOOPERACOES.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 

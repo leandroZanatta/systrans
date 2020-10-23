@@ -11,13 +11,13 @@ import br.com.lar.repository.model.Veiculo;
 import br.com.lar.service.motorista.MotoristaService;
 import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
-import br.com.lar.startup.enumeradores.TipoVeiculoEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
+import br.com.systrans.util.enumeradores.TipoVeiculoEnum;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmVeiculo extends AbstractInternalFrame {

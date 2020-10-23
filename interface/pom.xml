@@ -54,6 +54,12 @@
 
 		<dependency>
 			<groupId>br.com.systrans</groupId>
+			<artifactId>util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.systrans</groupId>
 			<artifactId>service</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

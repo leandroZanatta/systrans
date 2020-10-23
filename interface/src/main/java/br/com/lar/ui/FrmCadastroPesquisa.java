@@ -1,7 +1,5 @@
 package br.com.lar.ui;
 
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_SELECIONE_APENAS_UM_REGISTRO;
-import static br.com.sysdesc.util.constants.MensagemConstants.MENSAGEM_SELECIONE_PESQUISA;
 import static br.com.sysdesc.util.enumeradores.TipoPesquisaEnum.NORMAL;
 import static br.com.sysdesc.util.resources.Resources.FRMLOGIN_MSG_VERIFICACAO;
 import static br.com.sysdesc.util.resources.Resources.FRMPESQUISA_LB_CODIGO;
@@ -10,6 +8,8 @@ import static br.com.sysdesc.util.resources.Resources.FRMPESQUISA_LB_PAGINACAO;
 import static br.com.sysdesc.util.resources.Resources.FRMPESQUISA_LB_PESQUISA;
 import static br.com.sysdesc.util.resources.Resources.FRMPESQUISA_TITLE;
 import static br.com.sysdesc.util.resources.Resources.translate;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_SELECIONE_APENAS_UM_REGISTRO;
+import static br.com.systrans.util.constants.MensagemConstants.MENSAGEM_SELECIONE_PESQUISA;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;

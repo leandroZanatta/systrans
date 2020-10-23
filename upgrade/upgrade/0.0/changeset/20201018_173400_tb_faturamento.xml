@@ -14,6 +14,10 @@
 				<constraints primaryKey="true" primaryKeyName="faturamento_pk" nullable="false" />
 			</column>
 
+			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
+				<constraints nullable="false" foreignKeyName="faturamento_caixa_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
+			</column>
+
 			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTORICO">
 				<constraints nullable="false" foreignKeyName="faturamento_historico_fk" references="tb_historico(id_historico)" />
 			</column>

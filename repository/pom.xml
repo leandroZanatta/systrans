@@ -27,6 +27,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>br.com.systrans</groupId>
+			<artifactId>util</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>br.com.sysdesc</groupId>
 			<artifactId>sysdesc-pesquisa-repository</artifactId>
 			<version>${sysdesc.pesquisa.version}</version>

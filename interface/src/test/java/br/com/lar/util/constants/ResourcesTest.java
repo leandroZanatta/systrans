@@ -31,204 +31,208 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.lar.atualizacao.changelog.core.Conexao;
 import br.com.sysdesc.util.classes.ListUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
+import br.com.sysdesc.util.constants.MensagemUtilConstants;
 import br.com.sysdesc.util.resources.Resources;
+import br.com.systrans.util.constants.MensagemConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResourcesTest {
 
-    @Test
-    public void testOrdenarPtBr() throws Exception {
+	@Test
+	public void testOrdenarPtBr() throws Exception {
 
-        List<String> resources = FileUtils.readLines(new File("../interface/resources/pt_br.properties"), Charset.forName("UTF-8")).stream()
-                .filter(x -> x != null && !"".equals(x)).sorted(Comparator.comparing(String::toString)).collect(Collectors.toList());
+		List<String> resources = FileUtils.readLines(new File("../interface/resources/pt_br.properties"), Charset.forName("UTF-8")).stream()
+				.filter(x -> x != null && !"".equals(x)).sorted(Comparator.comparing(String::toString)).collect(Collectors.toList());
 
-        List<String> newList = new ArrayList<String>();
+		List<String> newList = new ArrayList<String>();
 
-        LinkedHashMap<String, List<String>> result = resources.stream().collect(Collectors.groupingBy(a -> a.toString().split("_")[0])).entrySet()
-                .stream().sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+		LinkedHashMap<String, List<String>> result = resources.stream().collect(Collectors.groupingBy(a -> a.toString().split("_")[0])).entrySet()
+				.stream().sorted(Map.Entry.comparingByKey())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
-        for (Entry<String, List<String>> keyset : result.entrySet()) {
-            newList.addAll(keyset.getValue().stream().sorted(Comparator.comparing(String::toString)).collect(Collectors.toList()));
-            newList.add("");
-        }
+		for (Entry<String, List<String>> keyset : result.entrySet()) {
+			newList.addAll(keyset.getValue().stream().sorted(Comparator.comparing(String::toString)).collect(Collectors.toList()));
+			newList.add("");
+		}
 
-        FileUtils.writeLines(new File("../interface/resources/pt_br.properties"), "UTF-8", newList);
-    }
+		FileUtils.writeLines(new File("../interface/resources/pt_br.properties"), "UTF-8", newList);
+	}
 
-    @Test
-    public void testPtBrsemResource() throws Exception {
+	@Test
+	public void testPtBrsemResource() throws Exception {
 
-        Properties properties = getPropertiesPtBr();
+		Properties properties = getPropertiesPtBr();
 
-        Set<String> resources = new HashSet<>();
+		Set<String> resources = new HashSet<>();
 
-        resources.addAll(getPropertiesFromDb());
+		resources.addAll(getPropertiesFromDb());
 
-        resources.addAll(getPropertiesFromMensagens());
+		resources.addAll(getPropertiesFromMensagens());
 
-        resources.addAll(getPropertiesFromResources());
+		resources.addAll(getPropertiesFromResources());
 
-        Boolean testeSucesso = Boolean.TRUE;
+		Boolean testeSucesso = Boolean.TRUE;
 
-        List<String> mensagensExcluir = new ArrayList<>();
+		List<String> mensagensExcluir = new ArrayList<>();
 
-        for (Entry<Object, Object> entry : properties.entrySet()) {
+		for (Entry<Object, Object> entry : properties.entrySet()) {
 
-            if (!resources.contains(entry.getKey().toString())) {
+			if (!resources.contains(entry.getKey().toString())) {
 
-                System.out.println("Excluir Chave do arquivo pt_br.properties: " + entry.getKey().toString());
+				System.out.println("Excluir Chave do arquivo pt_br.properties: " + entry.getKey().toString());
 
-                mensagensExcluir.add(entry.getKey().toString());
+				mensagensExcluir.add(entry.getKey().toString());
 
-                testeSucesso = Boolean.FALSE;
-            }
-        }
+				testeSucesso = Boolean.FALSE;
+			}
+		}
 
-        if (!testeSucesso) {
+		if (!testeSucesso) {
 
-            mensagensExcluir.forEach(x -> properties.remove(x));
+			mensagensExcluir.forEach(x -> properties.remove(x));
 
-            properties.store(new FileOutputStream(new File("../interface/resources/pt_br.properties")), "");
-        }
+			properties.store(new FileOutputStream(new File("../interface/resources/pt_br.properties")), "");
+		}
 
-        assertTrue(testeSucesso);
-    }
+		assertTrue(testeSucesso);
+	}
 
-    @Test
-    public void testResourcesMensagensNaoCadastradas() throws Exception {
+	@Test
+	public void testResourcesMensagensNaoCadastradas() throws Exception {
 
-        Properties properties = getPropertiesPtBr();
+		Properties properties = getPropertiesPtBr();
 
-        List<String> resourcesFromMensagens = getPropertiesFromMensagens();
+		List<String> resourcesFromMensagens = getPropertiesFromMensagens();
 
-        Boolean testeSucesso = Boolean.TRUE;
+		Boolean testeSucesso = Boolean.TRUE;
 
-        for (String field : resourcesFromMensagens) {
+		for (String field : resourcesFromMensagens) {
 
-            if (properties.getProperty(field, "").equals("")) {
+			if (properties.getProperty(field, "").equals("")) {
 
-                System.out.println("Mensagem não encontrada no arquivo pt_br.properties: " + field);
+				System.out.println("Mensagem não encontrada no arquivo pt_br.properties: " + field);
 
-                testeSucesso = Boolean.FALSE;
-            }
-        }
+				testeSucesso = Boolean.FALSE;
+			}
+		}
 
-        assertTrue(testeSucesso);
-    }
+		assertTrue(testeSucesso);
+	}
 
-    @Test
-    public void testResourcesNaoCadastradasDb() throws Exception {
+	@Test
+	public void testResourcesNaoCadastradasDb() throws Exception {
 
-        Properties properties = getPropertiesPtBr();
+		Properties properties = getPropertiesPtBr();
 
-        List<String> resourcesdb = getPropertiesFromDb();
+		List<String> resourcesdb = getPropertiesFromDb();
 
-        Boolean testeSucesso = Boolean.TRUE;
+		Boolean testeSucesso = Boolean.TRUE;
 
-        for (String resource : resourcesdb) {
+		for (String resource : resourcesdb) {
 
-            if (properties.getProperty(resource, "").equals("")) {
+			if (properties.getProperty(resource, "").equals("")) {
 
-                System.out.println("Programa não encontrado no arquivo pt_br.properties: " + resource);
+				System.out.println("Programa não encontrado no arquivo pt_br.properties: " + resource);
 
-                testeSucesso = Boolean.FALSE;
-            }
-        }
+				testeSucesso = Boolean.FALSE;
+			}
+		}
 
-        assertTrue(testeSucesso);
-    }
+		assertTrue(testeSucesso);
+	}
 
-    @Test
-    public void testResourcesNaoCadastradas() throws Exception {
+	@Test
+	public void testResourcesNaoCadastradas() throws Exception {
 
-        Properties properties = getPropertiesPtBr();
+		Properties properties = getPropertiesPtBr();
 
-        List<String> resourcesFromMensagens = getPropertiesFromResources();
+		List<String> resourcesFromMensagens = getPropertiesFromResources();
 
-        Boolean testeSucesso = Boolean.TRUE;
+		Boolean testeSucesso = Boolean.TRUE;
 
-        for (String field : resourcesFromMensagens) {
+		for (String field : resourcesFromMensagens) {
 
-            if (properties.getProperty(field, "").equals("")) {
+			if (properties.getProperty(field, "").equals("")) {
 
-                System.out.println("Mensagem não encontrada no arquivo pt_br.properties: " + field);
+				System.out.println("Mensagem não encontrada no arquivo pt_br.properties: " + field);
 
-                testeSucesso = Boolean.FALSE;
-            }
-        }
+				testeSucesso = Boolean.FALSE;
+			}
+		}
 
-        assertTrue(testeSucesso);
-    }
+		assertTrue(testeSucesso);
+	}
 
-    @Test
-    public void testResourcesDuplicadas() throws Exception {
+	@Test
+	public void testResourcesDuplicadas() throws Exception {
 
-        List<String> valores = FileUtils.readLines(new File("../interface/resources/pt_br.properties"), Charset.forName("UTF-8"));
+		List<String> valores = FileUtils.readLines(new File("../interface/resources/pt_br.properties"), Charset.forName("UTF-8"));
 
-        Map<String, List<String>> mapa = valores.stream().map(x -> x.split("=")[0]).filter(x -> !"".equals(x))
-                .collect(Collectors.groupingBy(String::toString));
+		Map<String, List<String>> mapa = valores.stream().map(x -> x.split("=")[0]).filter(x -> !"".equals(x))
+				.collect(Collectors.groupingBy(String::toString));
 
-        Boolean testeSucesso = Boolean.TRUE;
+		Boolean testeSucesso = Boolean.TRUE;
 
-        for (Entry<String, List<String>> x : mapa.entrySet()) {
+		for (Entry<String, List<String>> x : mapa.entrySet()) {
 
-            if (x.getValue().size() > 1) {
+			if (x.getValue().size() > 1) {
 
-                System.out.println("Chaves duplicadas no arquivo pt_br.properties :" + x.getKey());
+				System.out.println("Chaves duplicadas no arquivo pt_br.properties :" + x.getKey());
 
-                testeSucesso = Boolean.FALSE;
-            }
-        }
+				testeSucesso = Boolean.FALSE;
+			}
+		}
 
-        assertTrue(testeSucesso);
-    }
+		assertTrue(testeSucesso);
+	}
 
-    private List<String> getPropertiesFromMensagens() {
+	private List<String> getPropertiesFromMensagens() {
 
-        Class<?> clazz = MensagemConstants.class;
+		List<Field> fields = new ArrayList<>();
 
-        return ListUtil.toList(clazz.getDeclaredFields()).stream().map(Field::getName).collect(Collectors.toList());
+		fields.addAll(ListUtil.toList(MensagemConstants.class.getDeclaredFields()));
+		fields.addAll(ListUtil.toList(MensagemUtilConstants.class.getDeclaredFields()));
 
-    }
+		return fields.stream().map(Field::getName).collect(Collectors.toList());
 
-    private List<String> getPropertiesFromResources() {
+	}
 
-        Class<?> clazz = Resources.class;
+	private List<String> getPropertiesFromResources() {
 
-        return ListUtil.toList(clazz.getDeclaredFields()).stream().filter(x -> x.getModifiers() != 10 && !x.getName().equals("log"))
-                .map(Field::getName).collect(Collectors.toList());
-    }
+		Class<?> clazz = Resources.class;
 
-    private List<String> getPropertiesFromDb() throws Exception {
+		return ListUtil.toList(clazz.getDeclaredFields()).stream().filter(x -> x.getModifiers() != 10 && !x.getName().equals("log"))
+				.map(Field::getName).collect(Collectors.toList());
+	}
 
-        String sql = "select tx_descricao from tb_programa";
+	private List<String> getPropertiesFromDb() throws Exception {
 
-        List<String> resourcesdb = new ArrayList<String>();
+		String sql = "select tx_descricao from tb_programa";
 
-        try (Connection connection = Conexao.buscarConexao();
-                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                ResultSet rs = statement.executeQuery(sql)) {
+		List<String> resourcesdb = new ArrayList<String>();
 
-            while (rs.next()) {
-                resourcesdb.add(rs.getString(1));
-            }
-        }
+		try (Connection connection = Conexao.buscarConexao();
+				Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = statement.executeQuery(sql)) {
 
-        return resourcesdb;
-    }
+			while (rs.next()) {
+				resourcesdb.add(rs.getString(1));
+			}
+		}
 
-    private Properties getPropertiesPtBr() throws FileNotFoundException, IOException {
+		return resourcesdb;
+	}
 
-        Properties properties = new Properties();
+	private Properties getPropertiesPtBr() throws FileNotFoundException, IOException {
 
-        InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(new File("../interface/resources/pt_br.properties")),
-                Charset.forName("UTF-8"));
+		Properties properties = new Properties();
 
-        properties.load(inputStreamReader);
+		InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(new File("../interface/resources/pt_br.properties")),
+				Charset.forName("UTF-8"));
 
-        return properties;
-    }
+		properties.load(inputStreamReader);
+
+		return properties;
+	}
 
 }

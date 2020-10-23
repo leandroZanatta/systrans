@@ -4,8 +4,8 @@ import br.com.lar.repository.dao.OperacaoDAO;
 import br.com.lar.repository.model.Operacao;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.sysdesc.util.constants.MensagemConstants;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
 public class OperacaoService extends AbstractPesquisableServiceImpl<Operacao> {
 
