@@ -26,11 +26,18 @@ public class CaixaCabecalhoDAO extends PesquisableDAOImpl<CaixaCabecalho> {
 		return from().where(caixaCabecalho.idCaixaCabecalho.eq(idCaixaCabecalho).and(caixaCabecalho.dataFechamento.isNull())).exists();
 	}
 
-	public CaixaCabecalho obterCaixa(Long codigoUsuario) {
+	public CaixaCabecalho obterCaixaNoDia(Long codigoUsuario) {
 
 		return from().innerJoin(caixa).on(caixaCabecalho.codigoCaixa.eq(caixa.idCaixa))
 				.where(caixa.codigoUsuario.eq(codigoUsuario).and(caixaCabecalho.dataMovimento.eq(DateExpression.currentDate()))
 						.and(caixaCabecalho.dataFechamento.isNull()))
+				.orderBy(caixaCabecalho.dataAbertura.asc())
+				.singleResult(caixaCabecalho);
+	}
+
+	public CaixaCabecalho obterUltimoCaixaAberto(Long codigoUsuario) {
+		return from().innerJoin(caixa).on(caixaCabecalho.codigoCaixa.eq(caixa.idCaixa))
+				.where(caixa.codigoUsuario.eq(codigoUsuario).and(caixaCabecalho.dataFechamento.isNull())).orderBy(caixaCabecalho.dataAbertura.asc())
 				.singleResult(caixaCabecalho);
 	}
 

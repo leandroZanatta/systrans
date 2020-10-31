@@ -39,6 +39,15 @@ public class Veiculo implements Serializable {
 	@Column(name = "tx_placa")
 	private String placa;
 
+	@Column(name = "tx_marca")
+	private String marca;
+
+	@Column(name = "tx_modelo")
+	private String modelo;
+
+	@Column(name = "nr_ano")
+	private Long numeroAno;
+
 	@Column(name = "tx_capacidade")
 	private BigDecimal capacidade;
 

@@ -8,6 +8,7 @@ import com.mysema.query.types.path.EntityPathBase;
 import br.com.lar.repository.model.QCaixa;
 import br.com.lar.repository.model.QCidade;
 import br.com.lar.repository.model.QCliente;
+import br.com.lar.repository.model.QContasPagar;
 import br.com.lar.repository.model.QContasReceber;
 import br.com.lar.repository.model.QEstado;
 import br.com.lar.repository.model.QFaturamento;
@@ -57,7 +58,9 @@ public enum PesquisaEnum {
 
 	PES_FATURAMENTO(17L, "Faturamento", QFaturamento.class),
 
-	PES_CAIXA(18L, "Caixa", QCaixa.class);
+	PES_CAIXA(18L, "Caixa", QCaixa.class),
+
+	PES_CONTAS_PAGAR(19L, "Contas Á Pagar", QContasPagar.class);
 
 	private static Map<Long, PesquisaEnum> map = new HashMap<>();
 

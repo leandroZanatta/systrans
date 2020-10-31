@@ -151,7 +151,7 @@ public class FrmLancamento extends AbstractInternalFrame {
 			@Override
 			public boolean preencherObjeto(Faturamento objetoPesquisa) {
 
-				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixa(FrmApplication.getUsuario()));
+				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
 				objetoPesquisa.setIdFaturamento(txCodigo.getValue());
 				objetoPesquisa.setHistorico(pesquisaHistorico.getObjetoPesquisado());
 				objetoPesquisa.setCliente(pesquisaCliente.getObjetoPesquisado());

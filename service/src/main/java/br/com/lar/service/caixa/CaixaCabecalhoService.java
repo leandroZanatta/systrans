@@ -30,16 +30,25 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 		this.caixaCabecalhoDAO = caixaCabecalhoDAO;
 	}
 
-	public CaixaCabecalho validarCaixaAberto(Usuario usuario) {
+	public CaixaCabecalho validarCaixaAbertoNoDia(Usuario usuario) {
 
-		Caixa caixa = caixaDAO.buscarCaixaPorUsuario(usuario.getIdUsuario());
+		verificarCaixaUsuario(usuario);
 
-		if (caixa == null) {
+		CaixaCabecalho caixaCabecalho = caixaCabecalhoDAO.obterCaixaNoDia(usuario.getIdUsuario());
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_USUARIO_SEM_CAIXA);
+		if (caixaCabecalho == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_NAO_ENCONTRADO);
 		}
 
-		CaixaCabecalho caixaCabecalho = caixaCabecalhoDAO.obterCaixa(usuario.getIdUsuario());
+		return caixaCabecalho;
+	}
+
+	public CaixaCabecalho validarExistenciaCaixaAberto(Usuario usuario) {
+
+		verificarCaixaUsuario(usuario);
+
+		CaixaCabecalho caixaCabecalho = caixaCabecalhoDAO.obterUltimoCaixaAberto(usuario.getIdUsuario());
 
 		if (caixaCabecalho == null) {
 
@@ -51,12 +60,7 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 	public void consultarAterturaCaixa(Usuario usuario) {
 
-		Caixa caixa = caixaDAO.buscarCaixaPorUsuario(usuario.getIdUsuario());
-
-		if (caixa == null) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_USUARIO_SEM_CAIXA);
-		}
+		verificarCaixaUsuario(usuario);
 
 		boolean caixaAberto = caixaCabecalhoDAO.buscarCaixasAbertos(usuario.getIdUsuario());
 
@@ -66,9 +70,9 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 		}
 	}
 
-	public CaixaCabecalho obterCaixa(Usuario usuario) {
+	public CaixaCabecalho obterCaixaDoDia(Usuario usuario) {
 
-		return caixaCabecalhoDAO.obterCaixa(usuario.getIdUsuario());
+		return caixaCabecalhoDAO.obterCaixaNoDia(usuario.getIdUsuario());
 	}
 
 	public void abrirCaixa(Usuario usuario) {
@@ -102,6 +106,16 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 			entityManager.persist(caixaSaldo);
 		} finally {
 			entityManager.getTransaction().commit();
+		}
+	}
+
+	private void verificarCaixaUsuario(Usuario usuario) {
+
+		Caixa caixa = caixaDAO.buscarCaixaPorUsuario(usuario.getIdUsuario());
+
+		if (caixa == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_USUARIO_SEM_CAIXA);
 		}
 	}
 

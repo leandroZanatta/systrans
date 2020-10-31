@@ -11,14 +11,14 @@ import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.Cliente;
-import br.com.lar.repository.model.ContasReceber;
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Motorista;
 import br.com.lar.repository.model.Veiculo;
 import br.com.lar.service.caixa.CaixaCabecalhoService;
 import br.com.lar.service.cliente.ClienteService;
-import br.com.lar.service.contasreceber.ContasReceberService;
+import br.com.lar.service.contaspagar.ContasPagarService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
 import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.service.motorista.MotoristaService;
@@ -31,16 +31,17 @@ import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.classes.IfNull;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
 import net.miginfocom.swing.MigLayout;
 
-public class FrmGerarContasReceber extends AbstractInternalFrame {
+public class FrmGerarContasPagar extends AbstractInternalFrame {
 
 	private static final String FORMATO_PESQUISA = "%d - %s";
 	private static final long serialVersionUID = 1L;
-	private ContasReceberService contasReceberService = new ContasReceberService();
+	private ContasPagarService contasPagarService = new ContasPagarService();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private VeiculoService veiculoService = new VeiculoService();
 	private MotoristaService motoristaService = new MotoristaService();
@@ -56,7 +57,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 	private CampoPesquisa<Veiculo> pesquisaVeiculo;
 	private CampoPesquisa<Motorista> pesquisaMotorista;
 	private CampoPesquisa<Historico> pesquisaHistorico;
-	private PanelActions<ContasReceber> panelActions;
+	private PanelActions<ContasPagar> panelActions;
 	private JLabel lbPagamento;
 	private JLabel lbValorParcela;
 	private JMoneyField txValorParcela;
@@ -74,7 +75,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 	private JTextFieldMaiusculo txDocumento;
 	private JLabel lblHistorico;
 
-	public FrmGerarContasReceber(Long permissaoPrograma, Long codigoUsuario) {
+	public FrmGerarContasPagar(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
 
 		initComponents();
@@ -85,7 +86,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 
 		setSize(600, 380);
 		setClosable(Boolean.TRUE);
-		setTitle("CADASTRO DE CONTAS Á RECEBER");
+		setTitle("CADASTRO DE CONTAS Á PAGAR");
 
 		container = new JPanel();
 		getContentPane().add(container, BorderLayout.CENTER);
@@ -134,7 +135,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		};
 
 		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario(),
-				historicoService.getHistoricosCredores()) {
+				historicoService.getHistoricosDevedores()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -178,7 +179,8 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		pesquisaPagamento.addChangeListener(pagamento -> {
 
 			if (pagamento != null && dtVencimento.getDate() == null) {
-				dtVencimento.setDate(DateUtil.addDays(dtMovimento.getDate(), pagamento.getNumeroDiasPagamento()));
+
+				dtVencimento.setDate(DateUtil.addDays(dtMovimento.getDate(), IfNull.get(pagamento.getNumeroDiasPagamento(), 0L)));
 			}
 		});
 		pesquisaVeiculo.addChangeListener(veiculo -> pesquisaMotorista.setValue(veiculo == null ? null : veiculo.getMotorista()));
@@ -209,13 +211,13 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 		container.add(txAcrescimo, "cell 3 11,growx");
 		container.add(txDesconto, "cell 4 11,growx");
 
-		panelActions = new PanelActions<ContasReceber>(this, contasReceberService, PesquisaEnum.PES_CONTAS_RECEBER.getCodigoPesquisa()) {
+		panelActions = new PanelActions<ContasPagar>(this, contasPagarService, PesquisaEnum.PES_CONTAS_PAGAR.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void carregarObjeto(ContasReceber objetoPesquisa) {
-				txCodigo.setValue(objetoPesquisa.getIdContasReceber());
+			protected void carregarObjeto(ContasPagar objetoPesquisa) {
+				txCodigo.setValue(objetoPesquisa.getIdContasPagar());
 				txValorParcela.setValue(objetoPesquisa.getValorParcela());
 				txAcrescimo.setValue(objetoPesquisa.getValorAcrescimo());
 				txDesconto.setValue(objetoPesquisa.getValorDesconto());
@@ -230,8 +232,8 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 			}
 
 			@Override
-			public boolean preencherObjeto(ContasReceber objetoPesquisa) {
-				objetoPesquisa.setIdContasReceber(txCodigo.getValue());
+			public boolean preencherObjeto(ContasPagar objetoPesquisa) {
+				objetoPesquisa.setIdContasPagar(txCodigo.getValue());
 				objetoPesquisa.setDataMovimento(dtMovimento.getDate());
 				objetoPesquisa.setDataVencimento(dtVencimento.getDate());
 				objetoPesquisa.setValorParcela(txValorParcela.getValue());
@@ -249,7 +251,7 @@ public class FrmGerarContasReceber extends AbstractInternalFrame {
 			}
 		};
 		container.add(panelActions, "cell 0 12 5 1,growx,aligny bottom");
-		panelActions.addSaveListener(objeto -> txCodigo.setValue(objeto.getIdContasReceber()));
+		panelActions.addSaveListener(objeto -> txCodigo.setValue(objeto.getIdContasPagar()));
 		panelActions.addNewListener(conta -> {
 
 			conta.setCaixaCabecalho(cabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));

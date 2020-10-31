@@ -355,4 +355,35 @@
 			<where>id_programa=20</where>
 		</delete>
 	</changeSet>
+	
+	<changeSet id="20201030_171200" author="Leandro Zanatta">
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="36" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="17" />
+			<column name="nr_ordem" value="5" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CONTAS_PAGAR" />
+			<column name="tx_icone" value="contaspagar.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="37" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="36" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_GERAR_CONTAS_PAGAR" />
+			<column name="tx_icone" value="gerarcontaspagar.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="38" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="36" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CONSULTAR_CONTAS_PAGAR" />
+			<column name="tx_icone" value="consultarcontaspagar.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+	
+	</changeSet>
 </databaseChangeLog>
