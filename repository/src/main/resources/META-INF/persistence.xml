@@ -35,6 +35,7 @@
 		<class>br.com.lar.repository.model.DiarioCabecalho</class>
 		<class>br.com.lar.repository.model.DiarioDetalhe</class>
 		<class>br.com.lar.repository.model.ContasPagar</class>
+		<class>br.com.lar.repository.model.ContasReceberPagamento</class>
 	</persistence-unit>
 
 </persistence>
