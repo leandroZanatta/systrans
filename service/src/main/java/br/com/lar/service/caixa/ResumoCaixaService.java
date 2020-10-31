@@ -66,15 +66,4 @@ public class ResumoCaixaService {
 				valorFaturamentoCredor, valorFaturamentoDevedor, valorSaldoCaixaCredor, valorSaldoCaixaDevedor);
 	}
 
-	public BigDecimal calcularSaldoCaixa(Long codigoCaixa) {
-
-		Map<Long, BigDecimal> mapaSaldo = caixaDetalheDAO.buscarResumoCaixa(codigoCaixa).stream()
-				.collect(Collectors.toMap(ResumoCaixaDetalheProjection::getTipoSaldo, ResumoCaixaDetalheProjection::getValorSaldo));
-
-		BigDecimal valorSaldoCaixaCredor = IfNull.get(mapaSaldo.get(TipoHistoricoOperacaoEnum.CREDOR.getCodigo()), BigDecimal.ZERO);
-		BigDecimal valorSaldoCaixaDevedor = IfNull.get(mapaSaldo.get(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo()), BigDecimal.ZERO);
-
-		return valorSaldoCaixaCredor.subtract(valorSaldoCaixaDevedor);
-	}
-
 }

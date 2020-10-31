@@ -1,24 +1,40 @@
 package br.com.lar.service.caixa;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
 import br.com.lar.repository.dao.CaixaCabecalhoDAO;
 import br.com.lar.repository.dao.CaixaDAO;
+import br.com.lar.repository.dao.CaixaSaldoDAO;
+import br.com.lar.repository.dao.DiarioCabecalhoDAO;
 import br.com.lar.repository.model.Caixa;
 import br.com.lar.repository.model.CaixaCabecalho;
-import br.com.lar.repository.model.CaixaSaldo;
+import br.com.lar.repository.model.CaixaDetalhe;
+import br.com.lar.repository.model.PlanoContas;
+import br.com.lar.repository.projection.ResumoCaixaMovimentoProjection;
 import br.com.sysdesc.pesquisa.repository.model.Usuario;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
+import br.com.sysdesc.util.classes.BigDecimalUtil;
+import br.com.sysdesc.util.classes.IfNull;
+import br.com.sysdesc.util.enumeradores.TipoSaldoEnum;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
+import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
+import br.com.systrans.util.vo.DetalheFechamentoVO;
+import br.com.systrans.util.vo.FechamentoCaixaVO;
 
 public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaCabecalho> {
 
-	private ResumoCaixaService resumoCaixaService = new ResumoCaixaService();
 	private CaixaCabecalhoDAO caixaCabecalhoDAO;
 	private CaixaDAO caixaDAO = new CaixaDAO();
+	private CaixaSaldoDAO caixaSaldoDAO = new CaixaSaldoDAO();
+	private DiarioCabecalhoDAO diarioCabecalhoDAO = new DiarioCabecalhoDAO();
 
 	public CaixaCabecalhoService() {
 		this(new CaixaCabecalhoDAO());
@@ -93,20 +109,112 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 	public void fecharCaixa(CaixaCabecalho caixaCabecalho) {
 		caixaCabecalho.setDataFechamento(new Date());
 
-		CaixaSaldo caixaSaldo = new CaixaSaldo();
-		caixaSaldo.setCaixaCabecalho(caixaCabecalho);
-		caixaSaldo.setDataMovimento(caixaCabecalho.getDataMovimento());
-		caixaSaldo.setValorSaldo(resumoCaixaService.calcularSaldoCaixa(caixaCabecalho.getIdCaixaCabecalho()));
-
 		EntityManager entityManager = caixaCabecalhoDAO.getEntityManager();
 
 		try {
 			entityManager.getTransaction().begin();
 			entityManager.persist(caixaCabecalho);
-			entityManager.persist(caixaSaldo);
 		} finally {
 			entityManager.getTransaction().commit();
 		}
+	}
+
+	public FechamentoCaixaVO buscarResumoFechamentoCaixa(CaixaCabecalho caixaCabecalho) {
+
+		Map<String, List<ResumoCaixaMovimentoProjection>> resumoMovimentos = diarioCabecalhoDAO
+				.buscarResumoCaixa(caixaCabecalho.getIdCaixaCabecalho()).stream()
+				.collect(Collectors.groupingBy(ResumoCaixaMovimentoProjection::getTipoSaldo));
+
+		BigDecimal resumoCreditos = getValorResumo(resumoMovimentos, TipoSaldoEnum.CREDOR);
+		BigDecimal resumoDebitos = getValorResumo(resumoMovimentos, TipoSaldoEnum.DEVEDOR);
+
+		validarConsistenciaCaixa(resumoCreditos.subtract(resumoDebitos), caixaCabecalho.getCaixaDetalhes());
+
+		Map<PlanoContas, List<CaixaDetalhe>> contas = caixaCabecalho.getCaixaDetalhes().stream()
+				.filter(detalhe -> !detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
+				.collect(Collectors.groupingBy(CaixaDetalhe::getPlanoContas));
+
+		List<DetalheFechamentoVO> detalheFechamentoVOs = new ArrayList<>();
+
+		contas.forEach((key, value) -> {
+
+			DetalheFechamentoVO detalheFechamentoVO = new DetalheFechamentoVO();
+			detalheFechamentoVO.setNomeConta(key.getDescricao());
+
+			BigDecimal saldoCredito = value.stream()
+					.filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.CREDOR.getCodigo()))
+					.map(CaixaDetalhe::getValorDetalhe).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			BigDecimal saldoDebito = value.stream()
+					.filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo()))
+					.map(CaixaDetalhe::getValorDetalhe).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			detalheFechamentoVO.setValorConta(saldoCredito.subtract(saldoDebito));
+
+			detalheFechamentoVOs.add(detalheFechamentoVO);
+
+		});
+
+		BigDecimal valorPagamentos = detalheFechamentoVOs.stream().map(DetalheFechamentoVO::getValorConta)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		Map<Long, List<CaixaDetalhe>> saldoDinheiro = caixaCabecalho.getCaixaDetalhes().stream()
+				.filter(detalhe -> !detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
+				.collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
+
+		BigDecimal resumoCreditosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.CREDOR);
+		BigDecimal resumoDebitosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.CREDOR);
+
+		FechamentoCaixaVO fechamentoCaixaVO = new FechamentoCaixaVO();
+		fechamentoCaixaVO.setDetalheFechamentoVOs(detalheFechamentoVOs);
+		fechamentoCaixaVO.setSaldoAtual(IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixaCabecalho.getCodigoCaixa()), BigDecimal.ZERO));
+		fechamentoCaixaVO.setValorDinheiro(resumoCreditosDinheiro.subtract(resumoDebitosDinheiro));
+		fechamentoCaixaVO.setValorMovimentado(resumoCreditos.subtract(resumoDebitos));
+		fechamentoCaixaVO.setValorPagamentos(valorPagamentos);
+
+		return fechamentoCaixaVO;
+	}
+
+	private void validarConsistenciaCaixa(BigDecimal resumoMovimento, List<CaixaDetalhe> caixaDetalhes) {
+
+		Map<Long, List<CaixaDetalhe>> saldo = caixaDetalhes.stream()
+				.collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
+
+		BigDecimal saldoCredor = getValorSaldo(saldo, TipoHistoricoOperacaoEnum.CREDOR);
+		BigDecimal saldoDevedor = getValorSaldo(saldo, TipoHistoricoOperacaoEnum.DEVEDOR);
+
+		BigDecimal resumoPagamentos = saldoCredor.subtract(saldoDevedor);
+
+		if (BigDecimalUtil.diferente(resumoMovimento, resumoPagamentos)) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_RESUMO_CAIXA_INVALIDO, resumoMovimento, resumoPagamentos,
+					resumoMovimento.subtract(resumoPagamentos));
+		}
+
+	}
+
+	private BigDecimal getValorSaldo(Map<Long, List<CaixaDetalhe>> saldo, TipoHistoricoOperacaoEnum tipoOperacao) {
+
+		if (saldo.containsKey(tipoOperacao.getCodigo())) {
+
+			return IfNull
+					.get(saldo.get(tipoOperacao.getCodigo()).stream().map(CaixaDetalhe::getValorDetalhe)
+							.reduce(BigDecimal.ZERO, BigDecimal::add), BigDecimal.ZERO);
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	private BigDecimal getValorResumo(Map<String, List<ResumoCaixaMovimentoProjection>> resumoMovimentos, TipoSaldoEnum tipoSaldo) {
+
+		if (resumoMovimentos.containsKey(tipoSaldo.getCodigo())) {
+
+			return IfNull
+					.get(resumoMovimentos.get(tipoSaldo.getCodigo()).stream().map(ResumoCaixaMovimentoProjection::getValorSaldo)
+							.reduce(BigDecimal.ZERO, BigDecimal::add), BigDecimal.ZERO);
+		}
+
+		return BigDecimal.ZERO;
 	}
 
 	private void verificarCaixaUsuario(Usuario usuario) {
@@ -117,6 +225,20 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 			throw new SysDescException(MensagemConstants.MENSAGEM_USUARIO_SEM_CAIXA);
 		}
+	}
+
+	public BigDecimal buscarUltimoSaldoCaixa(Usuario usuario) {
+
+		verificarCaixaUsuario(usuario);
+
+		Caixa caixa = caixaDAO.buscarCaixaPorUsuario(usuario.getIdUsuario());
+
+		if (caixa == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_USUARIO_SEM_CAIXA);
+		}
+
+		return IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixa.getIdCaixa()), BigDecimal.ZERO);
 	}
 
 }

@@ -31,4 +31,14 @@
 		<createSequence sequenceName="gen_caixasaldo" />
 
 	</changeSet>
+
+	<changeSet id="20201031_155400" author="Leandro Zanatta" logicalFilePath="20201031_155400_add_campo_tb_caixasaldo.xml">
+
+		<addColumn tableName="tb_caixasaldo">
+			<column name="vl_saldoacumulado" type="${numeric.18x2}" defaultValueComputed="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+	</changeSet>
 </databaseChangeLog>

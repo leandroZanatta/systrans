@@ -28,7 +28,7 @@ public class CaixaSaldo implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_CAIXASALDO")
 	@Column(name = "id_caixasaldo")
-	private Long idCaixa;
+	private Long idCaixaSaldo;
 
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -38,7 +38,13 @@ public class CaixaSaldo implements Serializable {
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
 
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
 	@Column(name = "vl_saldo")
 	private BigDecimal valorSaldo;
+
+	@Column(name = "vl_saldoacumulado")
+	private BigDecimal valorSaldoAcumulado;
 
 }
