@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 
 import br.com.lar.repository.dao.CaixaCabecalhoDAO;
 import br.com.lar.repository.dao.CaixaDAO;
+import br.com.lar.repository.dao.CaixaDetalheDAO;
 import br.com.lar.repository.dao.CaixaSaldoDAO;
 import br.com.lar.repository.dao.DiarioCabecalhoDAO;
 import br.com.lar.repository.model.Caixa;
@@ -35,6 +36,7 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 	private CaixaDAO caixaDAO = new CaixaDAO();
 	private CaixaSaldoDAO caixaSaldoDAO = new CaixaSaldoDAO();
 	private DiarioCabecalhoDAO diarioCabecalhoDAO = new DiarioCabecalhoDAO();
+	private CaixaDetalheDAO caixaDetalheDAO = new CaixaDetalheDAO();
 
 	public CaixaCabecalhoService() {
 		this(new CaixaCabecalhoDAO());
@@ -128,9 +130,11 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 		BigDecimal resumoCreditos = getValorResumo(resumoMovimentos, TipoSaldoEnum.CREDOR);
 		BigDecimal resumoDebitos = getValorResumo(resumoMovimentos, TipoSaldoEnum.DEVEDOR);
 
-		validarConsistenciaCaixa(resumoCreditos.subtract(resumoDebitos), caixaCabecalho.getCaixaDetalhes());
+		List<CaixaDetalhe> caixaDetalhes = caixaDetalheDAO.buscarCaixaDetalhes(caixaCabecalho.getIdCaixaCabecalho());
 
-		Map<PlanoContas, List<CaixaDetalhe>> contas = caixaCabecalho.getCaixaDetalhes().stream()
+		validarConsistenciaCaixa(resumoCreditos.subtract(resumoDebitos), caixaDetalhes);
+
+		Map<PlanoContas, List<CaixaDetalhe>> contas = caixaDetalhes.stream()
 				.filter(detalhe -> !detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
 				.collect(Collectors.groupingBy(CaixaDetalhe::getPlanoContas));
 
@@ -158,16 +162,16 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 		BigDecimal valorPagamentos = detalheFechamentoVOs.stream().map(DetalheFechamentoVO::getValorConta)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		Map<Long, List<CaixaDetalhe>> saldoDinheiro = caixaCabecalho.getCaixaDetalhes().stream()
-				.filter(detalhe -> !detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
+		Map<Long, List<CaixaDetalhe>> saldoDinheiro = caixaDetalhes.stream()
+				.filter(detalhe -> detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
 				.collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
 
 		BigDecimal resumoCreditosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.CREDOR);
-		BigDecimal resumoDebitosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.CREDOR);
+		BigDecimal resumoDebitosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.DEVEDOR);
 
 		FechamentoCaixaVO fechamentoCaixaVO = new FechamentoCaixaVO();
 		fechamentoCaixaVO.setDetalheFechamentoVOs(detalheFechamentoVOs);
-		fechamentoCaixaVO.setSaldoAtual(IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixaCabecalho.getCodigoCaixa()), BigDecimal.ZERO));
+		fechamentoCaixaVO.setSaldoAtual(IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixaCabecalho.getCaixa().getIdCaixa()), BigDecimal.ZERO));
 		fechamentoCaixaVO.setValorDinheiro(resumoCreditosDinheiro.subtract(resumoDebitosDinheiro));
 		fechamentoCaixaVO.setValorMovimentado(resumoCreditos.subtract(resumoDebitos));
 		fechamentoCaixaVO.setValorPagamentos(valorPagamentos);

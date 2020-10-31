@@ -36,4 +36,9 @@ public class CaixaDetalheDAO extends PesquisableDAOImpl<CaixaDetalhe> {
 						caixaDetalhe.tipoSaldo, caixaDetalhe.valorDetalhe.sum().as("valorSaldo")));
 	}
 
+	public List<CaixaDetalhe> buscarCaixaDetalhes(Long idCaixaCabecalho) {
+
+		return from().where(caixaDetalhe.codigoCaixaCabecalho.eq(idCaixaCabecalho)).list(caixaDetalhe);
+	}
+
 }
