@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,6 +36,9 @@ public class CaixaCabecalho implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cd_caixa")
 	private Caixa caixa;
+
+	@OneToOne(mappedBy = "caixaCabecalho", optional = true, cascade = CascadeType.ALL)
+	private CaixaSaldo caixaSaldo;
 
 	@Column(name = "cd_caixa", insertable = false, updatable = false)
 	private Long codigoCaixa;
