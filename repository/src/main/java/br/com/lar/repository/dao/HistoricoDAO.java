@@ -20,4 +20,9 @@ public class HistoricoDAO extends PesquisableDAOImpl<Historico> {
 		return new BooleanBuilder(historico.tipoHistorico.eq(1L));
 	}
 
+	public BooleanBuilder getHistoricosDevedores() {
+
+		return new BooleanBuilder(historico.tipoHistorico.eq(2L));
+	}
+
 }

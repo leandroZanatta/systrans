@@ -94,7 +94,7 @@ public class FrmFechamentoCaixa extends AbstractInternalFrame {
 
 		try {
 
-			caixaCabecalho = caixaCabecalhoService.validarCaixaAberto(FrmApplication.getUsuario());
+			caixaCabecalho = caixaCabecalhoService.validarExistenciaCaixaAberto(FrmApplication.getUsuario());
 
 			txCaixa.setText(caixaCabecalho.getCaixa().getDescricao());
 			txDataAbertura.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(caixaCabecalho.getDataAbertura()));

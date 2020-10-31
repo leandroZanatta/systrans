@@ -34,6 +34,7 @@
 		<class>br.com.lar.repository.model.CaixaSaldo</class>
 		<class>br.com.lar.repository.model.DiarioCabecalho</class>
 		<class>br.com.lar.repository.model.DiarioDetalhe</class>
+		<class>br.com.lar.repository.model.ContasPagar</class>
 	</persistence-unit>
 
 </persistence>

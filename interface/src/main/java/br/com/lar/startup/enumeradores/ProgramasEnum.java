@@ -9,11 +9,13 @@ import br.com.lar.ui.FrmCadastroPesquisa;
 import br.com.lar.ui.FrmCaixa;
 import br.com.lar.ui.FrmCidade;
 import br.com.lar.ui.FrmCliente;
+import br.com.lar.ui.FrmConsultarContasPagar;
 import br.com.lar.ui.FrmConsultarContasReceber;
 import br.com.lar.ui.FrmEstado;
 import br.com.lar.ui.FrmFechamentoCaixa;
 import br.com.lar.ui.FrmFormasPagamento;
 import br.com.lar.ui.FrmFuncionario;
+import br.com.lar.ui.FrmGerarContasPagar;
 import br.com.lar.ui.FrmGerarContasReceber;
 import br.com.lar.ui.FrmGrupo;
 import br.com.lar.ui.FrmHistoricoOperacoes;
@@ -65,13 +67,17 @@ public enum ProgramasEnum {
 
 	ABERTURA_CAIXA(25L, FrmAberturaCaixa.class),
 
+	CONSULTA_CONTAS_RECEBER(27L, FrmConsultarContasReceber.class),
+
 	FECHAMENTO_CAIXA(33L, FrmFechamentoCaixa.class),
 
 	RESUMO_CAIXA(34L, FrmResumoCaixa.class),
 
-	CONSULTA_CONTAS_RECEBER(27L, FrmConsultarContasReceber.class),
+	CADASTRO_CAIXA(35L, FrmCaixa.class),
 
-	CADASTRO_CAIXA(35L, FrmCaixa.class);
+	CADASTRO_CONTAS_PAGAR(37L, FrmGerarContasPagar.class),
+
+	CONSULTA_CONTAS_PAGAR(38L, FrmConsultarContasPagar.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

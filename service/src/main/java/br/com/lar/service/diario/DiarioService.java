@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import br.com.lar.repository.dao.DiarioCabecalhoDAO;
 import br.com.lar.repository.dao.OperacaoDAO;
 import br.com.lar.repository.model.CaixaCabecalho;
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
@@ -40,6 +41,16 @@ public class DiarioService {
 
 		return registrarDiario(contasReceber.getHistorico(), contasReceber.getCaixaCabecalho(), codigoPagamentos, parcelas,
 				contasReceber.getValorParcela());
+	}
+
+	public DiarioCabecalho registrarDiarioContasPagar(ContasPagar contasPagar) {
+		List<Long> codigoPagamentos = Arrays.asList(contasPagar.getFormasPagamento().getIdFormaPagamento());
+
+		Map<Long, List<BigDecimal>> parcelas = new HashMap<>();
+		parcelas.put(contasPagar.getFormasPagamento().getIdFormaPagamento(), Arrays.asList(contasPagar.getValorParcela()));
+
+		return registrarDiario(contasPagar.getHistorico(), contasPagar.getCaixaCabecalho(), codigoPagamentos, parcelas,
+				contasPagar.getValorParcela());
 	}
 
 	public DiarioCabecalho registrarDiarioFaturamento(Faturamento faturamento) {

@@ -13,6 +13,7 @@ import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
+import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
@@ -38,6 +39,12 @@ public class FrmVeiculo extends AbstractInternalFrame {
 	private JMoneyField txCapacidade;
 	private JLabel lblMotorista;
 	private CampoPesquisa<Motorista> pesquisaMotorista;
+	private JLabel lblAno;
+	private JNumericField txAno;
+	private JLabel lblMarca;
+	private JTextFieldMaiusculo txMarca;
+	private JTextFieldMaiusculo txModelo;
+	private JLabel lblModelo;
 
 	public FrmVeiculo(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -53,14 +60,20 @@ public class FrmVeiculo extends AbstractInternalFrame {
 
 		painelContent = new JPanel();
 		txCodigo = new JTextFieldId();
-		lblCodigo = new JLabel("Código:");
-		lbTipoVeiculo = new JLabel("Tipo de Veículo:");
-		lbPlaca = new JLabel("Placa:");
-		txPlaca = new JTextFieldMaiusculo();
-		txCapacidade = new JMoneyField();
-		cbTipoVeiculo = new JComboBox<>();
-		lbCapacidade = new JLabel("Capacidade:");
+		lblMarca = new JLabel("Marca:");
+		lblModelo = new JLabel("Modelo:");
 		lblMotorista = new JLabel("Motorista:");
+		lbTipoVeiculo = new JLabel("Tipo de Veículo:");
+		lblAno = new JLabel("Ano:");
+		lblCodigo = new JLabel("Código:");
+		cbTipoVeiculo = new JComboBox<>();
+		txMarca = new JTextFieldMaiusculo();
+		lbPlaca = new JLabel("Placa:");
+		lbCapacidade = new JLabel("Capacidade:");
+		txModelo = new JTextFieldMaiusculo();
+		txPlaca = new JTextFieldMaiusculo();
+		txAno = new JNumericField();
+		txCapacidade = new JMoneyField();
 		pesquisaMotorista = new CampoPesquisa<Motorista>(motoristaService, PesquisaEnum.PES_MOTORISTA.getCodigoPesquisa(),
 				getCodigoUsuario()) {
 
@@ -72,18 +85,24 @@ public class FrmVeiculo extends AbstractInternalFrame {
 			}
 		};
 
-		painelContent.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][][][][grow]"));
+		painelContent.setLayout(new MigLayout("", "[150.00][75.00][][grow]", "[][][][][][][][][grow]"));
 		getContentPane().add(painelContent);
 		painelContent.add(lblCodigo, "cell 0 0");
 		painelContent.add(txCodigo, "cell 0 1,width 50:100:100");
-		painelContent.add(txCapacidade, "cell 1 5,growx");
 		painelContent.add(lbTipoVeiculo, "cell 0 2");
+		painelContent.add(lblMarca, "cell 2 2");
 		painelContent.add(cbTipoVeiculo, "cell 0 3 2 1,growx");
-		painelContent.add(lbPlaca, "cell 0 4,growx");
-		painelContent.add(lbCapacidade, "cell 1 4");
-		painelContent.add(txPlaca, "cell 0 5,growx");
+		painelContent.add(txMarca, "cell 2 3 2 1,growx,aligny top");
+		painelContent.add(lblModelo, "cell 0 4");
+		painelContent.add(lbPlaca, "cell 1 4,growx");
+		painelContent.add(lblAno, "cell 2 4");
+		painelContent.add(lbCapacidade, "cell 3 4");
+		painelContent.add(txModelo, "cell 0 5,growx,aligny top");
+		painelContent.add(txPlaca, "cell 1 5,growx");
+		painelContent.add(txAno, "cell 2 5,growx,aligny top");
+		painelContent.add(txCapacidade, "cell 3 5,growx");
 		painelContent.add(lblMotorista, "cell 0 6");
-		painelContent.add(pesquisaMotorista, "cell 0 7 2 1,growx");
+		painelContent.add(pesquisaMotorista, "cell 0 7 4 1,growx");
 
 		Arrays.asList(TipoVeiculoEnum.values()).forEach(cbTipoVeiculo::addItem);
 
@@ -97,6 +116,9 @@ public class FrmVeiculo extends AbstractInternalFrame {
 				cbTipoVeiculo.setSelectedItem(TipoVeiculoEnum.forValue(objeto.getTipoVeiculo()));
 				txPlaca.setText(objeto.getPlaca());
 				txCapacidade.setValue(objeto.getCapacidade());
+				txMarca.setText(objetoPesquisa.getMarca());
+				txModelo.setText(objetoPesquisa.getModelo());
+				txAno.setValue(objetoPesquisa.getNumeroAno());
 				pesquisaMotorista.setValue(objeto.getMotorista());
 			}
 
@@ -108,7 +130,9 @@ public class FrmVeiculo extends AbstractInternalFrame {
 				objetoPesquisa.setPlaca(txPlaca.getText());
 				objetoPesquisa.setCapacidade(txCapacidade.getValue());
 				objetoPesquisa.setMotorista(pesquisaMotorista.getObjetoPesquisado());
-
+				objetoPesquisa.setMarca(txMarca.getText());
+				objetoPesquisa.setModelo(txModelo.getText());
+				objetoPesquisa.setNumeroAno(txAno.getValue());
 				if (cbTipoVeiculo.getSelectedIndex() >= 0) {
 
 					objetoPesquisa.setTipoVeiculo(((TipoVeiculoEnum) cbTipoVeiculo.getSelectedItem()).getCodigoVeiculo());
@@ -121,7 +145,7 @@ public class FrmVeiculo extends AbstractInternalFrame {
 
 		panelActions.addSaveListener(objeto -> txCodigo.setValue(objeto.getIdVeiculo()));
 
-		painelContent.add(panelActions, "cell 0 8 2 1,growx,aligny bottom");
+		painelContent.add(panelActions, "cell 0 8 4 1,growx,aligny bottom");
 	}
 
 }

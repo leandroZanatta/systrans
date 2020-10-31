@@ -115,7 +115,7 @@ public class FrmHistoricoOperacoes extends AbstractInternalFrame {
 				case CREDOR:
 					return planoContasService.getContasCredoras();
 				case DEVEDOR:
-					return planoContasService.getContasDevedoras();
+					return planoContasService.getContasBalanco();
 				default:
 					throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO);
 
@@ -145,7 +145,16 @@ public class FrmHistoricoOperacoes extends AbstractInternalFrame {
 					throw new SysDescException(Resources.translate(MensagemConstants.MENSAGEM_SELECIONE_FORMA_PAGAMAMENTO));
 				}
 
-				return planoContasService.getContasBalanco();
+				switch (TipoHistoricoOperacaoEnum.forValue(pesquisaHistorico.getObjetoPesquisado().getTipoHistorico())) {
+				case CREDOR:
+					return planoContasService.getContasBalanco();
+				case DEVEDOR:
+					return planoContasService.getContasDevedoras();
+				default:
+					throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO);
+
+				}
+
 			}
 		};
 

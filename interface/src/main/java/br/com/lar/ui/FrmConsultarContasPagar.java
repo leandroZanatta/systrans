@@ -23,13 +23,13 @@ import javax.swing.border.TitledBorder;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.Cliente;
-import br.com.lar.repository.model.ContasReceber;
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.service.cliente.ClienteService;
-import br.com.lar.service.contasreceber.ContasReceberService;
+import br.com.lar.service.contaspagar.ContasPagarService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
-import br.com.lar.tablemodels.ContasReceberTableModel;
+import br.com.lar.tablemodels.ContasPagarTableModel;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
@@ -39,13 +39,13 @@ import br.com.sysdesc.util.classes.SomaUtil;
 import br.com.sysdesc.util.vo.PesquisaContasVO;
 import net.miginfocom.swing.MigLayout;
 
-public class FrmConsultarContasReceber extends AbstractInternalFrame {
+public class FrmConsultarContasPagar extends AbstractInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	private ContasReceberService contasReceberService = new ContasReceberService();
+	private ContasPagarService contasPagarService = new ContasPagarService();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private ClienteService clienteService = new ClienteService();
-	private ContasReceberTableModel contasReceberTableModel = new ContasReceberTableModel();
+	private ContasPagarTableModel contasPagarTableModel = new ContasPagarTableModel();
 	private JPanel container;
 	private JLabel lblNewLabel;
 	private JNumericField txCodigo;
@@ -68,7 +68,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 	private JLabel lbValorLiquido;
 	private JTextFieldMaiusculo txDocumento;
 
-	public FrmConsultarContasReceber(Long permissaoPrograma, Long codigoUsuario) {
+	public FrmConsultarContasPagar(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
 
 		container = new JPanel();
@@ -100,7 +100,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		pesquisaCliente.setBounds(322, 6, 455, 22);
 
 		pesquisaPagamento = new CampoPesquisa<FormasPagamento>(formasPagamentoService, PesquisaEnum.PES_FORMAS_PAGAMENTO.getCodigoPesquisa(),
-				getCodigoUsuario(), formasPagamentoService.pesquisarApenasAPrazo()) {
+				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -179,7 +179,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		scrollPane.setBounds(7, 111, 770, 203);
 		container.add(scrollPane);
 
-		table = new JTable(contasReceberTableModel);
+		table = new JTable(contasPagarTableModel);
 		scrollPane.setViewportView(table);
 
 		JPanel panel_3 = new JPanel();
@@ -287,21 +287,21 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 
 	private void filtrarContasReceber() {
 
-		PesquisaContasVO pesquisaContasReceberVO = new PesquisaContasVO();
-		pesquisaContasReceberVO.setCodigoConta(txCodigo.getValue());
-		pesquisaContasReceberVO.setCodigoCliente(getValueObject(pesquisaCliente.getObjetoPesquisado(), Cliente::getIdCliente));
-		pesquisaContasReceberVO
+		PesquisaContasVO pesquisaContasVO = new PesquisaContasVO();
+		pesquisaContasVO.setCodigoConta(txCodigo.getValue());
+		pesquisaContasVO.setCodigoCliente(getValueObject(pesquisaCliente.getObjetoPesquisado(), Cliente::getIdCliente));
+		pesquisaContasVO
 				.setCodigoFormaPagamento(getValueObject(pesquisaPagamento.getObjetoPesquisado(), FormasPagamento::getIdFormaPagamento));
-		pesquisaContasReceberVO.setDataVencimentoInicial(dtVencimentoInicial.getDate());
-		pesquisaContasReceberVO.setDataVencimentoFinal(dtVencimentoFinal.getDate());
-		pesquisaContasReceberVO.setDocumentoBaixado(chBaixado.isSelected());
-		pesquisaContasReceberVO.setValorParcelaInicial(txValorInicial.getValue());
-		pesquisaContasReceberVO.setValorParcelaFinal(txValorFinal.getValue());
-		pesquisaContasReceberVO.setCodigoDocumento(txDocumento.getText());
+		pesquisaContasVO.setDataVencimentoInicial(dtVencimentoInicial.getDate());
+		pesquisaContasVO.setDataVencimentoFinal(dtVencimentoFinal.getDate());
+		pesquisaContasVO.setDocumentoBaixado(chBaixado.isSelected());
+		pesquisaContasVO.setValorParcelaInicial(txValorInicial.getValue());
+		pesquisaContasVO.setValorParcelaFinal(txValorFinal.getValue());
+		pesquisaContasVO.setCodigoDocumento(txDocumento.getText());
 
-		List<ContasReceber> contasRecebers = contasReceberService.filtrarContasReceber(pesquisaContasReceberVO);
+		List<ContasPagar> contasPagar = contasPagarService.filtrarContasPagar(pesquisaContasVO);
 
-		contasReceberTableModel.setRows(contasRecebers);
+		contasPagarTableModel.setRows(contasPagar);
 
 		ajustarPainelTotalizador();
 	}
@@ -317,7 +317,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 
 	private void ajustarPainelTotalizador() {
 
-		List<ContasReceber> contasRecebers = getContasSelecionadas();
+		List<ContasPagar> contasPagars = getContasSelecionadas();
 
 		NumberFormat numberFormat = NumberFormat.getNumberInstance();
 		numberFormat.setMaximumFractionDigits(2);
@@ -329,7 +329,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		SomaUtil somaAcrescimos = new SomaUtil();
 		SomaUtil somaTotalPago = new SomaUtil();
 
-		contasRecebers.forEach(contaReceber -> {
+		contasPagars.forEach(contaReceber -> {
 			somaTotal.somar(contaReceber.getValorParcela());
 			somaDescontos.somar(contaReceber.getValorDesconto());
 			somaAcrescimos.somar(contaReceber.getValorAcrescimo());
@@ -344,17 +344,17 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 				.format(somaTotal.getValue().subtract(somaDescontos.getValue()).add(somaAcrescimos.getValue()).subtract(somaTotalPago.getValue())));
 	}
 
-	private List<ContasReceber> getContasSelecionadas() {
+	private List<ContasPagar> getContasSelecionadas() {
 
 		if (table.getSelectedRowCount() <= 0) {
 
-			return contasReceberTableModel.getRows();
+			return contasPagarTableModel.getRows();
 		}
 
-		List<ContasReceber> contasRecebers = new ArrayList<>();
+		List<ContasPagar> contasRecebers = new ArrayList<>();
 
 		for (int row : table.getSelectedRows()) {
-			contasRecebers.add(contasReceberTableModel.getRow(row));
+			contasRecebers.add(contasPagarTableModel.getRow(row));
 		}
 
 		return contasRecebers;

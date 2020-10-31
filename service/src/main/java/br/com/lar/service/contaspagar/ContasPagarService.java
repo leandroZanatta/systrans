@@ -1,12 +1,12 @@
-package br.com.lar.service.contasreceber;
+package br.com.lar.service.contaspagar;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import br.com.lar.repository.dao.ContasReceberDAO;
+import br.com.lar.repository.dao.ContasPagarDAO;
 import br.com.lar.repository.model.CaixaDetalhe;
-import br.com.lar.repository.model.ContasReceber;
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.lar.service.caixa.FaturamentoCaixa;
@@ -18,25 +18,25 @@ import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.vo.PesquisaContasVO;
 import br.com.systrans.util.constants.MensagemConstants;
 
-public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasReceber> {
+public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPagar> {
 
-	private ContasReceberDAO contasReceberDAO;
+	private ContasPagarDAO contasPagarDAO;
 	private DiarioService faturamentoDiario = new DiarioService();
 	private FaturamentoCaixa faturamentoCaixa = new FaturamentoCaixa();
 	private CaixaService caixaService = new CaixaService();
 
-	public ContasReceberService() {
-		this(new ContasReceberDAO());
+	public ContasPagarService() {
+		this(new ContasPagarDAO());
 	}
 
-	public ContasReceberService(ContasReceberDAO contasReceberDAO) {
-		super(contasReceberDAO, ContasReceber::getIdContasReceber);
+	public ContasPagarService(ContasPagarDAO contasPagarDAO) {
+		super(contasPagarDAO, ContasPagar::getIdContasPagar);
 
-		this.contasReceberDAO = contasReceberDAO;
+		this.contasPagarDAO = contasPagarDAO;
 	}
 
 	@Override
-	public void validar(ContasReceber objetoPersistir) {
+	public void validar(ContasPagar objetoPersistir) {
 
 		if (StringUtil.isNullOrEmpty(objetoPersistir.getDocumento())) {
 
@@ -70,7 +70,7 @@ public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasR
 
 		if (objetoPersistir.getDataVencimento() == null) {
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DATA_VENCIMENTO);
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DATA_VENCIMENTO_CONTA);
 		}
 
 		if (BigDecimalUtil.isNullOrZero(objetoPersistir.getValorParcela())) {
@@ -80,13 +80,13 @@ public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasR
 	}
 
 	@Override
-	public void salvar(ContasReceber objetoPersistir) {
+	public void salvar(ContasPagar objetoPersistir) {
 		caixaService.verificarCaixaAberto(objetoPersistir.getCaixaCabecalho());
 
-		DiarioCabecalho diarioCabecalho = faturamentoDiario.registrarDiarioContasReceber(objetoPersistir);
-		List<CaixaDetalhe> caixaDetalhes = faturamentoCaixa.registrarCaixaContasReceber(objetoPersistir);
+		DiarioCabecalho diarioCabecalho = faturamentoDiario.registrarDiarioContasPagar(objetoPersistir);
+		List<CaixaDetalhe> caixaDetalhes = faturamentoCaixa.registrarCaixaContasPagar(objetoPersistir);
 
-		EntityManager entityManager = contasReceberDAO.getEntityManager();
+		EntityManager entityManager = contasPagarDAO.getEntityManager();
 
 		try {
 
@@ -103,9 +103,9 @@ public class ContasReceberService extends AbstractPesquisableServiceImpl<ContasR
 		}
 	}
 
-	public List<ContasReceber> filtrarContasReceber(PesquisaContasVO pesquisaContasReceberVO) {
+	public List<ContasPagar> filtrarContasPagar(PesquisaContasVO pesquisaContasReceberVO) {
 
-		return contasReceberDAO.filtrarContasReceber(pesquisaContasReceberVO);
+		return contasPagarDAO.filtrarContasPagar(pesquisaContasReceberVO);
 	}
 
 }

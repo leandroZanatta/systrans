@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 import br.com.lar.repository.dao.OperacaoDAO;
 import br.com.lar.repository.model.CaixaCabecalho;
 import br.com.lar.repository.model.CaixaDetalhe;
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.Faturamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
-import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -33,6 +33,16 @@ public class FaturamentoCaixa {
 		parcelas.put(contasReceber.getFormasPagamento().getIdFormaPagamento(), Arrays.asList(contasReceber.getValorParcela()));
 
 		return registrarCaixa(contasReceber.getHistorico(), codigoPagamentos, contasReceber.getCaixaCabecalho(), parcelas);
+	}
+
+	public List<CaixaDetalhe> registrarCaixaContasPagar(ContasPagar contasPagar) {
+		List<Long> codigoPagamentos = Arrays.asList(contasPagar.getFormasPagamento().getIdFormaPagamento());
+
+		Map<Long, List<BigDecimal>> parcelas = new HashMap<>();
+		parcelas.put(contasPagar.getFormasPagamento().getIdFormaPagamento(), Arrays.asList(contasPagar.getValorParcela()));
+
+		return registrarCaixa(contasPagar.getHistorico(), codigoPagamentos, contasPagar.getCaixaCabecalho(), parcelas);
+
 	}
 
 	public List<CaixaDetalhe> registrarCaixaFaturamento(Faturamento faturamento) {
@@ -59,7 +69,7 @@ public class FaturamentoCaixa {
 			CaixaDetalhe caixaDetalhe = new CaixaDetalhe();
 			caixaDetalhe.setCaixaCabecalho(caixaCabecalho);
 			caixaDetalhe.setDataMovimento(new Date());
-			caixaDetalhe.setTipoSaldo(TipoHistoricoOperacaoEnum.CREDOR.getCodigo());
+			caixaDetalhe.setTipoSaldo(operacao.getHistorico().getTipoHistorico());
 			caixaDetalhe.setPlanoContas(operacao.getContaDevedora());
 			caixaDetalhe.setValorDetalhe(somarParcelasPorFormaPagamento(parcelasPagamento, operacao));
 
@@ -83,4 +93,5 @@ public class FaturamentoCaixa {
 
 		private BigDecimal valorParcela;
 	}
+
 }
