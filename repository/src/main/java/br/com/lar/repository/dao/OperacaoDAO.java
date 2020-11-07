@@ -22,8 +22,8 @@ public class OperacaoDAO extends PesquisableDAOImpl<Operacao> {
 
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-		booleanBuilder.and(operacao.codigoContaCredora.eq(objetoPersistir.getContaCredora().getIdPlanoContas()));
-		booleanBuilder.and(operacao.codigoContaDevedora.eq(objetoPersistir.getContaDevedora().getIdPlanoContas()));
+		booleanBuilder.and(operacao.codigoFormaPagamento.eq(objetoPersistir.getFormasPagamento().getIdFormaPagamento()));
+		booleanBuilder.and(operacao.codigoHistorico.eq(objetoPersistir.getHistorico().getIdHistorico()));
 
 		if (!LongUtil.isNullOrZero(objetoPersistir.getIdOperacao())) {
 			booleanBuilder.and(operacao.idOperacao.ne(objetoPersistir.getIdOperacao()));

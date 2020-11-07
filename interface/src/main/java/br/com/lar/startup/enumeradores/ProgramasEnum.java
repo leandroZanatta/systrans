@@ -7,6 +7,7 @@ import br.com.lar.ui.FrmAberturaCaixa;
 import br.com.lar.ui.FrmCadastroOperacoes;
 import br.com.lar.ui.FrmCadastroPesquisa;
 import br.com.lar.ui.FrmCaixa;
+import br.com.lar.ui.FrmCentroCusto;
 import br.com.lar.ui.FrmCidade;
 import br.com.lar.ui.FrmCliente;
 import br.com.lar.ui.FrmConsultarContasPagar;
@@ -18,8 +19,10 @@ import br.com.lar.ui.FrmFuncionario;
 import br.com.lar.ui.FrmGerarContasPagar;
 import br.com.lar.ui.FrmGerarContasReceber;
 import br.com.lar.ui.FrmGrupo;
+import br.com.lar.ui.FrmHistoricoCusto;
 import br.com.lar.ui.FrmHistoricoOperacoes;
-import br.com.lar.ui.FrmLancamento;
+import br.com.lar.ui.FrmLancamentoEntradas;
+import br.com.lar.ui.FrmLancamentoSaidas;
 import br.com.lar.ui.FrmMotorista;
 import br.com.lar.ui.FrmPerfil;
 import br.com.lar.ui.FrmPermissoes;
@@ -63,7 +66,11 @@ public enum ProgramasEnum {
 
 	PAGAMENTO_OPERACOES(31L, FrmHistoricoOperacoes.class),
 
-	LANCAMENTOS(32L, FrmLancamento.class),
+	HISTORICO_CUSTOS(40L, FrmHistoricoCusto.class),
+
+	LANCAMENTOS_ENTRADAS(41L, FrmLancamentoEntradas.class),
+
+	LANCAMENTOS_SAIDAS(42L, FrmLancamentoSaidas.class),
 
 	ABERTURA_CAIXA(25L, FrmAberturaCaixa.class),
 
@@ -77,7 +84,9 @@ public enum ProgramasEnum {
 
 	CADASTRO_CONTAS_PAGAR(37L, FrmGerarContasPagar.class),
 
-	CONSULTA_CONTAS_PAGAR(38L, FrmConsultarContasPagar.class);
+	CONSULTA_CONTAS_PAGAR(38L, FrmConsultarContasPagar.class),
+
+	CADASTRO_CENTRO_CUSTOS(39L, FrmCentroCusto.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

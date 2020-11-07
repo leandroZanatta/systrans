@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201107_120300" author="Leandro Zanatta" logicalFilePath="20201107_120300_tb_faturamentoentrada.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_faturamentoentrada" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_faturamentoentrada">
+
+			<column name="id_faturamentoentrada" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="faturamentoentrada_pk" nullable="false" />
+			</column>
+
+			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
+				<constraints nullable="false" foreignKeyName="faturamentoentrada_caixa_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTORICO">
+				<constraints nullable="false" foreignKeyName="faturamentoentrada_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
+				<constraints nullable="false" foreignKeyName="faturamentoentrada_cliente_fk" references="tb_cliente(id_cliente)" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
+				<constraints foreignKeyName="faturamentoentrada_veiculo_fk" references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
+				<constraints foreignKeyName="faturamentoentrada_motorista_fk" references="tb_motorista(id_motorista)" />
+			</column>
+
+			<column name="cd_centrocusto" type="${numeric.18x0}" remarks="CÓDIGO DO CENTRO DE CUSTO">
+				<constraints nullable="false" foreignKeyName="faturamentoentrada_centrocusto_fk" references="tb_centrocusto(id_centrocusto)" />
+			</column>
+
+			<column name="nr_documento" type="${varchar.100}" remarks="NÚMERO DO DOCUMENTO" />
+
+			<column name="dt_movimento" type="${date}" remarks="Data de Movimento">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_bruto" type="${numeric.18x2}" remarks="VALOR BRUTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_desconto" type="${numeric.18x2}" remarks="VALOR DESCONTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_acrescimo" type="${numeric.18x2}" remarks="VALOR ACRÉSCIMO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_faturamentoentrada" />
+
+	</changeSet>
+</databaseChangeLog>

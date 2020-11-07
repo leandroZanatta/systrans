@@ -12,18 +12,18 @@ import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.util.classes.DateUtil;
 
-public class PagamentoTableModel extends AbstractInternalFrameTable {
+public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 
 	private static final long serialVersionUID = 1L;
 	private List<FaturamentoPagamento> rows = new ArrayList<>();
 	private List<String> colunas = new ArrayList<>();
 	private NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
-	public PagamentoTableModel() {
+	public FaturamentoPagamentoTableModel() {
 		this(new ArrayList<>());
 	}
 
-	public PagamentoTableModel(List<FaturamentoPagamento> rows) {
+	public FaturamentoPagamentoTableModel(List<FaturamentoPagamento> rows) {
 		this.rows = rows;
 
 		colunas.add("Forma Pagamento");

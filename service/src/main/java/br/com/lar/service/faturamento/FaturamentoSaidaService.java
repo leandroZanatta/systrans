@@ -15,8 +15,10 @@ import br.com.lar.service.contasreceber.FaturamentoContasReceber;
 import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.ListUtil;
+import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.constants.MensagemConstants;
 
-public class FaturamentoService extends AbstractPesquisableServiceImpl<Faturamento> {
+public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Faturamento> {
 
 	private FaturamentoDAO faturamentoDAO;
 	private FaturamentoContasReceber faturamentoContasReceber = new FaturamentoContasReceber();
@@ -24,14 +26,43 @@ public class FaturamentoService extends AbstractPesquisableServiceImpl<Faturamen
 	private FaturamentoCaixa faturamentoCaixa = new FaturamentoCaixa();
 	private CaixaService caixaService = new CaixaService();
 
-	public FaturamentoService() {
+	public FaturamentoSaidaService() {
 		this(new FaturamentoDAO());
 	}
 
-	public FaturamentoService(FaturamentoDAO faturamentoDAO) {
+	public FaturamentoSaidaService(FaturamentoDAO faturamentoDAO) {
 		super(faturamentoDAO, Faturamento::getIdFaturamento);
 
 		this.faturamentoDAO = faturamentoDAO;
+	}
+
+	@Override
+	public void validar(Faturamento objetoPersistir) {
+
+		if (objetoPersistir.getHistorico() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
+		}
+
+		if (objetoPersistir.getCaixaCabecalho() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_NAO_ENCONTRADO);
+		}
+
+		if (objetoPersistir.getCliente() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORNECEDOR);
+		}
+
+		if (ListUtil.isNullOrEmpty(objetoPersistir.getFaturamentoPagamentos())) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_PAGAMENTOS);
+		}
+
+		if (objetoPersistir.getDataMovimento() == null) {
+			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
+		}
+
 	}
 
 	@Override

@@ -36,6 +36,11 @@
 		<class>br.com.lar.repository.model.DiarioDetalhe</class>
 		<class>br.com.lar.repository.model.ContasPagar</class>
 		<class>br.com.lar.repository.model.ContasReceberPagamento</class>
+		<class>br.com.lar.repository.model.AlocacaoCusto</class>
+		<class>br.com.lar.repository.model.FaturamentoEntrada</class>
+		<class>br.com.lar.repository.model.FaturamentoEntradaPagamento</class>
+		<class>br.com.lar.repository.model.HistoricoCusto</class>
+		<class>br.com.lar.repository.model.CentroCusto</class>
 	</persistence-unit>
 
 </persistence>

@@ -15,9 +15,13 @@ import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.Faturamento;
+import br.com.lar.repository.model.FaturamentoEntrada;
+import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
+import br.com.lar.repository.model.PlanoContas;
+import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -45,6 +49,18 @@ public class FaturamentoCaixa {
 
 	}
 
+	public List<CaixaDetalhe> registrarCaixaFaturamentoEntrada(FaturamentoEntrada faturamento) {
+
+		List<Long> codigoPagamentos = faturamento.getFaturamentoEntradaPagamentos().stream()
+				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
+
+		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoEntradaPagamentos().stream()
+				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
+						Collectors.mapping(FaturamentoEntradaPagamento::getValorParcela, Collectors.toList())));
+
+		return registrarCaixa(faturamento.getHistorico(), codigoPagamentos, faturamento.getCaixaCabecalho(), parcelas);
+	}
+
 	public List<CaixaDetalhe> registrarCaixaFaturamento(Faturamento faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoPagamentos().stream()
@@ -70,13 +86,22 @@ public class FaturamentoCaixa {
 			caixaDetalhe.setCaixaCabecalho(caixaCabecalho);
 			caixaDetalhe.setDataMovimento(new Date());
 			caixaDetalhe.setTipoSaldo(operacao.getHistorico().getTipoHistorico());
-			caixaDetalhe.setPlanoContas(operacao.getContaDevedora());
+			caixaDetalhe.setPlanoContas(obterPlanoContas(operacao));
 			caixaDetalhe.setValorDetalhe(somarParcelasPorFormaPagamento(parcelasPagamento, operacao));
 
 			caixaDetalhes.add(caixaDetalhe);
 		});
 
 		return caixaDetalhes;
+	}
+
+	private PlanoContas obterPlanoContas(Operacao operacao) {
+
+		if (operacao.getHistorico().getTipoHistorico().equals(TipoHistoricoOperacaoEnum.CREDOR.getCodigo())) {
+			return operacao.getContaDevedora();
+		}
+
+		return operacao.getContaCredora();
 	}
 
 	private BigDecimal somarParcelasPorFormaPagamento(Map<Long, List<BigDecimal>> pagamentos, Operacao operacao) {

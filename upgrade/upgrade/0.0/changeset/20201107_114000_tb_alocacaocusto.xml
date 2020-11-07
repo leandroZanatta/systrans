@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201107_114000" author="Leandro Zanatta" logicalFilePath="20201107_114000_tb_alocacaocusto.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_alocacaocusto" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_alocacaocusto">
+
+			<column name="id_alocacaocusto" type="${numeric.18x0}" remarks="CÓDIGO IDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="alocacaocusto_pk" nullable="false" />
+			</column>
+
+			<column name="cd_historicocusto" type="${numeric.18x0}" remarks="CÓDIGO DO HISTÓRICO DE CUSTO">
+				<constraints nullable="false" foreignKeyName="alocacaocusto_historicocusto_fk" references="tb_historicocusto(id_historicocusto)" />
+			</column>
+
+			<column name="cd_centrocusto" type="${numeric.18x0}" remarks="CÓDIGO DO CENTRO DE CUSTO">
+				<constraints nullable="false" foreignKeyName="alocacaocusto_centrocusto_fk" references="tb_centrocusto(id_centrocusto)" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
+				<constraints nullable="false" foreignKeyName="alocacaocusto_veiculo_fk" references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
+				<constraints nullable="false" foreignKeyName="alocacaocusto_motorista_fk" references="tb_motorista(id_motorista)" />
+			</column>
+
+			<column name="dt_periodo" type="${date}" remarks="PERÍODO DO CUSTO (UTILIZADO APENAS O MES E ANO)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_parcela" type="${numeric.3x0}" remarks="NÚMERO DA PARCELA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_parcela" type="${numeric.18x2}" remarks="VALOR DA PARCELA">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_alocacaocusto" />
+	</changeSet>
+</databaseChangeLog>
