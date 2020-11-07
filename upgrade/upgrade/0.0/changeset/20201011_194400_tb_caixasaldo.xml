@@ -35,10 +35,13 @@
 	<changeSet id="20201031_155400" author="Leandro Zanatta" logicalFilePath="20201031_155400_add_campo_tb_caixasaldo.xml">
 
 		<addColumn tableName="tb_caixasaldo">
-			<column name="vl_saldoacumulado" type="${numeric.18x2}" defaultValueComputed="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="vl_saldoacumulado" type="${numeric.18x2}" />
 		</addColumn>
 
+		<update tableName="tb_caixasaldo">
+			<column name="vl_saldoacumulado" value="0" />
+		</update>
+
+		<addNotNullConstraint tableName="tb_caixasaldo" columnName="vl_saldoacumulado" columnDataType="${numeric.18x2}" />
 	</changeSet>
 </databaseChangeLog>

@@ -17,6 +17,8 @@ import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.Faturamento;
+import br.com.lar.repository.model.FaturamentoEntrada;
+import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
@@ -53,6 +55,20 @@ public class DiarioService {
 				contasPagar.getValorParcela());
 	}
 
+	public DiarioCabecalho registrarDiarioFaturamentoEntrada(FaturamentoEntrada faturamento) {
+
+		List<Long> codigoPagamentos = faturamento.getFaturamentoEntradaPagamentos().stream()
+				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
+
+		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoEntradaPagamentos().stream()
+				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
+						Collectors.mapping(FaturamentoEntradaPagamento::getValorParcela, Collectors.toList())));
+
+		BigDecimal valorPagamentos = faturamento.getValorBruto().add(faturamento.getValorAcrescimo()).subtract(faturamento.getValorDesconto());
+
+		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, valorPagamentos);
+	}
+
 	public DiarioCabecalho registrarDiarioFaturamento(Faturamento faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoPagamentos().stream()
@@ -78,14 +94,61 @@ public class DiarioService {
 
 		List<Operacao> operacoes = operacaoDAO.buscarOperacao(historico.getIdHistorico(), codigoPagamentos);
 
-		Operacao operacaoCredito = operacoes.stream().findFirst()
-				.orElseThrow(() -> new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO));
-
 		DiarioCabecalho diarioCabecalho = new DiarioCabecalho();
 		diarioCabecalho.setDataMovimento(new Date());
 		diarioCabecalho.setHistorico(historico);
 		diarioCabecalho.setDiarioDetalhes(new ArrayList<>());
 		diarioCabecalho.setCaixaCabecalho(caixaCabecalho);
+
+		registrarDetalhe(historico, parcelasPagamento, valorPagamento, operacoes, diarioCabecalho);
+
+		return diarioCabecalho;
+	}
+
+	private void registrarDetalhe(Historico historico, Map<Long, List<BigDecimal>> parcelasPagamento, BigDecimal valorPagamento,
+			List<Operacao> operacoes, DiarioCabecalho diarioCabecalho) {
+
+		if (historico.getTipoHistorico().equals(TipoHistoricoOperacaoEnum.CREDOR.getCodigo())) {
+
+			registrarHistoricoCredor(diarioCabecalho, operacoes, valorPagamento, parcelasPagamento);
+
+			return;
+		}
+
+		registrarHistoricoDevedor(diarioCabecalho, operacoes, valorPagamento, parcelasPagamento);
+	}
+
+	private void registrarHistoricoDevedor(DiarioCabecalho diarioCabecalho, List<Operacao> operacoes, BigDecimal valorPagamento,
+			Map<Long, List<BigDecimal>> parcelasPagamento) {
+
+		Operacao operacaodebito = operacoes.stream().findFirst()
+				.orElseThrow(() -> new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO));
+
+		operacoes.forEach(operacao -> {
+
+			DiarioDetalhe diarioCredito = new DiarioDetalhe();
+			diarioCredito.setDiarioCabecalho(diarioCabecalho);
+			diarioCredito.setPlanoContas(operacao.getContaCredora());
+			diarioCredito.setTipoSaldo(TipoHistoricoOperacaoEnum.CREDOR.getCodigo());
+			diarioCredito.setValorDetalhe(somarParcelasPorFormaPagamento(parcelasPagamento, operacao));
+			diarioCabecalho.getDiarioDetalhes().add(diarioCredito);
+		});
+
+		DiarioDetalhe diarioDebito = new DiarioDetalhe();
+		diarioDebito.setDiarioCabecalho(diarioCabecalho);
+		diarioDebito.setPlanoContas(operacaodebito.getContaDevedora());
+		diarioDebito.setTipoSaldo(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo());
+		diarioDebito.setValorDetalhe(valorPagamento);
+
+		diarioCabecalho.getDiarioDetalhes().add(diarioDebito);
+
+	}
+
+	private void registrarHistoricoCredor(DiarioCabecalho diarioCabecalho, List<Operacao> operacoes, BigDecimal valorPagamento,
+			Map<Long, List<BigDecimal>> parcelasPagamento) {
+
+		Operacao operacaoCredito = operacoes.stream().findFirst()
+				.orElseThrow(() -> new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO));
 
 		DiarioDetalhe diarioCredito = new DiarioDetalhe();
 		diarioCredito.setDiarioCabecalho(diarioCabecalho);
@@ -105,8 +168,6 @@ public class DiarioService {
 			diarioCabecalho.getDiarioDetalhes().add(diarioDebito);
 
 		});
-
-		return diarioCabecalho;
 	}
 
 	private BigDecimal somarParcelasPorFormaPagamento(Map<Long, List<BigDecimal>> pagamentos, Operacao operacao) {

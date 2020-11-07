@@ -266,26 +266,26 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		FocusAdapter focusAdapter = new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
-				filtrarContasReceber();
+				filtrarContasPagar();
 			}
 		};
 
-		chBaixado.addActionListener(e -> filtrarContasReceber());
+		chBaixado.addActionListener(e -> filtrarContasPagar());
 		txCodigo.addFocusListener(focusAdapter);
-		dtVencimentoInicial.addPropertyChangeListener(e -> filtrarContasReceber());
-		dtVencimentoFinal.addPropertyChangeListener(e -> filtrarContasReceber());
+		dtVencimentoInicial.addPropertyChangeListener(e -> filtrarContasPagar());
+		dtVencimentoFinal.addPropertyChangeListener(e -> filtrarContasPagar());
 		txValorInicial.addFocusListener(focusAdapter);
 		txDocumento.addFocusListener(focusAdapter);
 		txValorFinal.addFocusListener(focusAdapter);
-		pesquisaPagamento.addChangeListener(value -> filtrarContasReceber());
-		pesquisaCliente.addChangeListener(value -> filtrarContasReceber());
+		pesquisaPagamento.addChangeListener(value -> filtrarContasPagar());
+		pesquisaCliente.addChangeListener(value -> filtrarContasPagar());
 
 		initComponents();
 
-		filtrarContasReceber();
+		filtrarContasPagar();
 	}
 
-	private void filtrarContasReceber() {
+	private void filtrarContasPagar() {
 
 		PesquisaContasVO pesquisaContasVO = new PesquisaContasVO();
 		pesquisaContasVO.setCodigoConta(txCodigo.getValue());
@@ -329,11 +329,11 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		SomaUtil somaAcrescimos = new SomaUtil();
 		SomaUtil somaTotalPago = new SomaUtil();
 
-		contasPagars.forEach(contaReceber -> {
-			somaTotal.somar(contaReceber.getValorParcela());
-			somaDescontos.somar(contaReceber.getValorDesconto());
-			somaAcrescimos.somar(contaReceber.getValorAcrescimo());
-			somaTotalPago.somar(contaReceber.getValorPago());
+		contasPagars.forEach(contaPagar -> {
+			somaTotal.somar(contaPagar.getValorParcela());
+			somaDescontos.somar(contaPagar.getValorDesconto());
+			somaAcrescimos.somar(contaPagar.getValorAcrescimo());
+			somaTotalPago.somar(contaPagar.getValorPago());
 		});
 
 		lbValorTotal.setText(numberFormat.format(somaTotal.getValue()));
@@ -351,20 +351,20 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 			return contasPagarTableModel.getRows();
 		}
 
-		List<ContasPagar> contasRecebers = new ArrayList<>();
+		List<ContasPagar> contasPagars = new ArrayList<>();
 
 		for (int row : table.getSelectedRows()) {
-			contasRecebers.add(contasPagarTableModel.getRow(row));
+			contasPagars.add(contasPagarTableModel.getRow(row));
 		}
 
-		return contasRecebers;
+		return contasPagars;
 	}
 
 	private void initComponents() {
 
 		setSize(800, 450);
 		setClosable(Boolean.TRUE);
-		setTitle("CONSULTAR CONTAS Á RECEBER");
+		setTitle("CONSULTAR CONTAS Á PAGAR");
 
 		table.getColumnModel().getColumn(0).setPreferredWidth(60);
 		table.getColumnModel().getColumn(1).setPreferredWidth(250);

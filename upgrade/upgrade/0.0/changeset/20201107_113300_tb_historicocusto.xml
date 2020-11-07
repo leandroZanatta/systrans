@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201107_113300" author="Leandro Zanatta" logicalFilePath="20201107_113300_tb_historicocusto.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_historicocusto" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_historicocusto">
+
+			<column name="id_historicocusto" type="${numeric.18x0}" remarks="CÓDIGO IDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="historicocusto_pk" nullable="false" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTÓRICO">
+				<constraints nullable="false" foreignKeyName="historicocusto_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+			<column name="fl_tipocusto" type="${varchar.1}" remarks="TIPO DE CUSTO(F/V)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_mesesalocacao" type="${numeric.3x0}" remarks="NÚMERO DE MESES PARA ALOCAÇÃO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_historicocusto" />
+	</changeSet>
+</databaseChangeLog>

@@ -355,7 +355,7 @@
 			<where>id_programa=20</where>
 		</delete>
 	</changeSet>
-	
+
 	<changeSet id="20201030_171200" author="Leandro Zanatta">
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="36" />
@@ -384,6 +384,53 @@
 			<column name="tx_icone" value="consultarcontaspagar.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-	
+
+	</changeSet>
+
+	<changeSet id="20201107_132100" author="Leandro Zanatta">
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="39" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="1" />
+			<column name="nr_ordem" value="12" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CENTRO_CUSTOS" />
+			<column name="tx_icone" value="centrocustos.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="40" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="28" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_HISTORICO_CUSTOS" />
+			<column name="tx_icone" value="historicocustos.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="41" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="32" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_ENTRADAS" />
+			<column name="tx_icone" value="lancamento-entradas.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="42" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="32" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_SAIDAS" />
+			<column name="tx_icone" value="lancamento-saidas.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<update tableName="tb_programa">
+			<column name="nr_ordem" value="3" />
+			<where>id_programa=32</where>
+		</update>
 	</changeSet>
 </databaseChangeLog>

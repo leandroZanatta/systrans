@@ -38,4 +38,7 @@ public class Historico implements Serializable {
 	@OneToMany(mappedBy = "historico")
 	private List<Faturamento> faturamentos;
 
+	@OneToMany(mappedBy = "historico")
+	private List<HistoricoCusto> historicoCustos;
+
 }

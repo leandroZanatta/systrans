@@ -6,12 +6,50 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.Faturamento;
+import br.com.lar.repository.model.FaturamentoEntrada;
+import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 
 public class FaturamentoContasReceber {
+
+	public List<ContasPagar> registrarContasPagar(FaturamentoEntrada faturamento) {
+		List<ContasPagar> contasPagars = new ArrayList<>();
+
+		List<FaturamentoEntradaPagamento> faturamentoAPrazo = faturamento.getFaturamentoEntradaPagamentos().stream()
+				.filter(pagamento -> pagamento.getFormasPagamento().isFlagPermitePagamentoPrazo())
+				.collect(Collectors.toList());
+
+		faturamentoAPrazo.forEach(pagamento -> {
+
+			ContasPagar contasPagar = new ContasPagar();
+			contasPagar.setBaixado(false);
+			contasPagar.setCaixaCabecalho(faturamento.getCaixaCabecalho());
+			contasPagar.setCliente(faturamento.getCliente());
+			contasPagar.setCodigoStatus(TipoStatusEnum.ATIVO.getCodigo());
+			contasPagar.setDataCadastro(new Date());
+			contasPagar.setDataManutencao(new Date());
+			contasPagar.setDataMovimento(pagamento.getDataLancamento());
+			contasPagar.setDataVencimento(pagamento.getDataVencimento());
+			contasPagar.setDocumento(faturamento.getNumeroDocumento());
+			contasPagar.setFormasPagamento(pagamento.getFormasPagamento());
+			contasPagar.setHistorico(faturamento.getHistorico());
+			contasPagar.setMotorista(faturamento.getMotorista());
+			contasPagar.setVeiculo(faturamento.getVeiculo());
+			contasPagar.setValorAcrescimo(BigDecimal.ZERO);
+			contasPagar.setValorDesconto(BigDecimal.ZERO);
+			contasPagar.setValorJuros(BigDecimal.ZERO);
+			contasPagar.setValorPago(BigDecimal.ZERO);
+			contasPagar.setValorParcela(pagamento.getValorParcela());
+
+			contasPagars.add(contasPagar);
+		});
+
+		return contasPagars;
+	}
 
 	public List<ContasReceber> registrarContasReceber(Faturamento faturamento) {
 
