@@ -1,11 +1,14 @@
 package br.com.lar.ui;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,6 +39,8 @@ import br.com.lar.service.motorista.MotoristaService;
 import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.lar.tablemodels.FaturamentoEntradasPagamentoTableModel;
+import br.com.lar.ui.buttonactions.ButtonActionImagem;
+import br.com.lar.ui.dialogs.FrmDocumentosContasReceber;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
@@ -44,6 +49,7 @@ import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
+import br.com.sysdesc.util.classes.ContadorUtil;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
@@ -83,6 +89,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private CaixaCabecalhoService caixaCabecalhoService = new CaixaCabecalhoService();
 	private FaturamentoEntradasPagamentoTableModel pagamentoTableModel = new FaturamentoEntradasPagamentoTableModel();
+	private ButtonActionImagem documentoEscaneados;
 
 	public FrmLancamentoEntradas(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -110,10 +117,49 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		montarPainelGeral();
 		montarPainelPagamentos();
 
-		panelActions = new PanelActions<FaturamentoEntrada>(this, faturamentoEntradaService,
-				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa()) {
+		documentoEscaneados = new ButtonActionImagem();
+
+		Action actionAlterarSalario = new AbstractAction() {
 
 			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				abrirScanner();
+			}
+
+		};
+
+		panelActions = new PanelActions<FaturamentoEntrada>(this, faturamentoEntradaService,
+				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa(), documentoEscaneados) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void posicionarBotoes() {
+
+				ContadorUtil contadorUtil = new ContadorUtil();
+
+				posicionarBotao(contadorUtil, btPrimeiro, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btRetroceder, Boolean.TRUE);
+
+				posicionarBotao(contadorUtil, documentoEscaneados, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btSalvar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btEditar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btNovo, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btBuscar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btCancelar, Boolean.TRUE);
+
+				posicionarBotao(contadorUtil, btAvancar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btUltimo, Boolean.TRUE);
+
+			}
+
+			@Override
+			protected void registrarEventosBotoesPagina() {
+				registrarEvento(documentoEscaneados, actionAlterarSalario);
+			}
 
 			@Override
 			public void carregarObjeto(FaturamentoEntrada objeto) {
@@ -256,7 +302,10 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 				txDiaPagamento.setEnabled(permitePrazo);
 
 				txNumeroParcelas.setValue(1L);
-				txDiaPagamento.setValue(DateUtil.getDayOfMonth(dtMovimento.getDate()).longValue());
+
+				if (dtMovimento.getDate() != null) {
+					txDiaPagamento.setValue(DateUtil.getDayOfMonth(dtMovimento.getDate()).longValue());
+				}
 			}
 		});
 
@@ -304,7 +353,6 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		painelPagamentos.add(txDiaPagamento, "cell 4 3,growx");
 		painelPagamentos.add(btnGerar, "cell 5 3");
 		painelPagamentos.add(scrollPane, "cell 0 5 6 1,grow");
-
 	}
 
 	private void gerarPagamento() {
@@ -479,7 +527,11 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		painelContent.add(txCodigo, "cell 0 1,,width 50:100:100");
 		painelContent.add(lblHistorico, "cell 0 2");
 		painelContent.add(pesquisaHistorico, "cell 0 3,growx");
+	}
 
+	private void abrirScanner() {
+
+		new FrmDocumentosContasReceber(panelActions.getObjetoPesquisa()).setVisible(true);
 	}
 
 }

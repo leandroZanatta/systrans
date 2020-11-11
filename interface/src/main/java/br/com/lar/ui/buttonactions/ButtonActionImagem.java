@@ -4,11 +4,11 @@ import java.awt.event.KeyEvent;
 
 import br.com.sysdesc.pesquisa.components.buttonactions.ButtonAction;
 
-public class ButtonActionAdicionarFoto extends ButtonAction {
+public class ButtonActionImagem extends ButtonAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public ButtonActionAdicionarFoto() {
+	public ButtonActionImagem() {
 
 		super("mapAlterarFoto", KeyEvent.VK_F, KeyEvent.VK_CONTROL, "camera.png", "Alterar Foto");
 	}

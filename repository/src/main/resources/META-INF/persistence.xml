@@ -41,6 +41,7 @@
 		<class>br.com.lar.repository.model.FaturamentoEntradaPagamento</class>
 		<class>br.com.lar.repository.model.HistoricoCusto</class>
 		<class>br.com.lar.repository.model.CentroCusto</class>
+		<class>br.com.lar.repository.model.DocumentoEntrada</class>
 	</persistence-unit>
 
 </persistence>

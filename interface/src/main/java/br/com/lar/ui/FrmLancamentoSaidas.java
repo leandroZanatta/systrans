@@ -281,7 +281,11 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 				txDiaPagamento.setEnabled(permitePrazo);
 
 				txNumeroParcelas.setValue(1L);
-				txDiaPagamento.setValue(DateUtil.getDayOfMonth(dtMovimento.getDate()).longValue());
+
+				if (dtMovimento.getDate() != null) {
+
+					txDiaPagamento.setValue(DateUtil.getDayOfMonth(dtMovimento.getDate()).longValue());
+				}
 			}
 		});
 

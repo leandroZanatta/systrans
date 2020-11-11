@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201111_193900" author="Leandro Zanatta" logicalFilePath="20201111_193900_tb_documentoentrada.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_documentoentrada" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_documentoentrada">
+
+			<column name="id_documentoentrada" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="documentoentrada_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentrada" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="documentoentrada_faturamentoentrada_fk"
+					references="tb_faturamentoentrada(id_faturamentoentrada)" />
+			</column>
+
+			<column name="tx_local" type="${varchar.100}" remarks="LOCAL DE ARMAZENAMENTO DO DOCUMENTO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_documentoentrada" />
+
+	</changeSet>
+</databaseChangeLog>
