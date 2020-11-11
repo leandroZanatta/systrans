@@ -45,6 +45,7 @@
 	<include file="0.0/changeset/20201107_114000_tb_alocacaocusto.xml" />
 	<include file="0.0/changeset/20201107_120300_tb_faturamentoentrada.xml" />
 	<include file="0.0/changeset/20201107_120500_tb_faturamentoentradapagamento.xml" />
+	<include file="0.0/changeset/20201111_193900_tb_documentoentrada.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

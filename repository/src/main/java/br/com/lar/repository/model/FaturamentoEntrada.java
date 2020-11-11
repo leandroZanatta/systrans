@@ -2,6 +2,7 @@ package br.com.lar.repository.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -75,5 +76,8 @@ public class FaturamentoEntrada implements Serializable {
 
 	@OneToMany(mappedBy = "faturamentoEntrada", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FaturamentoEntradaPagamento> faturamentoEntradaPagamentos;
+
+	@OneToMany(mappedBy = "faturamentoEntrada")
+	private List<DocumentoEntrada> documentoEntradas = new ArrayList<>();
 
 }
