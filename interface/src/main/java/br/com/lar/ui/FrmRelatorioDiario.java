@@ -76,7 +76,6 @@ public class FrmRelatorioDiario extends AbstractInternalFrame {
 					simpleDateFormat.format(txDataFinal.getDate()))).setData(diarioCabecalhos).view();
 
 		} catch (JRException e) {
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório diário");
 		}
 	}
