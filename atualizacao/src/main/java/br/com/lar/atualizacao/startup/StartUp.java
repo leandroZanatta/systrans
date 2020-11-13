@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import br.com.lar.atualizacao.versao.ExtratorZip;
 import br.com.lar.atualizacao.versao.VersaoBancoDados;
@@ -16,9 +18,10 @@ import br.com.lar.atualizacao.versao.VersaoInternet;
 import br.com.sysdesc.util.resources.Configuracoes;
 import br.com.sysdesc.util.vo.VersaoERPVO;
 import lombok.extern.slf4j.Slf4j;
+import net.miginfocom.swing.MigLayout;
 
 @Slf4j
-public class StartUp {
+public class StartUp extends JDialog {
 
 	private final VersaoBancoDados versaoBancoDados = new VersaoBancoDados();
 
@@ -26,42 +29,84 @@ public class StartUp {
 
 	private final ExtratorZip extratorZip = new ExtratorZip();
 
-	public static void main(String[] args) throws Exception {
+	private final JProgressBar progressBar;
+
+	public StartUp() {
+
+		setUndecorated(true);
+		setSize(400, 38);
+		setLocationRelativeTo(null);
+		getContentPane().setLayout(new MigLayout("", "[grow]", "[24.00]"));
+
+		progressBar = new JProgressBar();
+		progressBar.setStringPainted(true);
+		getContentPane().add(progressBar, "cell 0 0,growx");
+
+		new Thread(this::starApplication).start();
+	}
+
+	public static void main(String[] args) {
 
 		StartUp startUp = new StartUp();
 
-		File arquivoVersao = new File(Configuracoes.VERSAO);
-
-		startUp.escolherAtualizacao(arquivoVersao);
-
-		startUp.iniciarAplicacao();
-
-		System.exit(0);
-
+		startUp.setVisible(true);
 	}
 
-	private void escolherAtualizacao(File arquivoVersao) throws IOException {
+	private void starApplication() {
 
-		VersaoERPVO versaoVO = versaoInternet.obterVersaoVO(arquivoVersao);
+		File arquivoVersao = new File(Configuracoes.VERSAO);
 
-		String versaoBanco = versaoBancoDados.buscarVersaoBanco();
+		escolherAtualizacao(arquivoVersao);
 
-		if (!versaoBanco.equals(versaoVO.getVersaoERP())) {
+		iniciarAplicacao();
 
-			File arquivoZip = versaoInternet.obterArquivoVersaoZip(versaoVO);
+		System.exit(0);
+	}
 
-			extratorZip.extrairVersao(arquivoZip);
+	private void escolherAtualizacao(File arquivoVersao) {
 
-			versaoBancoDados.upgradeDatabase(versaoVO.getVersaoERP());
+		try {
 
-			Files.deleteIfExists(arquivoZip.toPath());
+			nextStep("Verificando versões remotas", 10);
+
+			VersaoERPVO versaoVO = versaoInternet.obterVersaoVO(arquivoVersao);
+
+			nextStep("Verificando versões do banco de dados", 20);
+
+			String versaoBanco = versaoBancoDados.buscarVersaoBanco();
+
+			if (!versaoBanco.equals(versaoVO.getVersaoERP())) {
+
+				nextStep("Obtendo versão da internet", 50);
+
+				File arquivoZip = versaoInternet.obterArquivoVersaoZip(versaoVO);
+
+				nextStep("Extraindo versão", 70);
+
+				extratorZip.extrairVersao(arquivoZip);
+
+				nextStep("Atualizando Base de dados", 90);
+
+				versaoBancoDados.upgradeDatabase(versaoVO.getVersaoERP());
+
+				Files.deleteIfExists(arquivoZip.toPath());
+			}
+		} catch (IOException e) {
+
+			JOptionPane.showMessageDialog(this, "Erro ao buscar vesões do sitema, causa:" + e.getCause());
 		}
+	}
 
+	private void nextStep(String mensagem, int percentual) {
+		progressBar.setString(mensagem);
+		progressBar.setValue(percentual);
 	}
 
 	private void iniciarAplicacao() {
 
 		try {
+
+			nextStep("Iniciando a aplicação", 100);
 
 			Desktop.getDesktop().open(new File(translate(APPLICATION_JAR, "interface.jar")));
 
