@@ -407,7 +407,7 @@
 			<column name="tx_icone" value="historicocustos.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-		
+
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="41" />
 			<column name="cd_aplicativo" value="1" />
@@ -417,7 +417,7 @@
 			<column name="tx_icone" value="lancamento-entradas.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-		
+
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="42" />
 			<column name="cd_aplicativo" value="1" />
@@ -432,5 +432,36 @@
 			<column name="nr_ordem" value="3" />
 			<where>id_programa=32</where>
 		</update>
+	</changeSet>
+
+	<changeSet id="20201112_202800" author="Leandro Zanatta">
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="43" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="nr_ordem" value="5" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MN_RELATORIOS" />
+			<column name="tx_icone" value="relatorios" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="44" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="43" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_CONTABILIDADE" />
+			<column name="tx_icone" value="relatorio-contabilidade.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="45" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="44" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_DIARIO" />
+			<column name="tx_icone" value="relatorio-diario.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
 	</changeSet>
 </databaseChangeLog>

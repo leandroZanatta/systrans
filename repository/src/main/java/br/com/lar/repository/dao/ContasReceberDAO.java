@@ -9,6 +9,7 @@ import java.util.List;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.DateExpression;
 
 import br.com.lar.repository.model.ContasReceber;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
@@ -74,6 +75,11 @@ public class ContasReceberDAO extends PesquisableDAOImpl<ContasReceber> {
 				|| !BigDecimalUtil.isNullOrZero(pesquisaContasReceberVO.getValorParcelaFinal())) {
 
 			booleanBuilder.and(getValorParcela(pesquisaContasReceberVO.getValorParcelaInicial(), pesquisaContasReceberVO.getValorParcelaFinal()));
+		}
+
+		if (pesquisaContasReceberVO.isDocumentoVencido()) {
+
+			booleanBuilder.and(contasReceber.dataVencimento.before(DateExpression.currentDate()));
 		}
 
 		booleanBuilder.and(contasReceber.baixado.eq(pesquisaContasReceberVO.isDocumentoBaixado()));

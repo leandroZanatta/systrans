@@ -146,7 +146,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 				posicionarBotao(contadorUtil, documentoEscaneados, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btSalvar, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btEditar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btEditar, Boolean.FALSE);
 				posicionarBotao(contadorUtil, btNovo, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btBuscar, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btCancelar, Boolean.TRUE);
@@ -163,6 +163,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 			@Override
 			public void carregarObjeto(FaturamentoEntrada objeto) {
+
 				txCodigo.setValue(objeto.getIdFaturamentoEntrada());
 				pesquisaHistorico.setValue(objeto.getHistorico());
 				pesquisaCliente.setValue(objeto.getCliente());
@@ -198,6 +199,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 				objetoPesquisa.setCentroCusto(pesquisaCentroCusto.getObjetoPesquisado());
 
 				objetoPesquisa.setFaturamentoEntradaPagamentos(pagamentoTableModel.getRows());
+
 				return true;
 			}
 

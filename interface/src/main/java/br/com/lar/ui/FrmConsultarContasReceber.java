@@ -67,6 +67,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 	private JLabel lbTotalPago;
 	private JLabel lbValorLiquido;
 	private JTextFieldMaiusculo txDocumento;
+	private JCheckBox chVencido;
 
 	public FrmConsultarContasReceber(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -254,6 +255,10 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		txDocumento.setBounds(77, 32, 168, 20);
 		container.add(txDocumento);
 		txDocumento.setColumns(10);
+
+		chVencido = new JCheckBox("Vencido");
+		chVencido.setBounds(603, 68, 97, 23);
+		container.add(chVencido);
 		ListSelectionModel rowSelMod = table.getSelectionModel();
 
 		rowSelMod.addListSelectionListener(e -> {
@@ -271,6 +276,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		};
 
 		chBaixado.addActionListener(e -> filtrarContasReceber());
+		chVencido.addActionListener(e -> filtrarContasReceber());
 		txCodigo.addFocusListener(focusAdapter);
 		dtVencimentoInicial.addPropertyChangeListener(e -> filtrarContasReceber());
 		dtVencimentoFinal.addPropertyChangeListener(e -> filtrarContasReceber());
@@ -298,6 +304,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		pesquisaContasReceberVO.setValorParcelaInicial(txValorInicial.getValue());
 		pesquisaContasReceberVO.setValorParcelaFinal(txValorFinal.getValue());
 		pesquisaContasReceberVO.setCodigoDocumento(txDocumento.getText());
+		pesquisaContasReceberVO.setDocumentoVencido(chVencido.isSelected());
 
 		List<ContasReceber> contasRecebers = contasReceberService.filtrarContasReceber(pesquisaContasReceberVO);
 

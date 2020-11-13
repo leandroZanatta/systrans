@@ -39,6 +39,9 @@ public class DiarioCabecalho implements Serializable {
 	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
 	private Long codigoCaixaCabecalho;
 
+	@Column(name = "cd_historico", insertable = false, updatable = false)
+	private Long codigoHistorico;
+
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataMovimento;
