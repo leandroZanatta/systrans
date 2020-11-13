@@ -101,6 +101,5 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		} finally {
 			entityManager.getTransaction().commit();
 		}
-
 	}
 }

@@ -4,6 +4,7 @@ import static br.com.lar.repository.model.QDiarioCabecalho.diarioCabecalho;
 import static br.com.lar.repository.model.QDiarioDetalhe.diarioDetalhe;
 import static br.com.lar.repository.model.QPlanoContas.planoContas;
 
+import java.util.Date;
 import java.util.List;
 
 import com.mysema.query.types.Projections;
@@ -29,6 +30,11 @@ public class DiarioCabecalhoDAO extends PesquisableDAOImpl<DiarioCabecalho> {
 						.and(planoContas.saldo.in(TipoSaldoEnum.CREDOR.getCodigo(), TipoSaldoEnum.DEVEDOR.getCodigo())))
 				.groupBy(planoContas.saldo).list(Projections.fields(ResumoCaixaMovimentoProjection.class, planoContas.saldo.as("tipoSaldo"),
 						diarioDetalhe.valorDetalhe.sum().as("valorSaldo")));
+	}
+
+	public List<DiarioCabecalho> buscarDiarioPeriodo(Date dataInicial, Date dataFinal) {
+
+		return from().where(diarioCabecalho.dataMovimento.between(dataInicial, dataFinal)).list(diarioCabecalho);
 	}
 
 }

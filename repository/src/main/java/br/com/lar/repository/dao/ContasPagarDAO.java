@@ -9,6 +9,7 @@ import java.util.List;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.DateExpression;
 
 import br.com.lar.repository.model.ContasPagar;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
@@ -44,39 +45,44 @@ public class ContasPagarDAO extends PesquisableDAOImpl<ContasPagar> {
 		return query.list(contasPagar);
 	}
 
-	private BooleanBuilder montarClausulasFiltroContasReceber(PesquisaContasVO pesquisaContasReceberVO) {
+	private BooleanBuilder montarClausulasFiltroContasReceber(PesquisaContasVO pesquisaVO) {
 
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-		if (!StringUtil.isNullOrEmpty(pesquisaContasReceberVO.getCodigoDocumento())) {
-			booleanBuilder.and(contasPagar.documento.eq(pesquisaContasReceberVO.getCodigoDocumento()));
+		if (!StringUtil.isNullOrEmpty(pesquisaVO.getCodigoDocumento())) {
+			booleanBuilder.and(contasPagar.documento.eq(pesquisaVO.getCodigoDocumento()));
 		}
 
-		if (!LongUtil.isNullOrZero(pesquisaContasReceberVO.getCodigoConta())) {
-			booleanBuilder.and(contasPagar.idContasPagar.eq(pesquisaContasReceberVO.getCodigoConta()));
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoConta())) {
+			booleanBuilder.and(contasPagar.idContasPagar.eq(pesquisaVO.getCodigoConta()));
 		}
 
-		if (!LongUtil.isNullOrZero(pesquisaContasReceberVO.getCodigoCliente())) {
-			booleanBuilder.and(contasPagar.codigoCliente.eq(pesquisaContasReceberVO.getCodigoCliente()));
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoCliente())) {
+			booleanBuilder.and(contasPagar.codigoCliente.eq(pesquisaVO.getCodigoCliente()));
 		}
 
-		if (!LongUtil.isNullOrZero(pesquisaContasReceberVO.getCodigoFormaPagamento())) {
-			booleanBuilder.and(contasPagar.codigoFormaPagamento.eq(pesquisaContasReceberVO.getCodigoFormaPagamento()));
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoFormaPagamento())) {
+			booleanBuilder.and(contasPagar.codigoFormaPagamento.eq(pesquisaVO.getCodigoFormaPagamento()));
 		}
 
-		if (pesquisaContasReceberVO.getDataVencimentoInicial() != null || pesquisaContasReceberVO.getDataVencimentoFinal() != null) {
+		if (pesquisaVO.getDataVencimentoInicial() != null || pesquisaVO.getDataVencimentoFinal() != null) {
 
 			booleanBuilder
-					.and(getDataVencimento(pesquisaContasReceberVO.getDataVencimentoInicial(), pesquisaContasReceberVO.getDataVencimentoFinal()));
+					.and(getDataVencimento(pesquisaVO.getDataVencimentoInicial(), pesquisaVO.getDataVencimentoFinal()));
 		}
 
-		if (!BigDecimalUtil.isNullOrZero(pesquisaContasReceberVO.getValorParcelaInicial())
-				|| !BigDecimalUtil.isNullOrZero(pesquisaContasReceberVO.getValorParcelaFinal())) {
+		if (!BigDecimalUtil.isNullOrZero(pesquisaVO.getValorParcelaInicial())
+				|| !BigDecimalUtil.isNullOrZero(pesquisaVO.getValorParcelaFinal())) {
 
-			booleanBuilder.and(getValorParcela(pesquisaContasReceberVO.getValorParcelaInicial(), pesquisaContasReceberVO.getValorParcelaFinal()));
+			booleanBuilder.and(getValorParcela(pesquisaVO.getValorParcelaInicial(), pesquisaVO.getValorParcelaFinal()));
 		}
 
-		booleanBuilder.and(contasPagar.baixado.eq(pesquisaContasReceberVO.isDocumentoBaixado()));
+		if (pesquisaVO.isDocumentoVencido()) {
+
+			booleanBuilder.and(contasPagar.dataVencimento.before(DateExpression.currentDate()));
+		}
+
+		booleanBuilder.and(contasPagar.baixado.eq(pesquisaVO.isDocumentoBaixado()));
 
 		return booleanBuilder;
 	}

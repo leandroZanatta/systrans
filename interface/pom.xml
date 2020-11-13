@@ -65,6 +65,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>ar.com.fdvs</groupId>
+			<artifactId>DynamicJasper</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.asprise.imaging</groupId>
 			<artifactId>java-scanner-access-twain</artifactId>
 			<version>[12,)</version>

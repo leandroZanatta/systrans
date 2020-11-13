@@ -83,6 +83,11 @@ public class DiarioService {
 		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, valorPagamentos);
 	}
 
+	public List<DiarioCabecalho> buscarDiarioPeriodo(Date dataInicial, Date dataFinal) {
+
+		return diarioCabecalhoDAO.buscarDiarioPeriodo(dataInicial, dataFinal);
+	}
+
 	public List<ResumoCaixaMovimentoProjection> buscarResumoCaixa(Long codigoCaixaCabecalho) {
 
 		return diarioCabecalhoDAO.buscarResumoCaixa(codigoCaixaCabecalho);

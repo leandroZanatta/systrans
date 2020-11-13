@@ -43,6 +43,7 @@ import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
+import br.com.sysdesc.util.classes.ContadorUtil;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
@@ -113,6 +114,25 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		panelActions = new PanelActions<Faturamento>(this, faturamentoService, PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void posicionarBotoes() {
+
+				ContadorUtil contadorUtil = new ContadorUtil();
+
+				posicionarBotao(contadorUtil, btPrimeiro, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btRetroceder, Boolean.TRUE);
+
+				posicionarBotao(contadorUtil, btSalvar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btEditar, Boolean.FALSE);
+				posicionarBotao(contadorUtil, btNovo, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btBuscar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btCancelar, Boolean.TRUE);
+
+				posicionarBotao(contadorUtil, btAvancar, Boolean.TRUE);
+				posicionarBotao(contadorUtil, btUltimo, Boolean.TRUE);
+
+			}
 
 			@Override
 			public void carregarObjeto(Faturamento objeto) {
