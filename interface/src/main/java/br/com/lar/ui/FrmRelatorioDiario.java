@@ -1,5 +1,6 @@
 package br.com.lar.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -8,7 +9,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.ibm.icu.text.SimpleDateFormat;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.reports.DiarioReportBuilder;
