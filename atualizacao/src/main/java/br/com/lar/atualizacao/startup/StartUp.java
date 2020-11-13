@@ -23,6 +23,8 @@ import net.miginfocom.swing.MigLayout;
 @Slf4j
 public class StartUp extends JDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	private final VersaoBancoDados versaoBancoDados = new VersaoBancoDados();
 
 	private final VersaoInternet versaoInternet = new VersaoInternet();
