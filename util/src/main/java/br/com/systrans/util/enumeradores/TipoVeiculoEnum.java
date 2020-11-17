@@ -8,7 +8,9 @@ import lombok.Getter;
 @Getter
 public enum TipoVeiculoEnum {
 
-	CAMINHAO(1L, "Caminhão");
+	CAMINHAO(1L, "Caminhão"),
+
+	CARRO(2L, "Carro");
 
 	private final Long codigoVeiculo;
 
