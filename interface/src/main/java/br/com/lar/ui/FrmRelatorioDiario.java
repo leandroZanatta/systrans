@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.reports.DiarioReportBuilder;
-import br.com.lar.repository.model.DiarioCabecalho;
+import br.com.lar.repository.projection.DiarioReportProjection;
 import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import net.miginfocom.swing.MigLayout;
@@ -68,12 +68,12 @@ public class FrmRelatorioDiario extends AbstractInternalFrame {
 	private void gerarRelatorio() {
 
 		try {
-			List<DiarioCabecalho> diarioCabecalhos = diarioService.buscarDiarioPeriodo(txDataInicial.getDate(), txDataFinal.getDate());
+			List<DiarioReportProjection> diarioReports = diarioService.buscarDiarioPeriodo(txDataInicial.getDate(), txDataFinal.getDate());
 
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(txDataInicial.getDateFormatString());
 
 			new DiarioReportBuilder().build(String.format("HISTÓRICO PERÍODO %s - %s", simpleDateFormat.format(txDataInicial.getDate()),
-					simpleDateFormat.format(txDataFinal.getDate()))).setData(diarioCabecalhos).view();
+					simpleDateFormat.format(txDataFinal.getDate()))).setData(diarioReports).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório diário");
