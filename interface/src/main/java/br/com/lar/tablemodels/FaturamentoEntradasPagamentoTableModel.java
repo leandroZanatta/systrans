@@ -1,9 +1,9 @@
 package br.com.lar.tablemodels;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -11,13 +11,14 @@ import com.google.common.collect.Lists;
 import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.exception.SysDescException;
 
 public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFrameTable {
 
+	private boolean editable = Boolean.FALSE;
 	private static final long serialVersionUID = 1L;
 	private List<FaturamentoEntradaPagamento> rows = new ArrayList<>();
 	private List<String> colunas = new ArrayList<>();
-	private NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
 	public FaturamentoEntradasPagamentoTableModel() {
 		this(new ArrayList<>());
@@ -31,10 +32,6 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 		colunas.add("Vencimento");
 		colunas.add("Parcela");
 		colunas.add("Valor");
-
-		numberFormat.setMaximumFractionDigits(2);
-		numberFormat.setMinimumFractionDigits(2);
-		numberFormat.setGroupingUsed(true);
 
 	}
 
@@ -52,17 +49,38 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 			return DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, faturamentoPagamento.getDataLancamento());
 
 		case 2:
-			return DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, faturamentoPagamento.getDataVencimento());
+			return faturamentoPagamento.getDataVencimento();
 
 		case 3:
 			return faturamentoPagamento.getNumeroParcela();
 
 		case 4:
-			return numberFormat.format(faturamentoPagamento.getValorParcela());
+			return faturamentoPagamento.getValorParcela();
 
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+		FaturamentoEntradaPagamento faturamentoPagamento = rows.get(rowIndex);
+
+		switch (columnIndex) {
+
+		case 2:
+			faturamentoPagamento.setDataVencimento((Date) aValue);
+			break;
+
+		case 4:
+			faturamentoPagamento.setValorParcela((BigDecimal) aValue);
+			break;
+
+		default:
+			throw new SysDescException("Campo não pode ser editado");
+		}
+		super.setValueAt(aValue, rowIndex, columnIndex);
 	}
 
 	@Override
@@ -83,13 +101,13 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 
-		return String.class;
+		return columnIndex == 2 ? Date.class : columnIndex == 4 ? BigDecimal.class : String.class;
 	}
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
 
-		return Boolean.FALSE;
+		return editable && (column == 2 || column == 4);
 	}
 
 	public FaturamentoEntradaPagamento getRow(int selectedRow) {
@@ -135,7 +153,7 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 
 	@Override
 	public void setEnabled(Boolean enabled) {
-
+		this.editable = enabled;
 	}
 
 	public BigDecimal getTotalPagamentos() {

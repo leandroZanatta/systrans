@@ -1,5 +1,7 @@
 package br.com.lar.service.faturamento;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +11,7 @@ import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.FaturamentoEntrada;
+import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.lar.service.caixa.FaturamentoCaixa;
 import br.com.lar.service.contasreceber.FaturamentoContasReceber;
@@ -66,6 +69,21 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 		if (objetoPersistir.getDataMovimento() == null) {
 			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
+		}
+
+		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoEntradaPagamentos().stream().map(FaturamentoEntradaPagamento::getValorParcela)
+				.reduce(BigDecimal.ZERO,
+						BigDecimal::add);
+
+		BigDecimal valorNota = objetoPersistir.getValorBruto().add(objetoPersistir.getValorAcrescimo()).subtract(objetoPersistir.getValorDesconto());
+
+		if (valorPagamentos.compareTo(valorNota) != 0) {
+
+			DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO, decimalFormat.format(valorNota.doubleValue()),
+					decimalFormat.format(valorPagamentos.doubleValue()),
+					decimalFormat.format(valorNota.subtract(valorPagamentos).doubleValue()));
 		}
 
 	}
