@@ -36,7 +36,7 @@ import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.util.classes.SomaUtil;
-import br.com.sysdesc.util.vo.PesquisaContasVO;
+import br.com.systrans.util.vo.PesquisaContasVO;
 import net.miginfocom.swing.MigLayout;
 
 public class FrmConsultarContasPagar extends AbstractInternalFrame {

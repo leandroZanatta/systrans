@@ -42,10 +42,12 @@ import br.com.lar.tablemodels.FaturamentoEntradasPagamentoTableModel;
 import br.com.lar.ui.buttonactions.ButtonActionImagem;
 import br.com.lar.ui.dialogs.FrmDocumentosContasReceber;
 import br.com.sysdesc.components.AbstractInternalFrame;
+import br.com.sysdesc.components.JDateFieldColumn;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
+import br.com.sysdesc.components.JmoneyFieldColumn;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
@@ -206,7 +208,10 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		};
 
 		panelActions.addSaveListener(faturamento -> txCodigo.setValue(faturamento.getIdFaturamentoEntrada()));
-		panelActions.addNewListener(faturamento -> dtMovimento.setDate(new Date()));
+		panelActions.addNewListener(faturamento -> {
+			dtMovimento.setDate(new Date());
+			tabbedPane.setSelectedIndex(0);
+		});
 		painelContent.add(panelActions, "cell 0 5,growx");
 
 	}
@@ -314,6 +319,9 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		JButton btnGerar = new JButton("Gerar");
 		table = new JTable(pagamentoTableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
+
+		new JmoneyFieldColumn(table, 4);
+		new JDateFieldColumn(table, 2);
 
 		txValorPagamento.setEnabled(false);
 		txValorTotal.setEnabled(false);

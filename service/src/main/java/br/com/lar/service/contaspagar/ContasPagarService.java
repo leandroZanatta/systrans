@@ -15,8 +15,8 @@ import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.StringUtil;
 import br.com.sysdesc.util.exception.SysDescException;
-import br.com.sysdesc.util.vo.PesquisaContasVO;
 import br.com.systrans.util.constants.MensagemConstants;
+import br.com.systrans.util.vo.PesquisaContasVO;
 
 public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPagar> {
 

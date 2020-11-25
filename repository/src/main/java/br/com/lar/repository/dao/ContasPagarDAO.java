@@ -17,7 +17,7 @@ import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.LongUtil;
 import br.com.sysdesc.util.classes.StringUtil;
 import br.com.sysdesc.util.exception.SysDescException;
-import br.com.sysdesc.util.vo.PesquisaContasVO;
+import br.com.systrans.util.vo.PesquisaContasVO;
 
 public class ContasPagarDAO extends PesquisableDAOImpl<ContasPagar> {
 
