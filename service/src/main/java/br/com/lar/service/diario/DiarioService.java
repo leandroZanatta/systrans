@@ -22,6 +22,7 @@ import br.com.lar.repository.model.FaturamentoEntradaPagamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
+import br.com.lar.repository.projection.DiarioReportProjection;
 import br.com.lar.repository.projection.ResumoCaixaMovimentoProjection;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
@@ -83,7 +84,7 @@ public class DiarioService {
 		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, valorPagamentos);
 	}
 
-	public List<DiarioCabecalho> buscarDiarioPeriodo(Date dataInicial, Date dataFinal) {
+	public List<DiarioReportProjection> buscarDiarioPeriodo(Date dataInicial, Date dataFinal) {
 
 		return diarioCabecalhoDAO.buscarDiarioPeriodo(dataInicial, dataFinal);
 	}
