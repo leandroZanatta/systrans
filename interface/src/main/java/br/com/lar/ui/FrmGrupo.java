@@ -53,6 +53,7 @@ public class FrmGrupo extends AbstractInternalFrame {
 
 	private GrupoService grupoService = new GrupoService();
 	private PanelActions<Grupo> panelActions;
+	private JCheckBox chkTelefoneFixo;
 
 	public FrmGrupo(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -86,9 +87,9 @@ public class FrmGrupo extends AbstractInternalFrame {
 		painelContent.add(lblDescricao, "cell 0 2");
 		painelContent.add(txDescricao, "cell 0 3,growx");
 		painelContent.add(panelPermissoes, "cell 0 4,grow");
-		chckbxRg = new JCheckBox("Rg");
+		chckbxRg = new JCheckBox("Rg/IE");
 		panelPermissoes.add(chckbxRg, "cell 0 0");
-		chckbxDataNascimento = new JCheckBox("Data Nascimento");
+		chckbxDataNascimento = new JCheckBox("Nascimento/Fundação");
 		panelPermissoes.add(chckbxDataNascimento, "cell 1 0");
 		chckbxEndereo = new JCheckBox("Endereço");
 		panelPermissoes.add(chckbxEndereo, "cell 2 0");
@@ -118,8 +119,11 @@ public class FrmGrupo extends AbstractInternalFrame {
 		panelPermissoes.add(chckbxBairro, "cell 2 2");
 		chckbxCelular = new JCheckBox("Celular");
 		panelPermissoes.add(chckbxCelular, "cell 3 2");
+
+		chkTelefoneFixo = new JCheckBox("Telefone Fixo");
+		panelPermissoes.add(chkTelefoneFixo, "cell 4 2");
 		chckbxReligio = new JCheckBox("Religião");
-		panelPermissoes.add(chckbxReligio, "cell 4 2");
+		panelPermissoes.add(chckbxReligio, "cell 5 2");
 		getContentPane().add(painelContent);
 
 		panelActions = new PanelActions<Grupo>(this, grupoService, PesquisaEnum.PES_GRUPO.getCodigoPesquisa()) {
@@ -160,6 +164,7 @@ public class FrmGrupo extends AbstractInternalFrame {
 				campoClientes.setBairro(chckbxBairro.isSelected());
 				campoClientes.setCep(chckbxCep.isSelected());
 				campoClientes.setCelular(chckbxCelular.isSelected());
+				campoClientes.setTelefone(chkTelefoneFixo.isSelected());
 				campoClientes.setEmail(chckbxEmail.isSelected());
 				campoClientes.setEstadoCivil(chckbxEstadoCivil.isSelected());
 				campoClientes.setEscolaridade(chckbxEscolaridade.isSelected());
@@ -196,6 +201,7 @@ public class FrmGrupo extends AbstractInternalFrame {
 		chckbxBairro.setSelected(campoClientes.isBairro());
 		chckbxCep.setSelected(campoClientes.isCep());
 		chckbxCelular.setSelected(campoClientes.isCelular());
+		chkTelefoneFixo.setSelected(campoClientes.isTelefone());
 		chckbxEmail.setSelected(campoClientes.isEmail());
 		chckbxEstadoCivil.setSelected(campoClientes.isEstadoCivil());
 		chckbxEscolaridade.setSelected(campoClientes.isEscolaridade());

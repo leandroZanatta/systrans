@@ -72,6 +72,9 @@ public class Cliente implements Serializable {
 	@Column(name = "tx_telefone")
 	private String telefone;
 
+	@Column(name = "tx_telefonefixo")
+	private String telefoneFixo;
+
 	@Column(name = "tx_email")
 	private String email;
 

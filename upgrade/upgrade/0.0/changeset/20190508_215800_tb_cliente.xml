@@ -80,6 +80,19 @@
 		<createSequence sequenceName="gen_cliente" startValue="2" />
 	</changeSet>
 
+	<changeSet id="20201128_102000" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_cliente" columnName="tx_telefonefixo" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_cliente">
+			<column name="tx_telefonefixo" type="${varchar.20}" remarks="TELEFONE FIXO" />
+		</addColumn>
+	</changeSet>
+
 
 
 </databaseChangeLog>

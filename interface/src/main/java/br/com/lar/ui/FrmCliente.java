@@ -91,6 +91,7 @@ public class FrmCliente extends AbstractInternalFrame {
 	private JFormattedTextField txCelular;
 	private JFormattedTextField txCep;
 	private JFormattedTextField txCgc;
+	private JFormattedTextField txTelefoneFixo;
 
 	private CampoPesquisa<Grupo> pesquisaGrupo;
 	private CampoPesquisa<Cidade> pesquisaNaturalidade;
@@ -118,14 +119,17 @@ public class FrmCliente extends AbstractInternalFrame {
 		setTitle(translate(FRMCLIENTE_TITLE));
 		setSize(623, 545);
 		setClosable(Boolean.TRUE);
-		getContentPane().setLayout(new MigLayout("", "[80.00][141.00][][][99.00][76.00][]", "[][][][][][][][][][][][][][][][][][][][][grow]"));
+		getContentPane().setLayout(new MigLayout("", "[80.00][96.00][grow][][99.00][76.00][]", "[][][][][][][][][][][][][][][][][][][][][grow]"));
 
 		MaskFormatter mascaraCep = new MaskFormatter("#####-###");
 		MaskFormatter mascaraCelular = new MaskFormatter("(##) #####-####");
+		MaskFormatter mascaraFixo = new MaskFormatter("(##) ####-####");
+
 		mascaraCNPJ = new MaskFormatter("##.###.###/####-##");
 		mascaraCPF = new MaskFormatter("###.###.###-##");
 
 		mascaraCelular.setPlaceholderCharacter('_');
+		mascaraFixo.setPlaceholderCharacter('_');
 		mascaraCNPJ.setPlaceholderCharacter('_');
 		mascaraCep.setPlaceholderCharacter('_');
 		mascaraCPF.setPlaceholderCharacter('_');
@@ -140,7 +144,6 @@ public class FrmCliente extends AbstractInternalFrame {
 		JLabel lbEndereco = new JLabel("Endereço:");
 		JLabel lbNumero = new JLabel("Número:");
 		JLabel lbCelular = new JLabel("Celular:");
-		JLabel lbEmail = new JLabel("Email:");
 		JLabel lbSituacao = new JLabel("Situação:");
 		JLabel lbGrupo = new JLabel("Grupo:");
 		JLabel lbNomePai = new JLabel("Nome do Pai:");
@@ -153,10 +156,10 @@ public class FrmCliente extends AbstractInternalFrame {
 		JLabel lbEstadoCivil = new JLabel("Estado Civil:");
 		JLabel lbEscolaridade = new JLabel("Escolaridade:");
 		JLabel lbSexo = new JLabel("Sexo:");
+		JLabel lbEmail = new JLabel("Email:");
+		JLabel lblTelefoneFixo = new JLabel("Telefone Fixo:");
 
 		txCodigo = new JTextFieldId();
-
-		txEmail = new JTextField();
 
 		txNomePai = new JTextFieldMaiusculo();
 		txNomeMae = new JTextFieldMaiusculo();
@@ -165,9 +168,11 @@ public class FrmCliente extends AbstractInternalFrame {
 		txEndereco = new JTextFieldMaiusculo();
 		txIncricaoEstadual = new JTextFieldMaiusculo(30);
 		txNumero = new JTextFieldMaiusculo(5);
+		txEmail = new JTextField();
 
 		txCep = new JFormattedTextField();
 		txCelular = new JFormattedTextField();
+		txTelefoneFixo = new JFormattedTextField();
 		txCgc = new JFormattedTextField();
 
 		cbEstadoCivil = new JComboBox<>();
@@ -218,6 +223,7 @@ public class FrmCliente extends AbstractInternalFrame {
 
 		mascaraCep.install(txCep);
 		mascaraCelular.install(txCelular);
+		mascaraFixo.install(txTelefoneFixo);
 
 		estadoService.listarEstados().forEach(cbEstado::addItem);
 		Arrays.asList(TipoStatusEnum.values()).forEach(cbSituacao::addItem);
@@ -309,9 +315,11 @@ public class FrmCliente extends AbstractInternalFrame {
 		getContentPane().add(txBairro, "cell 4 13 2 1,growx");
 		getContentPane().add(txCep, "cell 6 13,growx");
 		getContentPane().add(lbCelular, "cell 0 14 2 1");
-		getContentPane().add(lbEmail, "cell 2 14 5 1");
+		getContentPane().add(lblTelefoneFixo, "cell 2 14 2 1");
+		getContentPane().add(lbEmail, "cell 4 14 3 1");
 		getContentPane().add(txCelular, "cell 0 15 2 1,growx");
-		getContentPane().add(txEmail, "cell 2 15 5 1,growx");
+		getContentPane().add(txTelefoneFixo, "cell 2 15 2 1,growx");
+		getContentPane().add(txEmail, "cell 4 15 3 1,growx");
 		getContentPane().add(lbEstadoCivil, "cell 0 16 2 1");
 		getContentPane().add(lbEscolaridade, "cell 2 16 4 1");
 		getContentPane().add(lbSexo, "cell 6 16");
@@ -354,6 +362,7 @@ public class FrmCliente extends AbstractInternalFrame {
 				txBairro.setText(objeto.getBairro());
 				txCep.setText(objeto.getCep());
 				txCelular.setText(objeto.getTelefone());
+				txTelefoneFixo.setText(objeto.getTelefoneFixo());
 				txEmail.setText(objeto.getEmail());
 				txNomePai.setText(objeto.getNomePai());
 				txNomeMae.setText(objeto.getNomeMae());
@@ -382,6 +391,7 @@ public class FrmCliente extends AbstractInternalFrame {
 				objetoPesquisa.setEmail(IfNull.getStringEmpty(txEmail.getText()));
 				objetoPesquisa.setCep(IfNull.getStringChar(txCep.getText(), "_"));
 				objetoPesquisa.setTelefone(IfNull.getStringChar(txCelular.getText(), "_"));
+				objetoPesquisa.setTelefoneFixo(IfNull.getStringChar(txTelefoneFixo.getText(), "_"));
 				objetoPesquisa.setNaturalidade(pesquisaNaturalidade.getObjetoPesquisado());
 				objetoPesquisa.setCidade(null);
 				objetoPesquisa.setEstadocivil(null);
@@ -455,6 +465,7 @@ public class FrmCliente extends AbstractInternalFrame {
 		formatarCampoObrigatorio(txBairro, campoCliente.isBairro());
 		formatarCampoObrigatorio(txCep, campoCliente.isCep());
 		formatarCampoObrigatorio(txCelular, campoCliente.isCelular());
+		formatarCampoObrigatorio(txTelefoneFixo, campoCliente.isTelefone());
 		formatarCampoObrigatorio(txEmail, campoCliente.isEmail());
 		formatarCampoObrigatorio(cbEstadoCivil, campoCliente.isEstadoCivil());
 		formatarCampoObrigatorio(cbEscolaridade, campoCliente.isEscolaridade());
