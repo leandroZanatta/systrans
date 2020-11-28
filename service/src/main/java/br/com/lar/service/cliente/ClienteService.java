@@ -115,6 +115,10 @@ public class ClienteService extends AbstractPesquisableServiceImpl<Cliente> {
 			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_CELULAR);
 		}
 
+		if (campoClientes.isTelefone() && objetoPersistir.getTelefoneFixo() == null) {
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_TELEFONE_FIXO);
+		}
+
 		if (campoClientes.isEmail() && StringUtil.isNullOrEmpty(objetoPersistir.getEmail())) {
 			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_EMAIL);
 		}
