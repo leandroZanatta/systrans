@@ -1,6 +1,7 @@
 package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QOperacao.operacao;
+import static br.com.lar.repository.model.QPlanoContas.planoContas;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.mysema.query.BooleanBuilder;
 import br.com.lar.repository.model.Operacao;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.LongUtil;
+import br.com.sysdesc.util.enumeradores.TipoSaldoEnum;
 
 public class OperacaoDAO extends PesquisableDAOImpl<Operacao> {
 
@@ -35,6 +37,16 @@ public class OperacaoDAO extends PesquisableDAOImpl<Operacao> {
 	public List<Operacao> buscarOperacao(Long codigoHistorico, List<Long> codigoPagamentos) {
 
 		return from().where(operacao.codigoHistorico.eq(codigoHistorico).and(operacao.codigoFormaPagamento.in(codigoPagamentos))).list(operacao);
+	}
+
+	public BooleanBuilder buscarOperacaoContasPagar(Long codigoConta) {
+
+		return new BooleanBuilder(
+				subQuery().from(planoContas)
+						.where(operacao.codigoContaDevedora.eq(planoContas.idPlanoContas)
+								.and(planoContas.contaAnalitica.eq(true)).and(planoContas.idPlanoContas.eq(codigoConta))
+								.and(planoContas.saldo.eq(TipoSaldoEnum.ATIVO.getCodigo())))
+						.exists());
 	}
 
 }

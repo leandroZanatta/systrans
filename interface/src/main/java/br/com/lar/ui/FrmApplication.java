@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -163,7 +164,7 @@ public class FrmApplication extends JFrame {
 
 	}
 
-	public void posicionarFrame(AbstractInternalFrame internalFrame, String icon) {
+	public void posicionarFrame(JInternalFrame internalFrame, String icon) {
 
 		if (!StringUtil.isNullOrEmpty(icon)) {
 

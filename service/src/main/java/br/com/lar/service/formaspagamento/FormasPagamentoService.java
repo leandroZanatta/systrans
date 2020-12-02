@@ -57,6 +57,11 @@ public class FormasPagamentoService extends AbstractPesquisableServiceImpl<Forma
 		return formasPagamentoDAO.buscarPagamentosComHistorico(codigoHistorico);
 	}
 
+	public BooleanBuilder buscarPagamentosAVistaComHistorico(Long codigoHistorico) {
+
+		return formasPagamentoDAO.buscarPagamentosAVistaComHistorico(codigoHistorico);
+	}
+
 	public BooleanBuilder pesquisarApenasAPrazo() {
 
 		return formasPagamentoDAO.pesquisarApenasAPrazo();

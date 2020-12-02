@@ -27,10 +27,11 @@ import br.com.lar.ui.FrmMotorista;
 import br.com.lar.ui.FrmPerfil;
 import br.com.lar.ui.FrmPermissoes;
 import br.com.lar.ui.FrmPlanoContas;
-import br.com.lar.ui.FrmRelatorioDiario;
 import br.com.lar.ui.FrmResumoCaixa;
 import br.com.lar.ui.FrmUsuario;
 import br.com.lar.ui.FrmVeiculo;
+import br.com.lar.ui.relatorios.FrmRelatorioContasPagar;
+import br.com.lar.ui.relatorios.FrmRelatorioDiario;
 import br.com.sysdesc.components.AbstractInternalFrame;
 
 public enum ProgramasEnum {
@@ -89,7 +90,15 @@ public enum ProgramasEnum {
 
 	CADASTRO_CENTRO_CUSTOS(39L, FrmCentroCusto.class),
 
-	RELATORIO_DIARIO(45L, FrmRelatorioDiario.class);
+	RELATORIO_DIARIO(45L, FrmRelatorioDiario.class),
+
+	RELATORIO_DESPEZAS(47L, FrmRelatorioDiario.class),
+
+	RELATORIO_RECEITAS(51L, FrmRelatorioDiario.class),
+
+	RELATORIO_CONTAS_PAGAR(49L, FrmRelatorioContasPagar.class),
+
+	RELATORIO_CONTAS_RECEBER(50L, FrmRelatorioDiario.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

@@ -68,4 +68,12 @@ public class Faturamento implements Serializable {
 	@OneToMany(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FaturamentoPagamento> faturamentoPagamentos;
 
+	@OneToMany(mappedBy = "faturamento")
+	private List<VinculoSaida> vinculoSaidas;
+
+	@OneToMany(mappedBy = "faturamento")
+	private List<VinculoSaidaCaixa> vinculoSaidaCaixas;
+
+	@OneToMany(mappedBy = "faturamento")
+	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers;
 }

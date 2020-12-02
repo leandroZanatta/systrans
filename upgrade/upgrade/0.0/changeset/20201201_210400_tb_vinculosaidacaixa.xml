@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201201_210400" author="Leandro Zanatta" logicalFilePath="20201201_210400_tb_vinculosaidacaixa.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_vinculosaidacaixa" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_vinculosaidacaixa">
+
+			<column name="id_vinculosaidacaixa" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="vinculosaidacaixa_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamento" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="vinculosaidacaixa_faturamento_fk" references="tb_faturamento(id_faturamento)" />
+			</column>
+
+			<column name="cd_caixadetalhe" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA DETALHE">
+				<constraints primaryKey="true" nullable="false" foreignKeyName="vinculosaidacaixa_caixadetalhe_fk"
+					references="tb_caixadetalhe(id_caixadetalhe)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_vinculosaidacaixa" />
+	</changeSet>
+</databaseChangeLog>

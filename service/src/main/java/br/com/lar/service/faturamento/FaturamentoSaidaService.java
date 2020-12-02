@@ -12,6 +12,9 @@ import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.Faturamento;
 import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.VinculoSaida;
+import br.com.lar.repository.model.VinculoSaidaCaixa;
+import br.com.lar.repository.model.VinculoSaidaContasReceber;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.lar.service.caixa.FaturamentoCaixa;
 import br.com.lar.service.contasreceber.FaturamentoContasReceber;
@@ -109,6 +112,29 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 			}
 
 			caixaDetalhes.forEach(entityManager::persist);
+
+			VinculoSaida vinculoSaida = new VinculoSaida();
+			vinculoSaida.setDiarioCabecalho(diarioCabecalho);
+			vinculoSaida.setFaturamento(objetoPersistir);
+			entityManager.persist(vinculoSaida);
+
+			caixaDetalhes.stream().map(detalhe -> {
+				VinculoSaidaCaixa vinculoSaidaCaixa = new VinculoSaidaCaixa();
+				vinculoSaidaCaixa.setCaixaDetalhe(detalhe);
+				vinculoSaidaCaixa.setFaturamento(objetoPersistir);
+
+				return vinculoSaidaCaixa;
+			}).forEach(entityManager::persist);
+
+			if (!ListUtil.isNullOrEmpty(contasReceber)) {
+
+				contasReceber.stream().map(detalhe -> {
+					VinculoSaidaContasReceber vinculoSaidaContasReceber = new VinculoSaidaContasReceber();
+					vinculoSaidaContasReceber.setContasReceber(detalhe);
+					vinculoSaidaContasReceber.setFaturamento(objetoPersistir);
+					return vinculoSaidaContasReceber;
+				}).forEach(entityManager::persist);
+			}
 
 		} finally {
 			entityManager.getTransaction().commit();

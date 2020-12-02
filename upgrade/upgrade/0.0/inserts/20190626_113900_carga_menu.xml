@@ -464,4 +464,67 @@
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="20201130_201500" author="Leandro Zanatta">
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="46" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="43" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_FATURAMENTO" />
+			<column name="tx_icone" value="relatorio-faturamento.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="47" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="46" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_DESPESAS" />
+			<column name="tx_icone" value="relatorio-faturamento-despesas.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="48" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="43" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_FINANCEIRO" />
+			<column name="tx_icone" value="relatorio-financeiro.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="49" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="48" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_FINANCEIRO_PAGAR" />
+			<column name="tx_icone" value="relatorio-financeiro-pagar.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="50" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="48" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_FINANCEIRO_RECEBER" />
+			<column name="tx_icone" value="relatorio-financeiro-receber.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+		
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="51" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="46" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_RECEITAS" />
+			<column name="tx_icone" value="relatorio-faturamento-receitas.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

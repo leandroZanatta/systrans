@@ -50,7 +50,7 @@ public class PlanoContasDAO extends PesquisableDAOImpl<PlanoContas> {
 
 	public BooleanBuilder getContasCredoras() {
 		return new BooleanBuilder(
-				planoContas.saldo.eq(TipoSaldoEnum.CREDOR.getCodigo()).and(planoContas.contaAnalitica.eq(true)));
+				planoContas.saldo.in(TipoSaldoEnum.CREDOR.getCodigo(), TipoSaldoEnum.ATIVO.getCodigo()).and(planoContas.contaAnalitica.eq(true)));
 	}
 
 	public BooleanBuilder getContasBalanco() {

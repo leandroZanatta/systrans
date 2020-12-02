@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201202_002600" author="Leandro Zanatta" logicalFilePath="20201202_002600_tb_faturamentoentradasdetalhe.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_faturamentoentradasdetalhe" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_faturamentoentradasdetalhe">
+
+			<column name="id_faturamentoentradasdetalhe" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="faturamentoentradasdetalhe_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentradascabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CABEÇALHO DE FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="faturamentoentradasdetalhe_faturamentoentradascabecalho_fk"
+					references="tb_faturamentoentradascabecalho(id_faturamentoentradascabecalho)" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTORICO">
+				<constraints nullable="false" foreignKeyName="faturamentoentradasdetalhe_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
+				<constraints foreignKeyName="faturamentoentradasdetalhe_veiculo_fk" references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
+				<constraints foreignKeyName="faturamentoentradasdetalhe_motorista_fk" references="tb_motorista(id_motorista)" />
+			</column>
+
+			<column name="nr_documento" type="${varchar.100}" remarks="NÚMERO DO DOCUMENTO" />
+
+			<column name="vl_bruto" type="${numeric.18x2}" remarks="VALOR BRUTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_desconto" type="${numeric.18x2}" remarks="VALOR DESCONTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_acrescimo" type="${numeric.18x2}" remarks="VALOR ACRÉSCIMO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_faturamentoentradasdetalhe" />
+
+	</changeSet>
+</databaseChangeLog>

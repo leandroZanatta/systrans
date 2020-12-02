@@ -80,4 +80,13 @@ public class FaturamentoEntrada implements Serializable {
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	private List<DocumentoEntrada> documentoEntradas = new ArrayList<>();
 
+	@OneToMany(mappedBy = "faturamentoEntrada")
+	private List<VinculoEntrada> vinculoEntradas;
+
+	@OneToMany(mappedBy = "faturamentoEntrada")
+	private List<VinculoEntradaCaixa> vinculoEntradaCaixas;
+
+	@OneToMany(mappedBy = "faturamentoEntrada")
+	private List<VinculoEntradaContasPagar> vinculoEntradaContasPagars;
+
 }

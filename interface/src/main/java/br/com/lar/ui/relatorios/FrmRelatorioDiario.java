@@ -1,4 +1,4 @@
-package br.com.lar.ui;
+package br.com.lar.ui.relatorios;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

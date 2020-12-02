@@ -1,5 +1,7 @@
 package br.com.lar.service.operacao;
 
+import com.mysema.query.BooleanBuilder;
+
 import br.com.lar.repository.dao.OperacaoDAO;
 import br.com.lar.repository.model.Operacao;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
@@ -49,5 +51,10 @@ public class OperacaoService extends AbstractPesquisableServiceImpl<Operacao> {
 		if (objetoPersistir.getContaDevedora() == null) {
 			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_CONTA_DEVEDORA);
 		}
+	}
+
+	public BooleanBuilder buscarOperacaoContasPagar(Long codigoConta) {
+
+		return operacaoDAO.buscarOperacaoContasPagar(codigoConta);
 	}
 }

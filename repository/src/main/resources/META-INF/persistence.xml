@@ -42,6 +42,12 @@
 		<class>br.com.lar.repository.model.HistoricoCusto</class>
 		<class>br.com.lar.repository.model.CentroCusto</class>
 		<class>br.com.lar.repository.model.DocumentoEntrada</class>
+		<class>br.com.lar.repository.model.VinculoEntrada</class>
+		<class>br.com.lar.repository.model.VinculoEntradaCaixa</class>
+		<class>br.com.lar.repository.model.VinculoEntradaContasPagar</class>
+		<class>br.com.lar.repository.model.VinculoSaida</class>
+		<class>br.com.lar.repository.model.VinculoSaidaCaixa</class>
+		<class>br.com.lar.repository.model.VinculoSaidaContasReceber</class>
 	</persistence-unit>
 
 </persistence>

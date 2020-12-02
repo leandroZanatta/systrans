@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201201_204300" author="Leandro Zanatta" logicalFilePath="20201201_204300_tb_vinculosaida.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_vinculosaida" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_vinculosaida">
+
+			<column name="id_vinculosaida" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="vinculosaida_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamento" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="vinculosaida_faturamento_fk" references="tb_faturamento(id_faturamento)" />
+			</column>
+
+			<column name="cd_diariocabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO DIÁRIO">
+				<constraints primaryKey="true" nullable="false" foreignKeyName="vinculosaida_diariocabecalhor_fk"
+					references="tb_diariocabecalho(id_diariocabecalho)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_vinculosaida" />
+	</changeSet>
+</databaseChangeLog>
