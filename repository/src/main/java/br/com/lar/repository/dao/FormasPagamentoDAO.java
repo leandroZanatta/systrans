@@ -24,6 +24,14 @@ public class FormasPagamentoDAO extends PesquisableDAOImpl<FormasPagamento> {
 				.exists());
 	}
 
+	public BooleanBuilder buscarPagamentosAVistaComHistorico(Long codigoHistorico) {
+
+		return new BooleanBuilder(subQuery().from(operacao)
+				.where(formasPagamento.idFormaPagamento.eq(operacao.codigoFormaPagamento).and(formasPagamento.flagPermitePagamentoPrazo.eq(false))
+						.and(operacao.codigoHistorico.eq(codigoHistorico)))
+				.exists());
+	}
+
 	public BooleanBuilder buscarPagamentosComHistoricoAPrazo(Long codigoHistorico) {
 
 		return new BooleanBuilder(subQuery().from(operacao)

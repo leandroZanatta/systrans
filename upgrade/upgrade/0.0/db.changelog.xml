@@ -46,6 +46,20 @@
 	<include file="0.0/changeset/20201107_120300_tb_faturamentoentrada.xml" />
 	<include file="0.0/changeset/20201107_120500_tb_faturamentoentradapagamento.xml" />
 	<include file="0.0/changeset/20201111_193900_tb_documentoentrada.xml" />
+	<include file="0.0/changeset/20201201_192100_tb_vinculoentrada.xml" />
+	<include file="0.0/changeset/20201201_204300_tb_vinculosaida.xml" />
+	<include file="0.0/changeset/20201201_210100_tb_vinculoentradacaixa.xml" />
+	<include file="0.0/changeset/20201201_210400_tb_vinculosaidacaixa.xml" />
+	<include file="0.0/changeset/20201201_210800_tb_vinculoentradacontaspagar.xml" />
+	<include file="0.0/changeset/20201201_211000_tb_vinculosaidacontasreceber.xml" />
+	<include file="0.0/changeset/20201202_000600_tb_faturamentocabecalho.xml" />
+	<include file="0.0/changeset/20201202_000700_tb_faturamentodetalhe.xml" />
+	<include file="0.0/changeset/20201202_001400_tb_faturamentopagamentos.xml" />
+	<include file="0.0/changeset/20201202_001800_tb_faturamentoentradascabecalho.xml" />
+	<include file="0.0/changeset/20201202_001900_tb_faturamentoentradapagamentos.xml" />
+	<include file="0.0/changeset/20201202_002000_tb_documentosentrada.xml" />
+	<include file="0.0/changeset/20201202_002600_tb_faturamentoentradasdetalhe.xml" />
+	<include file="0.0/changeset/20201202_003900_reprocesamento_faturamento.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

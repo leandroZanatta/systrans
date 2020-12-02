@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -52,4 +53,17 @@ public class DiarioCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "diarioCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DiarioDetalhe> diarioDetalhes;
+
+	@OneToMany(mappedBy = "diarioCabecalho")
+	private List<VinculoEntrada> vinculoSaidas;
+
+	@OneToMany(mappedBy = "diarioCabecalho")
+	private List<VinculoSaida> vinculoEntradas;
+
+	@OneToOne(mappedBy = "diarioCabecalho")
+	private VinculoEntrada vinculoEntrada;
+
+	@OneToOne(mappedBy = "diarioCabecalho")
+	private VinculoSaida vinculoSaida;
+
 }

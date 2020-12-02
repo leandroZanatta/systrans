@@ -7,12 +7,18 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -243,6 +249,7 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		container.add(panel);
 
 		btnNewButton_1 = new JButton("Baixar");
+		btnNewButton_1.addActionListener((e) -> baixarContas());
 		panel.add(btnNewButton_1);
 
 		btnNewButton = new JButton("Cancelar");
@@ -289,6 +296,65 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		initComponents();
 
 		filtrarContasPagar();
+	}
+
+	private void baixarContas() {
+
+		if (table.getSelectedRowCount() < 1) {
+
+			JOptionPane.showMessageDialog(this, "Selecione ao menos uma conta á pagar");
+
+			return;
+		}
+
+		List<ContasPagar> contasPagars = new ArrayList<>();
+
+		int[] rows = table.getSelectedRows();
+
+		for (int row : rows) {
+
+			contasPagars.add(contasPagarTableModel.getRow(row));
+		}
+
+		if (!isUnique(contasPagars, ContasPagar::getCodigoCliente)) {
+
+			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de clientes diferentes");
+
+			return;
+		}
+
+		if (!isUnique(contasPagars, ContasPagar::getCodigoFormaPagamento)) {
+
+			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de formas de pagamento diferentes");
+
+			return;
+		}
+
+		Set<Long> codigosPlanoContas = new HashSet<>();
+
+		contasPagars.stream().forEach(conta -> codigosPlanoContas.addAll(
+				conta.getHistorico().getOperacoes().stream()
+						.filter(operacao -> operacao.getCodigoFormaPagamento().equals(conta.getCodigoFormaPagamento()))
+						.mapToLong(operacao -> operacao.getCodigoContaCredora()).boxed()
+						.collect(Collectors.toSet())));
+
+		if (codigosPlanoContas.size() > 1) {
+
+			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas com planos de contas de débito diferentes");
+
+			return;
+		}
+
+		Optional<Long> codigoPlanoContas = codigosPlanoContas.stream().findFirst();
+
+		FrmBaixarContasPagar frmBaixarContasPagar = new FrmBaixarContasPagar(getCodigoUsuario(), contasPagars, codigoPlanoContas.get());
+		FrmApplication.getInstance().posicionarFrame(frmBaixarContasPagar, null);
+
+	}
+
+	private boolean isUnique(List<ContasPagar> contasPagars, ToLongFunction<ContasPagar> chave) {
+
+		return contasPagars.stream().mapToLong(chave).boxed().distinct().count() == 1;
 	}
 
 	private void filtrarContasPagar() {

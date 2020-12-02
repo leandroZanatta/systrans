@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201201_210800" author="Leandro Zanatta" logicalFilePath="20201201_210800_tb_vinculoentradacontaspagar.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_vinculoentradacontaspagar" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_vinculoentradacontaspagar">
+
+			<column name="id_vinculoentradacontaspagar" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="vinculoentradacontaspagar_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentrada" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO DE ENTRADA">
+				<constraints nullable="false" foreignKeyName="vinculoentradacaixa_faturamentoentrada_fk"
+					references="tb_faturamentoentrada(id_faturamentoentrada)" />
+			</column>
+
+			<column name="cd_contaspagar" type="${numeric.18x0}" remarks="CÓDIGO DO CONTAS A PAGAR">
+				<constraints primaryKey="true" nullable="false" foreignKeyName="vinculoentradacaixa_contaspagar_fk"
+					references="tb_contaspagar(id_contaspagar)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_vinculoentradacontaspagar" />
+	</changeSet>
+</databaseChangeLog>

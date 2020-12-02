@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,5 +54,11 @@ public class CaixaDetalhe implements Serializable {
 
 	@Column(name = "vl_detalhe")
 	private BigDecimal valorDetalhe;
+
+	@OneToOne(mappedBy = "caixaDetalhe")
+	private VinculoEntradaCaixa vinculoEntradaCaixa;
+
+	@OneToOne(mappedBy = "caixaDetalhe")
+	private VinculoSaidaCaixa vinculoSaidaCaixa;
 
 }

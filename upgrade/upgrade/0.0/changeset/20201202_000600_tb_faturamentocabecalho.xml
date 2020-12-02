@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201202_000600" author="Leandro Zanatta" logicalFilePath="20201202_000600_tb_faturamentocabecalho.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_faturamentocabecalho" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_faturamentocabecalho">
+
+			<column name="id_faturamentocabecalho" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="faturamentocabecalho_pk" nullable="false" />
+			</column>
+
+			<column name="cd_caixacabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CAIXA">
+				<constraints nullable="false" foreignKeyName="faturamentocabecalho_caixa_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
+			</column>
+
+			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
+				<constraints nullable="false" foreignKeyName="faturamentocabecalho_cliente_fk" references="tb_cliente(id_cliente)" />
+			</column>
+
+			<column name="dt_movimento" type="${date}" remarks="Data de Movimento">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_bruto" type="${numeric.18x2}" remarks="VALOR BRUTO">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_faturamentocabecalho" />
+
+	</changeSet>
+</databaseChangeLog>

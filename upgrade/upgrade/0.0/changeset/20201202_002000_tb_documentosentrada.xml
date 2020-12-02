@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201202_002000" author="Leandro Zanatta" logicalFilePath="20201202_002000_tb_documentosentrada.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_documentosentrada" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_documentosentrada">
+
+			<column name="id_documentosentrada" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="documentosentrada_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentradascabecalho" type="${numeric.18x0}" remarks="CÓDIGO DO CABEÇALHO DE FATURAMENTO">
+				<constraints nullable="false" foreignKeyName="documentosentrada_faturamentoentradascabecalho_fk"
+					references="tb_faturamentoentradascabecalho(id_faturamentoentradascabecalho)" />
+			</column>
+
+			<column name="tx_local" type="${varchar.100}" remarks="LOCAL DE ARMAZENAMENTO DO DOCUMENTO">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_documentosentrada" />
+
+	</changeSet>
+</databaseChangeLog>

@@ -24,5 +24,4 @@ public class HistoricoDAO extends PesquisableDAOImpl<Historico> {
 
 		return new BooleanBuilder(historico.tipoHistorico.eq(2L));
 	}
-
 }
