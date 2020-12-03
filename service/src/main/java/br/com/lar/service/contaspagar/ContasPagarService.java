@@ -13,7 +13,6 @@ import br.com.lar.service.caixa.FaturamentoCaixa;
 import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
-import br.com.sysdesc.util.classes.StringUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
 import br.com.systrans.util.vo.PesquisaContasVO;
@@ -37,11 +36,6 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 	@Override
 	public void validar(ContasPagar objetoPersistir) {
-
-		if (StringUtil.isNullOrEmpty(objetoPersistir.getDocumento())) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_CODIGO_DOCUMENTO);
-		}
 
 		if (objetoPersistir.getCaixaCabecalho() == null) {
 

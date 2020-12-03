@@ -24,42 +24,31 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_faturamentoentrada")
-@SequenceGenerator(name = "GEN_FATURAMENTOENTRADA", allocationSize = 1, sequenceName = "GEN_FATURAMENTOENTRADA")
-public class FaturamentoEntrada implements Serializable {
+@Table(name = "tb_faturamentoentradascabecalho")
+@SequenceGenerator(name = "GEN_FATURAMENTOENTRADASCABECALHO", allocationSize = 1, sequenceName = "GEN_FATURAMENTOENTRADASCABECALHO")
+public class FaturamentoEntradasCabecalho implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTOENTRADA")
-	@Column(name = "id_faturamentoentrada")
-	private Long idFaturamentoEntrada;
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTOENTRADASCABECALHO")
+	@Column(name = "id_faturamentoentradascabecalho")
+	private Long idFaturamentoEntradasCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
-	@JoinColumn(name = "cd_historico")
-	private Historico historico;
-
-	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
 	private Cliente cliente;
 
 	@ManyToOne
-	@JoinColumn(name = "cd_veiculo")
-	private Veiculo veiculo;
-
-	@ManyToOne
-	@JoinColumn(name = "cd_motorista")
-	private Motorista motorista;
+	@JoinColumn(name = "cd_historico")
+	private Historico historico;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_centrocusto")
 	private CentroCusto centroCusto;
-
-	@Column(name = "nr_documento")
-	private String numeroDocumento;
 
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.DATE)
@@ -68,14 +57,11 @@ public class FaturamentoEntrada implements Serializable {
 	@Column(name = "vl_bruto")
 	private BigDecimal valorBruto;
 
-	@Column(name = "vl_acrescimo")
-	private BigDecimal valorAcrescimo;
+	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FaturamentoEntradaPagamentos> faturamentoEntradaPagamentos;
 
-	@Column(name = "vl_desconto")
-	private BigDecimal valorDesconto;
-
-	@OneToMany(mappedBy = "faturamentoEntrada", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FaturamentoEntradaPagamento> faturamentoEntradaPagamentos;
+	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FaturamentoEntradasDetalhe> faturamentoEntradasDetalhes;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	private List<DocumentoEntrada> documentoEntradas = new ArrayList<>();

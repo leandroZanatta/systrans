@@ -28,7 +28,7 @@ public class DocumentoEntrada implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamentoentrada")
-	private FaturamentoEntrada faturamentoEntrada;
+	private FaturamentoEntradasCabecalho faturamentoEntrada;
 
 	@Column(name = "tx_local")
 	private String local;

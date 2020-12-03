@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201202_221800" author="Leandro Zanatta" logicalFilePath="20201202_221800_tb_contasreceberveiculo.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_contasreceberveiculo" />
+			</not>
+		</preConditions>
+
+		<createTable tableName="tb_contasreceberveiculo">
+
+			<column name="id_contasreceberveiculo" type="${numeric.18x0}" remarks="CÓDIGO IDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="contasreceberveiculo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_contasreceber" type="${numeric.18x0}" remarks="CÓDIGO DO CONTAS A RECEBER">
+				<constraints nullable="false" foreignKeyName="cliente_contasreceberveiculo_fk" references="tb_contasreceber(id_contasreceber)" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
+				<constraints nullable="true" foreignKeyName="veiculo_contasreceberveiculo_fk" references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
+				<constraints nullable="true" foreignKeyName="motorista_contasreceberveiculo_fk" references="tb_motorista(id_motorista)" />
+			</column>
+
+			<column name="tx_documento" type="${varchar.10}" remarks="NÚMERO DO DOCUMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_parcela" type="${numeric.18x2}" remarks="VALOR DA PARCELA">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_contasreceberveiculo" />
+	</changeSet>
+</databaseChangeLog>

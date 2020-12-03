@@ -1,6 +1,7 @@
 package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QContasPagar.contasPagar;
+import static br.com.lar.repository.model.QContasPagarVeiculo.contasPagarVeiculo;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -50,7 +51,9 @@ public class ContasPagarDAO extends PesquisableDAOImpl<ContasPagar> {
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
 		if (!StringUtil.isNullOrEmpty(pesquisaVO.getCodigoDocumento())) {
-			booleanBuilder.and(contasPagar.documento.eq(pesquisaVO.getCodigoDocumento()));
+
+			booleanBuilder.and(subQuery().from(contasPagarVeiculo).where(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar)
+					.and(contasPagarVeiculo.documento.eq(pesquisaVO.getCodigoDocumento()))).exists());
 		}
 
 		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoConta())) {

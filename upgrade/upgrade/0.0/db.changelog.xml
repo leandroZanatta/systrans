@@ -60,6 +60,9 @@
 	<include file="0.0/changeset/20201202_002000_tb_documentosentrada.xml" />
 	<include file="0.0/changeset/20201202_002600_tb_faturamentoentradasdetalhe.xml" />
 	<include file="0.0/changeset/20201202_003900_reprocesamento_faturamento.xml" />
+	<include file="0.0/changeset/20201202_221800_tb_contasreceberveiculo.xml" />
+	<include file="0.0/changeset/20201202_223300_tb_contaspagarveiculo.xml" />
+	<include file="0.0/changeset/20201202_230500_reprocesamento_contas.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

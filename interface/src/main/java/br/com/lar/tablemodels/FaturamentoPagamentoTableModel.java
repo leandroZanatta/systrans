@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.util.classes.DateUtil;
 
@@ -16,14 +16,14 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 
 	private boolean editable = Boolean.FALSE;
 	private static final long serialVersionUID = 1L;
-	private List<FaturamentoPagamento> rows = new ArrayList<>();
+	private List<FaturamentoPagamentos> rows = new ArrayList<>();
 	private List<String> colunas = new ArrayList<>();
 
 	public FaturamentoPagamentoTableModel() {
 		this(new ArrayList<>());
 	}
 
-	public FaturamentoPagamentoTableModel(List<FaturamentoPagamento> rows) {
+	public FaturamentoPagamentoTableModel(List<FaturamentoPagamentos> rows) {
 		this.rows = rows;
 
 		colunas.add("Forma Pagamento");
@@ -37,7 +37,7 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		FaturamentoPagamento faturamentoPagamento = rows.get(rowIndex);
+		FaturamentoPagamentos faturamentoPagamento = rows.get(rowIndex);
 
 		switch (columnIndex) {
 
@@ -88,7 +88,7 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 		return editable && (column == 2 || column == 4);
 	}
 
-	public FaturamentoPagamento getRow(int selectedRow) {
+	public FaturamentoPagamentos getRow(int selectedRow) {
 		return rows.get(selectedRow);
 	}
 
@@ -102,19 +102,19 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 		fireTableDataChanged();
 	}
 
-	public List<FaturamentoPagamento> getRows() {
+	public List<FaturamentoPagamentos> getRows() {
 		return rows;
 	}
 
-	public void setRows(List<FaturamentoPagamento> rows) {
+	public void setRows(List<FaturamentoPagamentos> rows) {
 		this.rows = Lists.newArrayList(rows);
 
-		this.rows.sort(Comparator.comparing(FaturamentoPagamento::getDataVencimento));
+		this.rows.sort(Comparator.comparing(FaturamentoPagamentos::getDataVencimento));
 
 		fireTableDataChanged();
 	}
 
-	public void addRow(FaturamentoPagamento row) {
+	public void addRow(FaturamentoPagamentos row) {
 
 		this.rows.add(row);
 
@@ -137,7 +137,7 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 
 	public BigDecimal getTotalPagamentos() {
 
-		return this.rows.stream().map(FaturamentoPagamento::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return this.rows.stream().map(FaturamentoPagamentos::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 }

@@ -16,10 +16,10 @@ import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
-import br.com.lar.repository.model.Faturamento;
-import br.com.lar.repository.model.FaturamentoEntrada;
-import br.com.lar.repository.model.FaturamentoEntradaPagamento;
-import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.FaturamentoCabecalho;
+import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
+import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.projection.DiarioReportProjection;
@@ -56,32 +56,28 @@ public class DiarioService {
 				contasPagar.getValorParcela());
 	}
 
-	public DiarioCabecalho registrarDiarioFaturamentoEntrada(FaturamentoEntrada faturamento) {
+	public DiarioCabecalho registrarDiarioFaturamentoEntrada(FaturamentoEntradasCabecalho faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoEntradaPagamentos().stream()
 				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
 
 		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoEntradaPagamentos().stream()
 				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
-						Collectors.mapping(FaturamentoEntradaPagamento::getValorParcela, Collectors.toList())));
+						Collectors.mapping(FaturamentoEntradaPagamentos::getValorParcela, Collectors.toList())));
 
-		BigDecimal valorPagamentos = faturamento.getValorBruto().add(faturamento.getValorAcrescimo()).subtract(faturamento.getValorDesconto());
-
-		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, valorPagamentos);
+		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, faturamento.getValorBruto());
 	}
 
-	public DiarioCabecalho registrarDiarioFaturamento(Faturamento faturamento) {
+	public DiarioCabecalho registrarDiarioFaturamento(FaturamentoCabecalho faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoPagamentos().stream()
 				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
 
 		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoPagamentos().stream()
 				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
-						Collectors.mapping(FaturamentoPagamento::getValorParcela, Collectors.toList())));
+						Collectors.mapping(FaturamentoPagamentos::getValorParcela, Collectors.toList())));
 
-		BigDecimal valorPagamentos = faturamento.getValorBruto().add(faturamento.getValorAcrescimo()).subtract(faturamento.getValorDesconto());
-
-		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, valorPagamentos);
+		return registrarDiario(faturamento.getHistorico(), faturamento.getCaixaCabecalho(), codigoPagamentos, parcelas, faturamento.getValorBruto());
 	}
 
 	public List<DiarioReportProjection> buscarDiarioPeriodo(Date dataInicial, Date dataFinal) {

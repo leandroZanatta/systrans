@@ -23,8 +23,8 @@ import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.CentroCusto;
 import br.com.lar.repository.model.Cliente;
-import br.com.lar.repository.model.FaturamentoEntrada;
-import br.com.lar.repository.model.FaturamentoEntradaPagamento;
+import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Motorista;
@@ -81,7 +81,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 	private JNumericField txDiaPagamento;
 	private JTable table;
 	private JTabbedPane tabbedPane;
-	private PanelActions<FaturamentoEntrada> panelActions;
+	private PanelActions<FaturamentoEntradasCabecalho> panelActions;
 	private FaturamentoEntradaService faturamentoEntradaService = new FaturamentoEntradaService();
 	private HistoricoService historicoService = new HistoricoService();
 	private ClienteService clienteService = new ClienteService();
@@ -133,7 +133,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 		};
 
-		panelActions = new PanelActions<FaturamentoEntrada>(this, faturamentoEntradaService,
+		panelActions = new PanelActions<FaturamentoEntradasCabecalho>(this, faturamentoEntradaService,
 				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa(), documentoEscaneados) {
 
 			private static final long serialVersionUID = 1L;
@@ -164,7 +164,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 			}
 
 			@Override
-			public void carregarObjeto(FaturamentoEntrada objeto) {
+			public void carregarObjeto(FaturamentoEntradasCabecalho objeto) {
 
 				txCodigo.setValue(objeto.getIdFaturamentoEntrada());
 				pesquisaHistorico.setValue(objeto.getHistorico());
@@ -185,7 +185,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 			}
 
 			@Override
-			public boolean preencherObjeto(FaturamentoEntrada objetoPesquisa) {
+			public boolean preencherObjeto(FaturamentoEntradasCabecalho objetoPesquisa) {
 
 				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
 				objetoPesquisa.setIdFaturamentoEntrada(txCodigo.getValue());
@@ -377,7 +377,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 			for (Long parcela = 1L; parcela <= txNumeroParcelas.getValue(); parcela++) {
 
-				FaturamentoEntradaPagamento faturamentoEntradaPagamento = new FaturamentoEntradaPagamento();
+				FaturamentoEntradaPagamentos faturamentoEntradaPagamento = new FaturamentoEntradaPagamentos();
 				faturamentoEntradaPagamento.setFaturamentoEntrada(panelActions.getObjetoPesquisa());
 				faturamentoEntradaPagamento.setFormasPagamento(pesquisaFormasPagamento.getObjetoPesquisado());
 				faturamentoEntradaPagamento.setDataLancamento(new Date());
