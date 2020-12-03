@@ -52,6 +52,6 @@ public class Veiculo implements Serializable {
 	private BigDecimal capacidade;
 
 	@OneToMany(mappedBy = "veiculo")
-	private List<FaturamentoTransporte> faturamentoTransportes;
+	private List<FaturamentoDetalhe> faturamentoDetalhes;
 
 }

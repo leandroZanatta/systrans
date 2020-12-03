@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import br.com.lar.repository.dao.FaturamentoDAO;
+import br.com.lar.repository.dao.FaturamentoCabecalhoDAO;
 import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.DiarioCabecalho;
-import br.com.lar.repository.model.Faturamento;
-import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.FaturamentoCabecalho;
+import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.lar.repository.model.VinculoSaida;
 import br.com.lar.repository.model.VinculoSaidaCaixa;
 import br.com.lar.repository.model.VinculoSaidaContasReceber;
@@ -24,26 +24,26 @@ import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
 
-public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Faturamento> {
+public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<FaturamentoCabecalho> {
 
-	private FaturamentoDAO faturamentoDAO;
+	private FaturamentoCabecalhoDAO faturamentoDAO;
 	private FaturamentoContasReceber faturamentoContasReceber = new FaturamentoContasReceber();
 	private DiarioService faturamentoDiario = new DiarioService();
 	private FaturamentoCaixa faturamentoCaixa = new FaturamentoCaixa();
 	private CaixaService caixaService = new CaixaService();
 
 	public FaturamentoSaidaService() {
-		this(new FaturamentoDAO());
+		this(new FaturamentoCabecalhoDAO());
 	}
 
-	public FaturamentoSaidaService(FaturamentoDAO faturamentoDAO) {
-		super(faturamentoDAO, Faturamento::getIdFaturamento);
+	public FaturamentoSaidaService(FaturamentoCabecalhoDAO faturamentoDAO) {
+		super(faturamentoDAO, FaturamentoCabecalho::getIdFaturamentoCabecalho);
 
 		this.faturamentoDAO = faturamentoDAO;
 	}
 
 	@Override
-	public void validar(Faturamento objetoPersistir) {
+	public void validar(FaturamentoCabecalho objetoPersistir) {
 
 		if (objetoPersistir.getHistorico() == null) {
 
@@ -69,30 +69,30 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
 		}
 
-		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoPagamentos().stream().map(FaturamentoPagamento::getValorParcela)
+		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoPagamentos().stream().map(FaturamentoPagamentos::getValorParcela)
 				.reduce(BigDecimal.ZERO,
 						BigDecimal::add);
 
-		BigDecimal valorNota = objetoPersistir.getValorBruto().add(objetoPersistir.getValorAcrescimo()).subtract(objetoPersistir.getValorDesconto());
-
-		if (valorPagamentos.compareTo(valorNota) != 0) {
+		if (valorPagamentos.compareTo(objetoPersistir.getValorBruto()) != 0) {
 
 			DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO, decimalFormat.format(valorNota.doubleValue()),
+			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO,
+					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()),
 					decimalFormat.format(valorPagamentos.doubleValue()),
-					decimalFormat.format(valorNota.subtract(valorPagamentos).doubleValue()));
+					decimalFormat.format(objetoPersistir.getValorBruto().subtract(valorPagamentos).doubleValue()));
 		}
 	}
 
 	@Override
-	public void salvar(Faturamento objetoPersistir) {
+	public void salvar(FaturamentoCabecalho objetoPersistir) {
 
 		caixaService.verificarCaixaAberto(objetoPersistir.getCaixaCabecalho());
 
 		DiarioCabecalho diarioCabecalho = faturamentoDiario.registrarDiarioFaturamento(objetoPersistir);
 
-		List<ContasReceber> contasReceber = faturamentoContasReceber.registrarContasReceber(objetoPersistir);
+		List<ContasReceber> contasReceber = faturamentoContasReceber.registrarContasReceber(objetoPersistir,
+				objetoPersistir.getFaturamentoDetalhes());
 
 		List<CaixaDetalhe> caixaDetalhes = faturamentoCaixa.registrarCaixaFaturamento(objetoPersistir);
 

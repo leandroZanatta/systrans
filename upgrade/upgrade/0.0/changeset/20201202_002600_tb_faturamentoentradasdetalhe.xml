@@ -19,10 +19,6 @@
 					references="tb_faturamentoentradascabecalho(id_faturamentoentradascabecalho)" />
 			</column>
 
-			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTORICO">
-				<constraints nullable="false" foreignKeyName="faturamentoentradasdetalhe_historico_fk" references="tb_historico(id_historico)" />
-			</column>
-
 			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
 				<constraints foreignKeyName="faturamentoentradasdetalhe_veiculo_fk" references="tb_veiculo(id_veiculo)" />
 			</column>

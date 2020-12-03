@@ -25,9 +25,6 @@
 		<class>br.com.lar.repository.model.Motorista</class>
 		<class>br.com.lar.repository.model.PlanoContas</class>
 		<class>br.com.lar.repository.model.Operacao</class>
-		<class>br.com.lar.repository.model.Faturamento</class>
-		<class>br.com.lar.repository.model.FaturamentoPagamento</class>
-		<class>br.com.lar.repository.model.FaturamentoTransporte</class>
 		<class>br.com.lar.repository.model.Caixa</class>
 		<class>br.com.lar.repository.model.CaixaCabecalho</class>
 		<class>br.com.lar.repository.model.CaixaDetalhe</class>
@@ -37,8 +34,6 @@
 		<class>br.com.lar.repository.model.ContasPagar</class>
 		<class>br.com.lar.repository.model.ContasReceberPagamento</class>
 		<class>br.com.lar.repository.model.AlocacaoCusto</class>
-		<class>br.com.lar.repository.model.FaturamentoEntrada</class>
-		<class>br.com.lar.repository.model.FaturamentoEntradaPagamento</class>
 		<class>br.com.lar.repository.model.HistoricoCusto</class>
 		<class>br.com.lar.repository.model.CentroCusto</class>
 		<class>br.com.lar.repository.model.DocumentoEntrada</class>
@@ -48,6 +43,14 @@
 		<class>br.com.lar.repository.model.VinculoSaida</class>
 		<class>br.com.lar.repository.model.VinculoSaidaCaixa</class>
 		<class>br.com.lar.repository.model.VinculoSaidaContasReceber</class>
+		<class>br.com.lar.repository.model.FaturamentoCabecalho</class>
+		<class>br.com.lar.repository.model.FaturamentoDetalhe</class>
+		<class>br.com.lar.repository.model.FaturamentoPagamentos</class>
+		<class>br.com.lar.repository.model.FaturamentoEntradasCabecalho</class>
+		<class>br.com.lar.repository.model.FaturamentoEntradasDetalhe</class>
+		<class>br.com.lar.repository.model.FaturamentoEntradaPagamentos</class>
+		<class>br.com.lar.repository.model.ContasPagarVeiculo</class>
+		<class>br.com.lar.repository.model.ContasReceberVeiculo</class>
 	</persistence-unit>
 
 </persistence>

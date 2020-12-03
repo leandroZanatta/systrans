@@ -27,7 +27,7 @@ import com.asprise.imaging.core.Result;
 import com.asprise.imaging.scan.ui.workbench.AspriseScanUI;
 
 import br.com.lar.repository.model.DocumentoEntrada;
-import br.com.lar.repository.model.FaturamentoEntrada;
+import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
 import br.com.lar.service.faturamento.DocumentoEntradaService;
 import br.com.lar.tablemodels.DocumentosTableModel;
 import br.com.sysdesc.components.ButtonColumn;
@@ -41,7 +41,7 @@ public class FrmDocumentosContasReceber extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final DocumentoEntradaService documentoEntradaService = new DocumentoEntradaService();
 	private DocumentosTableModel documentosTableModel = new DocumentosTableModel();
-	private final FaturamentoEntrada faturamentoEntrada;
+	private final FaturamentoEntradasCabecalho faturamentoEntrada;
 	private JPanel panelAcoes;
 	private JButton btCancelar;
 	private JScrollPane scrollPane;
@@ -49,7 +49,7 @@ public class FrmDocumentosContasReceber extends JDialog {
 	private JButton btAdicionar;
 	private JButton btRemover;
 
-	public FrmDocumentosContasReceber(FaturamentoEntrada faturamentoEntrada) {
+	public FrmDocumentosContasReceber(FaturamentoEntradasCabecalho faturamentoEntrada) {
 		this.faturamentoEntrada = faturamentoEntrada;
 
 		documentosTableModel.setRows(faturamentoEntrada.getDocumentoEntradas());

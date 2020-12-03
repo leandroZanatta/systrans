@@ -22,19 +22,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_faturamentoentradapagamento")
-@SequenceGenerator(name = "GEN_FATURAMENTOENTRADAPAGAMENTO", allocationSize = 1, sequenceName = "GEN_FATURAMENTOENTRADAPAGAMENTO")
-public class FaturamentoEntradaPagamento implements Serializable {
+@Table(name = "tb_faturamentopagamentos")
+@SequenceGenerator(name = "GEN_FATURAMENTOPAGAMENTOS", allocationSize = 1, sequenceName = "GEN_FATURAMENTOPAGAMENTOS")
+public class FaturamentoPagamentos implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTOPAGAMENTO")
-	@Column(name = "id_faturamentoentradapagamento")
-	private Long idFaturamentoEntradaPagamento;
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTOPAGAMENTOS")
+	@Column(name = "id_faturamentopagamentos")
+	private Long idFaturamentoPagamentos;
 
 	@ManyToOne
-	@JoinColumn(name = "cd_faturamentoentrada")
-	private FaturamentoEntrada faturamentoEntrada;
+	@JoinColumn(name = "cd_faturamentocabecalho")
+	private FaturamentoCabecalho faturamentoCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_formapagamento")

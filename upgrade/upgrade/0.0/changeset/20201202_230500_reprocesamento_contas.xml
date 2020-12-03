@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201202_230500" author="Leandro Zanatta" logicalFilePath="20201202_230500_reprocesamento_contas.xml">
+		<preConditions onFail="MARK_RAN">
+			<and>
+				<dbms type="h2" />
+				<not>
+					<sqlCheck expectedResult="0">
+						select count(*) from tb_contaspagar
+					</sqlCheck>
+				</not>
+			</and>
+		</preConditions>
+
+		<sql splitStatements="true" stripComments="true">
+			<![CDATA[
+			INSERT INTO TB_CONTASPAGARVEICULO
+			SELECT GEN_CONTASPAGARVEICULO.NEXTVAL, ID_CONTASPAGAR, CD_VEICULO, CD_MOTORISTA, TX_DOCUMENTO, (VL_PARCELA - VL_DESCONTO + VL_ACRESCIMO) FROM TB_CONTASPAGAR;
+			]]>
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="20201202_230600" author="Leandro Zanatta" logicalFilePath="20201202_230500_reprocesamento_contas.xml">
+		<preConditions onFail="MARK_RAN">
+			<and>
+				<dbms type="h2" />
+				<not>
+					<sqlCheck expectedResult="0">
+						select count(*) from tb_contasreceber
+					</sqlCheck>
+				</not>
+			</and>
+		</preConditions>
+
+		<sql splitStatements="true" stripComments="true">
+			<![CDATA[
+			INSERT INTO TB_CONTASRECEBERVEICULO
+			SELECT GEN_CONTASPAGARVEICULO.NEXTVAL, ID_CONTASRECEBER, CD_VEICULO, CD_MOTORISTA, TX_DOCUMENTO, (VL_PARCELA - VL_DESCONTO + VL_ACRESCIMO) FROM TB_CONTASRECEBER;
+			]]>
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="20201202_230700" author="Leandro Zanatta" logicalFilePath="20201202_230500_reprocesamento_contas.xml">
+
+		<dropColumn tableName="TB_CONTASPAGAR" columnName="CD_VEICULO" />
+		<dropColumn tableName="TB_CONTASPAGAR" columnName="CD_MOTORISTA" />
+		<dropColumn tableName="TB_CONTASPAGAR" columnName="TX_DOCUMENTO" />
+
+		<dropColumn tableName="TB_CONTASRECEBER" columnName="CD_VEICULO" />
+		<dropColumn tableName="TB_CONTASRECEBER" columnName="CD_MOTORISTA" />
+		<dropColumn tableName="TB_CONTASRECEBER" columnName="TX_DOCUMENTO" />
+	</changeSet>
+</databaseChangeLog>

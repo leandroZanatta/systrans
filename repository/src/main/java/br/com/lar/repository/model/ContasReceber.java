@@ -57,19 +57,8 @@ public class ContasReceber implements Serializable {
 	private FormasPagamento formasPagamento;
 
 	@ManyToOne
-	@JoinColumn(name = "cd_veiculo")
-	private Veiculo veiculo;
-
-	@ManyToOne
-	@JoinColumn(name = "cd_motorista")
-	private Motorista motorista;
-
-	@ManyToOne
 	@JoinColumn(name = "cd_historico")
 	private Historico historico;
-
-	@Column(name = "tx_documento")
-	private String documento;
 
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.DATE)
@@ -110,6 +99,9 @@ public class ContasReceber implements Serializable {
 
 	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
 	private List<ContasReceberPagamento> contasReceberPagamentos = new ArrayList<>();
+
+	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
+	private List<ContasReceberVeiculo> contasReceberVeiculos = new ArrayList<>();
 
 	@OneToOne(mappedBy = "contasReceber")
 	private VinculoSaidaContasReceber vinculoSaidaContasReceber;

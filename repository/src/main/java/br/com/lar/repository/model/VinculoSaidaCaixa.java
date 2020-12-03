@@ -29,7 +29,7 @@ public class VinculoSaidaCaixa implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamento")
-	private Faturamento faturamento;
+	private FaturamentoCabecalho faturamento;
 
 	@OneToOne
 	@JoinColumn(name = "cd_caixadetalhe")

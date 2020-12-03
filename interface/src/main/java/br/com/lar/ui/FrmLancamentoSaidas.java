@@ -19,8 +19,8 @@ import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.Cliente;
-import br.com.lar.repository.model.Faturamento;
-import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.FaturamentoCabecalho;
+import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.lar.repository.model.FaturamentoTransporte;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
@@ -76,7 +76,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 	private JNumericField txDiaPagamento;
 	private JTable table;
 	private JTabbedPane tabbedPane;
-	private PanelActions<Faturamento> panelActions;
+	private PanelActions<FaturamentoCabecalho> panelActions;
 	private FaturamentoSaidaService faturamentoService = new FaturamentoSaidaService();
 	private HistoricoService historicoService = new HistoricoService();
 	private ClienteService clienteService = new ClienteService();
@@ -113,7 +113,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		montarPainelTransporte();
 		montarPainelPagamentos();
 
-		panelActions = new PanelActions<Faturamento>(this, faturamentoService, PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
+		panelActions = new PanelActions<FaturamentoCabecalho>(this, faturamentoService, PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -137,7 +137,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 			}
 
 			@Override
-			public void carregarObjeto(Faturamento objeto) {
+			public void carregarObjeto(FaturamentoCabecalho objeto) {
 				txCodigo.setValue(objeto.getIdFaturamento());
 				pesquisaHistorico.setValue(objeto.getHistorico());
 				pesquisaCliente.setValue(objeto.getCliente());
@@ -171,7 +171,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 			}
 
 			@Override
-			public boolean preencherObjeto(Faturamento objetoPesquisa) {
+			public boolean preencherObjeto(FaturamentoCabecalho objetoPesquisa) {
 
 				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
 				objetoPesquisa.setIdFaturamento(txCodigo.getValue());
@@ -376,7 +376,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 
 			for (Long parcela = 1L; parcela <= txNumeroParcelas.getValue(); parcela++) {
 
-				FaturamentoPagamento faturamentoPagamento = new FaturamentoPagamento();
+				FaturamentoPagamentos faturamentoPagamento = new FaturamentoPagamentos();
 				faturamentoPagamento.setFaturamento(panelActions.getObjetoPesquisa());
 				faturamentoPagamento.setFormasPagamento(pesquisaFormasPagamento.getObjetoPesquisado());
 				faturamentoPagamento.setDataLancamento(new Date());

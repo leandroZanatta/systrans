@@ -14,10 +14,10 @@ import br.com.lar.repository.model.CaixaCabecalho;
 import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasReceber;
-import br.com.lar.repository.model.Faturamento;
-import br.com.lar.repository.model.FaturamentoEntrada;
-import br.com.lar.repository.model.FaturamentoEntradaPagamento;
-import br.com.lar.repository.model.FaturamentoPagamento;
+import br.com.lar.repository.model.FaturamentoCabecalho;
+import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
+import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.model.PlanoContas;
@@ -49,26 +49,26 @@ public class FaturamentoCaixa {
 
 	}
 
-	public List<CaixaDetalhe> registrarCaixaFaturamentoEntrada(FaturamentoEntrada faturamento) {
+	public List<CaixaDetalhe> registrarCaixaFaturamentoEntrada(FaturamentoEntradasCabecalho faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoEntradaPagamentos().stream()
 				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
 
 		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoEntradaPagamentos().stream()
 				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
-						Collectors.mapping(FaturamentoEntradaPagamento::getValorParcela, Collectors.toList())));
+						Collectors.mapping(FaturamentoEntradaPagamentos::getValorParcela, Collectors.toList())));
 
 		return registrarCaixa(faturamento.getHistorico(), codigoPagamentos, faturamento.getCaixaCabecalho(), parcelas);
 	}
 
-	public List<CaixaDetalhe> registrarCaixaFaturamento(Faturamento faturamento) {
+	public List<CaixaDetalhe> registrarCaixaFaturamento(FaturamentoCabecalho faturamento) {
 
 		List<Long> codigoPagamentos = faturamento.getFaturamentoPagamentos().stream()
 				.mapToLong(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento()).distinct().boxed().collect(Collectors.toList());
 
 		Map<Long, List<BigDecimal>> parcelas = faturamento.getFaturamentoPagamentos().stream()
 				.collect(Collectors.groupingBy(pagamento -> pagamento.getFormasPagamento().getIdFormaPagamento(),
-						Collectors.mapping(FaturamentoPagamento::getValorParcela, Collectors.toList())));
+						Collectors.mapping(FaturamentoPagamentos::getValorParcela, Collectors.toList())));
 
 		return registrarCaixa(faturamento.getHistorico(), codigoPagamentos, faturamento.getCaixaCabecalho(), parcelas);
 	}

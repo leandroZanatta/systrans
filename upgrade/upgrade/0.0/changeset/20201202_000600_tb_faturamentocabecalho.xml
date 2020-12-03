@@ -18,6 +18,10 @@
 				<constraints nullable="false" foreignKeyName="faturamentocabecalho_caixa_fk" references="tb_caixacabecalho(id_caixacabecalho)" />
 			</column>
 
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTORICO">
+				<constraints nullable="false" foreignKeyName="faturamentocabecalho_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
 			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
 				<constraints nullable="false" foreignKeyName="faturamentocabecalho_cliente_fk" references="tb_cliente(id_cliente)" />
 			</column>

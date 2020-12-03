@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,15 +23,15 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_faturamento")
-@SequenceGenerator(name = "GEN_FATURAMENTO", allocationSize = 1, sequenceName = "GEN_FATURAMENTO")
-public class Faturamento implements Serializable {
+@Table(name = "tb_faturamentocabecalho")
+@SequenceGenerator(name = "GEN_FATURAMENTOCABECALHO", allocationSize = 1, sequenceName = "GEN_FATURAMENTOCABECALHO")
+public class FaturamentoCabecalho implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTO")
-	@Column(name = "id_faturamento")
-	private Long idFaturamento;
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_FATURAMENTOCABECALHO")
+	@Column(name = "id_faturamentocabecalho")
+	private Long idFaturamentoCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
@@ -46,9 +45,6 @@ public class Faturamento implements Serializable {
 	@JoinColumn(name = "cd_cliente")
 	private Cliente cliente;
 
-	@Column(name = "nr_documento")
-	private String numeroDocumento;
-
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.DATE)
 	private Date dataMovimento;
@@ -56,17 +52,11 @@ public class Faturamento implements Serializable {
 	@Column(name = "vl_bruto")
 	private BigDecimal valorBruto;
 
-	@Column(name = "vl_acrescimo")
-	private BigDecimal valorAcrescimo;
+	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FaturamentoDetalhe> faturamentoDetalhes;
 
-	@Column(name = "vl_desconto")
-	private BigDecimal valorDesconto;
-
-	@OneToOne(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
-	private FaturamentoTransporte faturamentoTransporte;
-
-	@OneToMany(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<FaturamentoPagamento> faturamentoPagamentos;
+	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FaturamentoPagamentos> faturamentoPagamentos;
 
 	@OneToMany(mappedBy = "faturamento")
 	private List<VinculoSaida> vinculoSaidas;

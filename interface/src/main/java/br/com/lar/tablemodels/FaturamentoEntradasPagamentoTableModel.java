@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import br.com.lar.repository.model.FaturamentoEntradaPagamento;
+import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.exception.SysDescException;
@@ -17,14 +17,14 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 
 	private boolean editable = Boolean.FALSE;
 	private static final long serialVersionUID = 1L;
-	private List<FaturamentoEntradaPagamento> rows = new ArrayList<>();
+	private List<FaturamentoEntradaPagamentos> rows = new ArrayList<>();
 	private List<String> colunas = new ArrayList<>();
 
 	public FaturamentoEntradasPagamentoTableModel() {
 		this(new ArrayList<>());
 	}
 
-	public FaturamentoEntradasPagamentoTableModel(List<FaturamentoEntradaPagamento> rows) {
+	public FaturamentoEntradasPagamentoTableModel(List<FaturamentoEntradaPagamentos> rows) {
 		this.rows = rows;
 
 		colunas.add("Forma Pagamento");
@@ -38,7 +38,7 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		FaturamentoEntradaPagamento faturamentoPagamento = rows.get(rowIndex);
+		FaturamentoEntradaPagamentos faturamentoPagamento = rows.get(rowIndex);
 
 		switch (columnIndex) {
 
@@ -65,7 +65,7 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 
-		FaturamentoEntradaPagamento faturamentoPagamento = rows.get(rowIndex);
+		FaturamentoEntradaPagamentos faturamentoPagamento = rows.get(rowIndex);
 
 		switch (columnIndex) {
 
@@ -110,7 +110,7 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 		return editable && (column == 2 || column == 4);
 	}
 
-	public FaturamentoEntradaPagamento getRow(int selectedRow) {
+	public FaturamentoEntradaPagamentos getRow(int selectedRow) {
 		return rows.get(selectedRow);
 	}
 
@@ -124,19 +124,19 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 		fireTableDataChanged();
 	}
 
-	public List<FaturamentoEntradaPagamento> getRows() {
+	public List<FaturamentoEntradaPagamentos> getRows() {
 		return rows;
 	}
 
-	public void setRows(List<FaturamentoEntradaPagamento> rows) {
+	public void setRows(List<FaturamentoEntradaPagamentos> rows) {
 		this.rows = Lists.newArrayList(rows);
 
-		this.rows.sort(Comparator.comparing(FaturamentoEntradaPagamento::getDataVencimento));
+		this.rows.sort(Comparator.comparing(FaturamentoEntradaPagamentos::getDataVencimento));
 
 		fireTableDataChanged();
 	}
 
-	public void addRow(FaturamentoEntradaPagamento row) {
+	public void addRow(FaturamentoEntradaPagamentos row) {
 
 		this.rows.add(row);
 
@@ -158,7 +158,7 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 
 	public BigDecimal getTotalPagamentos() {
 
-		return this.rows.stream().map(FaturamentoEntradaPagamento::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return this.rows.stream().map(FaturamentoEntradaPagamentos::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 }
