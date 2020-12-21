@@ -313,14 +313,14 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 			contasPagars.add(contasPagarTableModel.getRow(row));
 		}
 
-		if (!isUnique(contasPagars, ContasPagar::getCodigoCliente)) {
+		if (!isUnique(contasPagars, conta -> conta.getCliente().getIdCliente())) {
 
 			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de clientes diferentes");
 
 			return;
 		}
 
-		if (!isUnique(contasPagars, ContasPagar::getCodigoFormaPagamento)) {
+		if (!isUnique(contasPagars, conta -> conta.getFormasPagamento().getIdFormaPagamento())) {
 
 			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de formas de pagamento diferentes");
 

@@ -46,4 +46,9 @@ public class OperacaoFinanceiroService extends AbstractPesquisableServiceImpl<Op
 		}
 	}
 
+	public OperacaoFinanceiro buscarPorPlanoCredorEFormaPagamento(Long codigoPlanoContas, Long idFormaPagamento) {
+
+		return operacaoFinanceiroDAO.buscarPorPlanoCredorEFormaPagamento(codigoPlanoContas, idFormaPagamento);
+	}
+
 }

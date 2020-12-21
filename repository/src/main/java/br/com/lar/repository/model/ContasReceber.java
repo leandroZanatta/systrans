@@ -39,6 +39,10 @@ public class ContasReceber implements Serializable {
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
 
+	@ManyToOne
+	@JoinColumn(name = "cd_diarioDetalhe")
+	private DiarioDetalhe diarioDetalhe;
+
 	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
 	private Long codigoCaixaCabecalho;
 

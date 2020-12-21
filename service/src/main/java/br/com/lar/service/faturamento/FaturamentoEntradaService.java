@@ -1,36 +1,42 @@
 package br.com.lar.service.faturamento;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
 import br.com.lar.repository.dao.FaturamentoEntradaCabecalhoDAO;
+import br.com.lar.repository.dao.OperacaoDAO;
 import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasPagar;
+import br.com.lar.repository.model.ContasPagarVeiculo;
 import br.com.lar.repository.model.DiarioCabecalho;
+import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.model.VinculoEntrada;
 import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.service.caixa.CaixaService;
-import br.com.lar.service.caixa.FaturamentoCaixa;
-import br.com.lar.service.contasreceber.FaturamentoContasReceber;
-import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.ListUtil;
+import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import br.com.sysdesc.util.exception.SysDescException;
+import br.com.systrans.util.RateioUtil;
 import br.com.systrans.util.constants.MensagemConstants;
+import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 
 public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<FaturamentoEntradasCabecalho> {
 
 	private FaturamentoEntradaCabecalhoDAO faturamentoEntradaDAO;
-	private FaturamentoContasReceber faturamentoContasReceber = new FaturamentoContasReceber();
-	private DiarioService faturamentoDiario = new DiarioService();
-	private FaturamentoCaixa faturamentoCaixa = new FaturamentoCaixa();
 	private CaixaService caixaService = new CaixaService();
+	private OperacaoDAO operacaoDAO = new OperacaoDAO();
 
 	public FaturamentoEntradaService() {
 		this(new FaturamentoEntradaCabecalhoDAO());
@@ -95,12 +101,88 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 		caixaService.verificarCaixaAberto(objetoPersistir.getCaixaCabecalho());
 
-		DiarioCabecalho diarioCabecalho = faturamentoDiario.registrarDiarioFaturamentoEntrada(objetoPersistir);
+		DiarioCabecalho diarioCabecalho = new DiarioCabecalho();
+		diarioCabecalho.setDataMovimento(new Date());
+		diarioCabecalho.setHistorico(objetoPersistir.getHistorico());
+		diarioCabecalho.setDiarioDetalhes(new ArrayList<>());
+		diarioCabecalho.setCaixaCabecalho(objetoPersistir.getCaixaCabecalho());
 
-		List<ContasPagar> contasPagar = faturamentoContasReceber.registrarContasPagar(objetoPersistir,
-				objetoPersistir.getFaturamentoEntradasDetalhes());
+		List<ContasPagar> contasPagars = new ArrayList<>();
+		List<CaixaDetalhe> caixaDetalhes = new ArrayList<>();
 
-		List<CaixaDetalhe> caixaDetalhes = faturamentoCaixa.registrarCaixaFaturamentoEntrada(objetoPersistir);
+		objetoPersistir.getFaturamentoEntradaPagamentos().forEach(pagamento -> {
+
+			Operacao operacao = operacaoDAO.buscarOperacao(objetoPersistir.getHistorico().getIdHistorico(),
+					pagamento.getFormasPagamento().getIdFormaPagamento());
+
+			DiarioDetalhe diarioCredito = new DiarioDetalhe();
+			diarioCredito.setDiarioCabecalho(diarioCabecalho);
+			diarioCredito.setPlanoContas(operacao.getContaCredora());
+			diarioCredito.setTipoSaldo(TipoHistoricoOperacaoEnum.CREDOR.getCodigo());
+			diarioCredito.setValorDetalhe(pagamento.getValorParcela());
+
+			DiarioDetalhe diarioDebito = new DiarioDetalhe();
+			diarioDebito.setDiarioCabecalho(diarioCabecalho);
+			diarioDebito.setPlanoContas(operacao.getContaDevedora());
+			diarioDebito.setTipoSaldo(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo());
+			diarioDebito.setValorDetalhe(pagamento.getValorParcela());
+
+			diarioCabecalho.getDiarioDetalhes().add(diarioDebito);
+			diarioCabecalho.getDiarioDetalhes().add(diarioCredito);
+
+			CaixaDetalhe caixaDetalhe = new CaixaDetalhe();
+			caixaDetalhe.setCaixaCabecalho(objetoPersistir.getCaixaCabecalho());
+			caixaDetalhe.setDataMovimento(new Date());
+			caixaDetalhe.setTipoSaldo(operacao.getHistorico().getTipoHistorico());
+			caixaDetalhe.setPlanoContas(operacao.getContaDevedora());
+			caixaDetalhe.setValorDetalhe(pagamento.getValorParcela());
+
+			caixaDetalhes.add(caixaDetalhe);
+
+			if (pagamento.getFormasPagamento().isFlagPermitePagamentoPrazo()) {
+
+				ContasPagar contasPagar = new ContasPagar();
+				contasPagar.setBaixado(false);
+				contasPagar.setCaixaCabecalho(objetoPersistir.getCaixaCabecalho());
+				contasPagar.setDiarioDetalhe(diarioCredito);
+				contasPagar.setCliente(objetoPersistir.getCliente());
+				contasPagar.setCodigoStatus(TipoStatusEnum.ATIVO.getCodigo());
+				contasPagar.setDataCadastro(new Date());
+				contasPagar.setDataManutencao(new Date());
+				contasPagar.setDataMovimento(pagamento.getDataLancamento());
+				contasPagar.setDataVencimento(pagamento.getDataVencimento());
+				contasPagar.setFormasPagamento(pagamento.getFormasPagamento());
+				contasPagar.setHistorico(objetoPersistir.getHistorico());
+				contasPagar.setValorAcrescimo(BigDecimal.ZERO);
+				contasPagar.setValorDesconto(BigDecimal.ZERO);
+				contasPagar.setValorJuros(BigDecimal.ZERO);
+				contasPagar.setValorPago(BigDecimal.ZERO);
+				contasPagar.setValorParcela(pagamento.getValorParcela());
+
+				List<ContasPagarVeiculo> contasPagarVeiculos = objetoPersistir.getFaturamentoEntradasDetalhes().stream().map(detalhe -> {
+
+					BigDecimal valorDetalhe = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
+
+					ContasPagarVeiculo contasPagarVeiculo = new ContasPagarVeiculo();
+					contasPagarVeiculo.setContasPagar(contasPagar);
+					contasPagarVeiculo.setDocumento(detalhe.getNumeroDocumento());
+					contasPagarVeiculo.setMotorista(detalhe.getMotorista());
+					contasPagarVeiculo.setVeiculo(detalhe.getVeiculo());
+					contasPagarVeiculo.setValorParcela(
+							valorDetalhe.multiply(pagamento.getValorParcela()).divide(objetoPersistir.getValorBruto(), 2,
+									RoundingMode.HALF_EVEN));
+
+					return contasPagarVeiculo;
+				}).collect(Collectors.toList());
+
+				RateioUtil.efetuarRateio(contasPagarVeiculos, ContasPagarVeiculo::getValorParcela, ContasPagarVeiculo::setValorParcela,
+						pagamento.getValorParcela());
+
+				contasPagar.setContasPagarVeiculos(contasPagarVeiculos);
+
+				contasPagars.add(contasPagar);
+			}
+		});
 
 		EntityManager entityManager = faturamentoEntradaDAO.getEntityManager();
 
@@ -112,9 +194,9 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 			entityManager.persist(diarioCabecalho);
 
-			if (!ListUtil.isNullOrEmpty(contasPagar)) {
+			if (!ListUtil.isNullOrEmpty(contasPagars)) {
 
-				contasPagar.forEach(entityManager::persist);
+				contasPagars.forEach(entityManager::persist);
 			}
 
 			caixaDetalhes.forEach(entityManager::persist);
@@ -132,9 +214,9 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 				return vinculoEntradaCaixa;
 			}).forEach(entityManager::persist);
 
-			if (!ListUtil.isNullOrEmpty(contasPagar)) {
+			if (!ListUtil.isNullOrEmpty(contasPagars)) {
 
-				contasPagar.stream().map(detalhe -> {
+				contasPagars.stream().map(detalhe -> {
 					VinculoEntradaContasPagar vinculoEntradaContasPagar = new VinculoEntradaContasPagar();
 					vinculoEntradaContasPagar.setContasPagar(detalhe);
 					vinculoEntradaContasPagar.setFaturamentoEntrada(objetoPersistir);

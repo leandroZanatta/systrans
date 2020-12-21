@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.FormasPagamento;
+import br.com.lar.repository.model.OperacaoFinanceiro;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
 import br.com.lar.service.operacao.OperacaoFinanceiroService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
@@ -133,6 +134,14 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 			DiarioDetalhe diarioDetahes = contaPagar.getDiarioDetalhe();
 
 			FormasPagamento formasPagamento = pesquisaFormaPagamento.getObjetoPesquisado();
+
+			OperacaoFinanceiro operacaoFinanceiro = operacaoFinanceiroService.buscarPorPlanoCredorEFormaPagamento(
+					diarioDetahes.getPlanoContas().getIdPlanoContas(),
+					formasPagamento.getIdFormaPagamento());
+
+			if (operacaoFinanceiro == null) {
+
+			}
 
 		});
 
