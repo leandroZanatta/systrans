@@ -7,13 +7,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -254,6 +250,7 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 
 		btnNewButton = new JButton("Cancelar");
 		btnNewButton.addActionListener(e -> dispose());
+
 		panel.add(btnNewButton);
 
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -330,24 +327,7 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 			return;
 		}
 
-		Set<Long> codigosPlanoContas = new HashSet<>();
-
-		contasPagars.stream().forEach(conta -> codigosPlanoContas.addAll(
-				conta.getHistorico().getOperacoes().stream()
-						.filter(operacao -> operacao.getCodigoFormaPagamento().equals(conta.getCodigoFormaPagamento()))
-						.mapToLong(operacao -> operacao.getCodigoContaCredora()).boxed()
-						.collect(Collectors.toSet())));
-
-		if (codigosPlanoContas.size() > 1) {
-
-			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas com planos de contas de débito diferentes");
-
-			return;
-		}
-
-		Optional<Long> codigoPlanoContas = codigosPlanoContas.stream().findFirst();
-
-		FrmBaixarContasPagar frmBaixarContasPagar = new FrmBaixarContasPagar(getCodigoUsuario(), contasPagars, codigoPlanoContas.get());
+		FrmBaixarContasPagar frmBaixarContasPagar = new FrmBaixarContasPagar(getCodigoUsuario(), contasPagars);
 		FrmApplication.getInstance().posicionarFrame(frmBaixarContasPagar, null);
 
 	}

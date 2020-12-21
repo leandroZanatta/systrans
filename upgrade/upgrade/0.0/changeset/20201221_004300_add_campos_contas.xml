@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201221_004300" author="Leandro Zanatta" logicalFilePath="20201221_004300_add_campos_contas.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_contaspagar" columnName="cd_diariocabecalho" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_contaspagar">
+			<column name="cd_diariodetalhe" type="${numeric.18x0}" remarks="CÓDIGO DO DIÁRIO">
+				<constraints nullable="true" foreignKeyName="diariodetalhe_contaspagar_fk" references="tb_diariodetalhe(id_diariodetalhe)" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="20201221_004301" author="Leandro Zanatta" logicalFilePath="20201221_004300_add_campos_contas.xml">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_contasreceber" columnName="cd_diariocabecalho" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_contasreceber">
+			<column name="cd_diariodetalhe" type="${numeric.18x0}" remarks="CÓDIGO DO DIÁRIO">
+				<constraints nullable="true" foreignKeyName="diariodetalhe_contasreceber_fk" references="tb_diariodetalhe(id_diariodetalhe)" />
+			</column>
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

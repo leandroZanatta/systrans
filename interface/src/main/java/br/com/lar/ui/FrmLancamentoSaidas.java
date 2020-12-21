@@ -13,39 +13,34 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 
 import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
 
 import br.com.lar.repository.model.Cliente;
 import br.com.lar.repository.model.FaturamentoCabecalho;
+import br.com.lar.repository.model.FaturamentoDetalhe;
 import br.com.lar.repository.model.FaturamentoPagamentos;
-import br.com.lar.repository.model.FaturamentoTransporte;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
-import br.com.lar.repository.model.Motorista;
-import br.com.lar.repository.model.Veiculo;
 import br.com.lar.service.caixa.CaixaCabecalhoService;
 import br.com.lar.service.cliente.ClienteService;
 import br.com.lar.service.faturamento.FaturamentoSaidaService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
 import br.com.lar.service.historico.HistoricoService;
-import br.com.lar.service.motorista.MotoristaService;
-import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.lar.tablemodels.FaturamentoPagamentoTableModel;
+import br.com.lar.tablemodels.FaturamentoTableModel;
+import br.com.lar.ui.dialogs.FrmSaida;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JDateFieldColumn;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldId;
-import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.components.JmoneyFieldColumn;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.pesquisa.ui.components.PanelActions;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
-import br.com.sysdesc.util.classes.ContadorUtil;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
@@ -60,28 +55,37 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 	private JTextFieldId txCodigo;
 	private CampoPesquisa<Historico> pesquisaHistorico;
 	private CampoPesquisa<Cliente> pesquisaCliente;
-	private CampoPesquisa<Veiculo> pesquisaVeiculo;
-	private CampoPesquisa<Motorista> pesquisaMotorista;
-	private CampoPesquisa<FormasPagamento> pesquisaFormasPagamento;
 	private JDateChooser dtMovimento;
+	private PanelActions<FaturamentoCabecalho> panelActions;
+	private FaturamentoSaidaService faturamentoEntradaService = new FaturamentoSaidaService();
+	private FaturamentoTableModel faturamentoTableModel = new FaturamentoTableModel();
+	private HistoricoService historicoService = new HistoricoService();
+	private ClienteService clienteService = new ClienteService();
+	private JLabel lblCliente_1;
+	private JLabel lblValorDoFrete_1;
 	private JMoneyField txValorBruto;
+	private JScrollPane scrollPane_1;
+	private JTable table_1;
+	private JLabel lblDesconto;
+	private JMoneyField txDesconto;
+	private JMoneyField txAcrescimo;
+	private JLabel lblAcrscimo;
+	private JPanel panel;
+	private JButton btAdd;
+	private JButton btRemove;
+	private JMoneyField txValorLiquido;
+	private JLabel lblValorTotal;
+	private JTabbedPane tabbePane;
+	private JPanel panelPrincipal;
+	private JPanel painelPagamentos;
+	private CampoPesquisa<FormasPagamento> pesquisaFormasPagamento;
 	private JMoneyField txValorTotal;
 	private JMoneyField txValorPagamento;
 	private JMoneyField txValorDesconto;
 	private JMoneyField txValorAcrescimo;
-	private JTextFieldMaiusculo txDocumento;
-	private JNumericField txOdometroInicial;
-	private JNumericField txOdometroFinal;
 	private JNumericField txNumeroParcelas;
 	private JNumericField txDiaPagamento;
 	private JTable table;
-	private JTabbedPane tabbedPane;
-	private PanelActions<FaturamentoCabecalho> panelActions;
-	private FaturamentoSaidaService faturamentoService = new FaturamentoSaidaService();
-	private HistoricoService historicoService = new HistoricoService();
-	private ClienteService clienteService = new ClienteService();
-	private VeiculoService veiculoService = new VeiculoService();
-	private MotoristaService motoristaService = new MotoristaService();
 	private FaturamentoPagamentoTableModel pagamentoTableModel = new FaturamentoPagamentoTableModel();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private CaixaCabecalhoService caixaCabecalhoService = new CaixaCabecalhoService();
@@ -94,133 +98,165 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(550, 450);
+		setSize(600, 500);
 		setClosable(Boolean.TRUE);
-		setTitle("FATURAMENTO - LANÇAMENTOS");
+		setTitle("FATURAMENTO - SAÍDA - LANÇAMENTOS");
 
 		painelContent = new JPanel();
-		tabbedPane = new JTabbedPane(SwingConstants.TOP);
+		tabbePane = new JTabbedPane();
+		panelPrincipal = new JPanel();
+		painelPagamentos = new JPanel();
 
-		tabbedPane.addChangeListener(e -> checarCamposObrigatorios());
+		painelContent.setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
+		panelPrincipal
+				.setLayout(new MigLayout("", "[grow][grow][120.00,grow][grow][grow]", "[][20.00][16.00,grow][][][][][][grow][][grow][]"));
 
-		painelContent.setLayout(new MigLayout("", "[grow]", "[][][][][grow][]"));
+		tabbePane.addTab("Receitas", null, panelPrincipal, null);
+		tabbePane.addTab("Recebimentos", null, painelPagamentos, null);
+
+		tabbePane.addChangeListener(e -> checarCamposObrigatorios());
 
 		getContentPane().add(painelContent);
-		painelContent.add(tabbedPane, "cell 0 4,grow");
+		painelContent.add(tabbePane, "cell 0 2,grow");
 
 		montarPainelPrincipal();
-		montarPainelGeral();
-		montarPainelTransporte();
 		montarPainelPagamentos();
 
-		panelActions = new PanelActions<FaturamentoCabecalho>(this, faturamentoService, PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
+		panelActions = new PanelActions<FaturamentoCabecalho>(this, faturamentoEntradaService,
+				PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void posicionarBotoes() {
-
-				ContadorUtil contadorUtil = new ContadorUtil();
-
-				posicionarBotao(contadorUtil, btPrimeiro, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btRetroceder, Boolean.TRUE);
-
-				posicionarBotao(contadorUtil, btSalvar, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btEditar, Boolean.FALSE);
-				posicionarBotao(contadorUtil, btNovo, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btBuscar, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btCancelar, Boolean.TRUE);
-
-				posicionarBotao(contadorUtil, btAvancar, Boolean.TRUE);
-				posicionarBotao(contadorUtil, btUltimo, Boolean.TRUE);
-
-			}
-
-			@Override
 			public void carregarObjeto(FaturamentoCabecalho objeto) {
-				txCodigo.setValue(objeto.getIdFaturamento());
-				pesquisaHistorico.setValue(objeto.getHistorico());
-				pesquisaCliente.setValue(objeto.getCliente());
+
+				txCodigo.setValue(objeto.getIdFaturamentoCabecalho());
 				dtMovimento.setDate(objeto.getDataMovimento());
-				txDocumento.setText(objeto.getNumeroDocumento());
-				txValorAcrescimo.setValue(objeto.getValorAcrescimo());
-				txValorBruto.setValue(objeto.getValorBruto());
-				txValorPagamento.setValue(objeto.getValorBruto());
-				txValorDesconto.setValue(objeto.getValorDesconto());
-
-				calcularValorTotal();
-
-				Motorista motorista = null;
-				Veiculo veiculo = null;
-				Long odometroInicial = null;
-				Long odometroFinal = null;
-
-				if (objeto.getFaturamentoTransporte() != null) {
-					motorista = objeto.getFaturamentoTransporte().getMotorista();
-					veiculo = objeto.getFaturamentoTransporte().getVeiculo();
-					odometroInicial = objeto.getFaturamentoTransporte().getOdometroInicial();
-					odometroFinal = objeto.getFaturamentoTransporte().getOdometroFinal();
-				}
-
-				pesquisaVeiculo.setValue(veiculo);
-				pesquisaMotorista.setValue(motorista);
-				txOdometroInicial.setValue(odometroInicial);
-				txOdometroFinal.setValue(odometroFinal);
+				faturamentoTableModel.setRows(objeto.getFaturamentoDetalhes());
+				pesquisaCliente.setValue(objeto.getCliente());
+				pesquisaHistorico.setValue(objeto.getHistorico());
 
 				pagamentoTableModel.setRows(objeto.getFaturamentoPagamentos());
+
+				atualizarTotais();
 			}
 
 			@Override
 			public boolean preencherObjeto(FaturamentoCabecalho objetoPesquisa) {
-
-				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
-				objetoPesquisa.setIdFaturamento(txCodigo.getValue());
-				objetoPesquisa.setHistorico(pesquisaHistorico.getObjetoPesquisado());
-				objetoPesquisa.setCliente(pesquisaCliente.getObjetoPesquisado());
+				objetoPesquisa.setIdFaturamentoCabecalho(txCodigo.getValue());
+				objetoPesquisa.setValorBruto(txValorLiquido.getValue());
 				objetoPesquisa.setDataMovimento(dtMovimento.getDate());
-				objetoPesquisa.setNumeroDocumento(txDocumento.getText());
-				objetoPesquisa.setValorAcrescimo(txValorAcrescimo.getValue());
-				objetoPesquisa.setValorBruto(txValorBruto.getValue());
-				objetoPesquisa.setValorDesconto(txValorDesconto.getValue());
+				objetoPesquisa.setFaturamentoDetalhes(faturamentoTableModel.getRows());
+				objetoPesquisa.setCliente(pesquisaCliente.getObjetoPesquisado());
+				objetoPesquisa.setHistorico(pesquisaHistorico.getObjetoPesquisado());
 
-				FaturamentoTransporte faturamentoTransporte = null;
-
-				if (pesquisaMotorista.getObjetoPesquisado() != null) {
-
-					faturamentoTransporte = objetoPesquisa.getFaturamentoTransporte() != null ? objetoPesquisa.getFaturamentoTransporte()
-							: new FaturamentoTransporte();
-					faturamentoTransporte.setFaturamento(objetoPesquisa);
-					faturamentoTransporte.setMotorista(pesquisaMotorista.getObjetoPesquisado());
-					faturamentoTransporte.setVeiculo(pesquisaVeiculo.getObjetoPesquisado());
-					faturamentoTransporte.setOdometroFinal(txOdometroInicial.getValue());
-					faturamentoTransporte.setOdometroInicial(txOdometroFinal.getValue());
-				}
-
-				objetoPesquisa.setFaturamentoTransporte(faturamentoTransporte);
 				objetoPesquisa.setFaturamentoPagamentos(pagamentoTableModel.getRows());
-
+				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
 				return true;
 			}
 
 		};
 
-		panelActions.addSaveListener(faturamento -> txCodigo.setValue(faturamento.getIdFaturamento()));
-		panelActions.addNewListener(faturamento -> {
-			dtMovimento.setDate(new Date());
-			tabbedPane.setSelectedIndex(0);
-		});
-		painelContent.add(panelActions, "cell 0 5,growx");
+		panelActions.addSaveListener(faturamento -> txCodigo.setValue(faturamento.getIdFaturamentoCabecalho()));
+		panelActions.addNewListener(faturamento -> dtMovimento.setDate(new Date()));
 
+		painelContent.add(panelActions, "cell 0 14,growx");
+
+	}
+
+	private void montarPainelPrincipal() {
+		lblCliente_1 = new JLabel("Cliente:");
+		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(),
+				getCodigoUsuario()) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String formatarValorCampo(Cliente objeto) {
+				return String.format(TEMPLATE_PESQUISA, objeto.getIdCliente(), objeto.getNome());
+			}
+		};
+
+		JLabel lblCdigo = new JLabel("Código:");
+		JLabel lblHistorico = new JLabel("Histórico:");
+
+		table_1 = new JTable(faturamentoTableModel);
+		scrollPane_1 = new JScrollPane(table_1);
+		txCodigo = new JTextFieldId();
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
+				getCodigoUsuario(), historicoService.getHistoricosCredores()) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String formatarValorCampo(Historico objeto) {
+				return String.format(TEMPLATE_PESQUISA, objeto.getIdHistorico(), objeto.getDescricao());
+			}
+		};
+
+		painelContent.add(lblCdigo, "cell 0 0");
+		painelContent.add(txCodigo, "cell 0 1,,width 50:100:100");
+
+		JLabel lblDataDoMovimento = new JLabel("Data do Movimento:");
+
+		lblValorDoFrete_1 = new JLabel("Valor do Bruto:");
+
+		lblDesconto = new JLabel("Desconto:");
+
+		lblAcrscimo = new JLabel("Acréscimo:");
+
+		lblValorTotal = new JLabel("Valor Total:");
+		dtMovimento = new JDateChooser("dd/MM/yyyy HH:mm:ss", "##/##/##### ##:##:##", '_');
+
+		txValorBruto = new JMoneyField();
+		txValorBruto.setEnabled(false);
+
+		txDesconto = new JMoneyField();
+		txDesconto.setEnabled(false);
+
+		txAcrescimo = new JMoneyField();
+		txAcrescimo.setEnabled(false);
+
+		txValorLiquido = new JMoneyField();
+		txValorLiquido.setEnabled(false);
+		panel = new JPanel();
+
+		btAdd = new JButton("+");
+		btAdd.addActionListener((e) -> adicionarDespesa());
+
+		btRemove = new JButton("-");
+		btRemove.addActionListener(e -> removeRow());
+
+		panelPrincipal.add(lblCliente_1, "cell 0 1");
+		panelPrincipal.add(pesquisaCliente, "cell 0 2 5 1,growx");
+
+		panelPrincipal.add(dtMovimento, "cell 0 8");
+		panelPrincipal.add(lblAcrscimo, "cell 3 7");
+		panelPrincipal.add(lblDesconto, "cell 2 7");
+		panelPrincipal.add(lblValorTotal, "cell 4 7");
+		panelPrincipal.add(txValorBruto, "cell 1 8,growx");
+		panelPrincipal.add(txDesconto, "cell 2 8,growx");
+		panelPrincipal.add(lblHistorico, "cell 0 3");
+		panelPrincipal.add(pesquisaHistorico, "cell 0 4 5 1,growx");
+		panelPrincipal.add(lblDataDoMovimento, "cell 0 7");
+		panelPrincipal.add(lblValorDoFrete_1, "cell 1 7");
+		panelPrincipal.add(panel, "cell 0 11 5 1,alignx right,growy");
+		panelPrincipal.add(txAcrescimo, "cell 3 8,growx");
+		panelPrincipal.add(txValorLiquido, "cell 4 8,growx");
+		panelPrincipal.add(scrollPane_1, "cell 0 10 5 1,grow");
+
+		panel.add(btRemove);
+		panel.add(btAdd);
 	}
 
 	private void checarCamposObrigatorios() {
 
-		if (tabbedPane.getSelectedIndex() == 2) {
+		if (tabbePane.getSelectedIndex() == 1) {
 
 			if (pesquisaHistorico.getObjetoPesquisado() == null) {
 				JOptionPane.showMessageDialog(this, "Selecione um histórico");
 
-				tabbedPane.setSelectedIndex(0);
+				tabbePane.setSelectedIndex(0);
 
 				pesquisaHistorico.requestFocus();
 
@@ -230,7 +266,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 			if (!BigDecimalUtil.maior(txValorBruto.getValue(), BigDecimal.ZERO)) {
 				JOptionPane.showMessageDialog(this, "Insira o valor do faturamento");
 
-				tabbedPane.setSelectedIndex(0);
+				tabbePane.setSelectedIndex(0);
 
 				txValorBruto.requestFocus();
 
@@ -240,7 +276,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 			if (dtMovimento.getDate() == null) {
 				JOptionPane.showMessageDialog(this, "Insira a data de Movimento");
 
-				tabbedPane.setSelectedIndex(0);
+				tabbePane.setSelectedIndex(0);
 
 				dtMovimento.requestFocus();
 
@@ -253,15 +289,8 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		}
 	}
 
-	private void calcularValorTotal() {
-
-		txValorTotal.setValue(txValorPagamento.getValue().add(txValorAcrescimo.getValue()).subtract(txValorDesconto.getValue()));
-	}
-
 	private void montarPainelPagamentos() {
-		JPanel painelPagamentos = new JPanel();
 
-		tabbedPane.addTab("Pagamentos", null, painelPagamentos, null);
 		painelPagamentos.setLayout(new MigLayout("", "[grow][grow][grow][grow][][]", "[][][][][][]"));
 
 		JLabel lblValorPagamento = new JLabel("Valor Pagamento:");
@@ -298,7 +327,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 
 		pesquisaFormasPagamento.addChangeListener(formaPagamento -> {
 
-			if (tabbedPane.getSelectedIndex() == 2) {
+			if (tabbePane.getSelectedIndex() == 1) {
 
 				boolean permitePrazo = formaPagamento != null && formaPagamento.isFlagPermitePagamentoPrazo();
 
@@ -377,7 +406,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 			for (Long parcela = 1L; parcela <= txNumeroParcelas.getValue(); parcela++) {
 
 				FaturamentoPagamentos faturamentoPagamento = new FaturamentoPagamentos();
-				faturamentoPagamento.setFaturamento(panelActions.getObjetoPesquisa());
+				faturamentoPagamento.setFaturamentoCabecalho(panelActions.getObjetoPesquisa());
 				faturamentoPagamento.setFormasPagamento(pesquisaFormasPagamento.getObjetoPesquisado());
 				faturamentoPagamento.setDataLancamento(new Date());
 				faturamentoPagamento.setNumeroParcela(parcela);
@@ -437,109 +466,46 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		return valorPagamento.divide(BigDecimal.valueOf(txNumeroParcelas.getValue()), 2, RoundingMode.HALF_EVEN);
 	}
 
-	private void montarPainelTransporte() {
-		JPanel painelTransporte = new JPanel();
+	private void removeRow() {
 
-		tabbedPane.addTab("Transporte", null, painelTransporte, null);
-		painelTransporte.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][]"));
+		if (table_1.getSelectedRowCount() != 1) {
+			JOptionPane.showMessageDialog(this, "Selecione uma despesa para excluir");
 
-		JLabel lblVeculo = new JLabel("Veículo:");
-		JLabel lblMotorista = new JLabel("Motorista:");
-		JLabel lblOdmetroInicial = new JLabel("Odômetro Inicial:");
-		JLabel lblOdmetroFinal = new JLabel("Odômetro Final:");
+			return;
+		}
 
-		pesquisaVeiculo = new CampoPesquisa<Veiculo>(veiculoService, PesquisaEnum.PES_VEICULOS.getCodigoPesquisa(),
-				getCodigoUsuario()) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String formatarValorCampo(Veiculo objeto) {
-				return String.format(TEMPLATE_PESQUISA, objeto.getIdVeiculo(), objeto.getPlaca());
-			}
-
-		};
-		pesquisaMotorista = new CampoPesquisa<Motorista>(motoristaService, PesquisaEnum.PES_MOTORISTA.getCodigoPesquisa(),
-				getCodigoUsuario()) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String formatarValorCampo(Motorista objeto) {
-				return String.format(TEMPLATE_PESQUISA, objeto.getIdMotorista(), objeto.getFuncionario().getCliente().getNome());
-			}
-		};
-		txOdometroInicial = new JNumericField();
-		txOdometroFinal = new JNumericField();
-
-		pesquisaVeiculo.addChangeListener(veiculo -> pesquisaMotorista.setValue(veiculo == null ? null : veiculo.getMotorista()));
-
-		painelTransporte.add(lblVeculo, "cell 0 0");
-		painelTransporte.add(lblMotorista, "cell 0 2");
-		painelTransporte.add(lblOdmetroInicial, "cell 0 4");
-		painelTransporte.add(lblOdmetroFinal, "cell 1 4");
-		painelTransporte.add(pesquisaVeiculo, "cell 0 1 2 1,growx");
-		painelTransporte.add(pesquisaMotorista, "cell 0 3 2 1,growx");
-		painelTransporte.add(txOdometroInicial, "cell 0 5,growx");
-		painelTransporte.add(txOdometroFinal, "cell 1 5,growx");
+		faturamentoTableModel.remove(table_1.getSelectedRow());
 	}
 
-	private void montarPainelGeral() {
-		JPanel painelGeral = new JPanel();
-		painelGeral.setLayout(new MigLayout("", "[grow][161.00][grow]", "[][][][]"));
-		tabbedPane.addTab("Geral", null, painelGeral, null);
+	private void calcularValorTotal() {
 
-		JLabel lblCliente = new JLabel("Cliente:");
-		JLabel lblDocumento = new JLabel("Documento:");
-		JLabel lblDataDoMovimento = new JLabel("Data do Movimento:");
-		JLabel lblValorDoFrete = new JLabel("Valor do Bruto:");
-
-		txDocumento = new JTextFieldMaiusculo();
-		dtMovimento = new JDateChooser("dd/MM/yyyy HH:mm:ss", "##/##/##### ##:##:##", '_');
-		txValorBruto = new JMoneyField();
-		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(),
-				getCodigoUsuario()) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String formatarValorCampo(Cliente objeto) {
-				return String.format(TEMPLATE_PESQUISA, objeto.getIdCliente(), objeto.getNome());
-			}
-		};
-
-		painelGeral.add(lblCliente, "cell 0 0");
-		painelGeral.add(lblDocumento, "cell 0 2");
-		painelGeral.add(lblDataDoMovimento, "cell 1 2");
-		painelGeral.add(lblValorDoFrete, "cell 2 2");
-		painelGeral.add(pesquisaCliente, "cell 0 1 3 1,growx");
-		painelGeral.add(txDocumento, "cell 0 3,growx");
-		painelGeral.add(dtMovimento, "cell 1 3,growx");
-		painelGeral.add(txValorBruto, "cell 2 3,growx");
-
+		txValorTotal.setValue(txValorPagamento.getValue().add(txValorAcrescimo.getValue()).subtract(txValorDesconto.getValue()));
 	}
 
-	private void montarPainelPrincipal() {
-		JLabel lblCdigo = new JLabel("Código:");
-		JLabel lblHistorico = new JLabel("Histórico:");
+	private void atualizarTotais() {
 
-		txCodigo = new JTextFieldId();
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
-				getCodigoUsuario(), historicoService.getHistoricosCredores()) {
+		txValorBruto.setValue(faturamentoTableModel.getTotalPagamentos());
+		txDesconto.setValue(faturamentoTableModel.getTotalDescontos());
+		txAcrescimo.setValue(faturamentoTableModel.getTotalAcrecimos());
 
-			private static final long serialVersionUID = 1L;
+		txValorLiquido.setValue(txValorBruto.getValue().add(txAcrescimo.getValue()).subtract(txDesconto.getValue()));
+	}
 
-			@Override
-			public String formatarValorCampo(Historico objeto) {
-				return String.format(TEMPLATE_PESQUISA, objeto.getIdHistorico(), objeto.getDescricao());
-			}
-		};
+	private void adicionarDespesa() {
 
-		painelContent.add(lblCdigo, "cell 0 0");
-		painelContent.add(txCodigo, "cell 0 1,,width 50:100:100");
-		painelContent.add(lblHistorico, "cell 0 2");
-		painelContent.add(pesquisaHistorico, "cell 0 3,growx");
+		FaturamentoDetalhe faturamentoDetalhe = new FaturamentoDetalhe();
+		faturamentoDetalhe.setFaturamentoCabecalho(panelActions.getObjetoPesquisa());
 
+		FrmSaida frmSaida = new FrmSaida(faturamentoDetalhe, getCodigoUsuario());
+
+		frmSaida.setVisible(true);
+
+		if (frmSaida.isOk()) {
+
+			faturamentoTableModel.addRow(faturamentoDetalhe);
+
+			atualizarTotais();
+		}
 	}
 
 }
