@@ -29,6 +29,7 @@ import br.com.lar.ui.FrmResumoCaixa;
 import br.com.lar.ui.FrmUsuario;
 import br.com.lar.ui.FrmVeiculo;
 import br.com.lar.ui.relatorios.FrmRelatorioContasPagar;
+import br.com.lar.ui.relatorios.FrmRelatorioContasReceber;
 import br.com.lar.ui.relatorios.FrmRelatorioDiario;
 import br.com.sysdesc.components.AbstractInternalFrame;
 
@@ -92,7 +93,7 @@ public enum ProgramasEnum {
 
 	RELATORIO_CONTAS_PAGAR(49L, FrmRelatorioContasPagar.class),
 
-	RELATORIO_CONTAS_RECEBER(50L, FrmRelatorioDiario.class);
+	RELATORIO_CONTAS_RECEBER(50L, FrmRelatorioContasReceber.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

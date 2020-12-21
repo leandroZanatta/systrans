@@ -20,20 +20,20 @@ import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.constants.Page;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import br.com.lar.reports.models.ContasReport;
-import br.com.lar.repository.model.ContasPagar;
+import br.com.lar.repository.model.ContasReceber;
 import br.com.sysdesc.pesquisa.ui.components.ReportViewer;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-public class ContasPagarReportBuilder {
+public class ContasReceberReportBuilder {
 
 	private Integer margin = 20;
 	private List<ContasReport> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public ContasPagarReportBuilder build(String title) {
+	public ContasReceberReportBuilder build(String title) {
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
@@ -109,7 +109,7 @@ public class ContasPagarReportBuilder {
 		return this;
 	}
 
-	public ContasPagarReportBuilder setData(List<ContasPagar> data) {
+	public ContasReceberReportBuilder setData(List<ContasReceber> data) {
 
 		this.data = data.stream().map(this::mapearData).collect(Collectors.toList());
 
@@ -127,25 +127,25 @@ public class ContasPagarReportBuilder {
 		new ReportViewer(jasperPrint).setVisible(Boolean.TRUE);
 	}
 
-	private ContasReport mapearData(ContasPagar contasPagar) {
+	private ContasReport mapearData(ContasReceber contasReceber) {
 
-		ContasReport contasPagarReport = new ContasReport();
+		ContasReport contasReceberReport = new ContasReport();
 
-		BigDecimal valorLiquido = contasPagar.getValorParcela().add(contasPagar.getValorAcrescimo()).subtract(contasPagar.getValorDesconto())
-				.subtract(contasPagar.getValorPago());
+		BigDecimal valorLiquido = contasReceber.getValorParcela().add(contasReceber.getValorAcrescimo()).subtract(contasReceber.getValorDesconto())
+				.subtract(contasReceber.getValorPago());
 
-		contasPagarReport.setCodigoConta(contasPagar.getIdContasPagar());
-		contasPagarReport.setCliente(cortar(contasPagar.getCliente().getNome(), 37));
-		contasPagarReport.setFormaPagamento(cortar(contasPagar.getFormasPagamento().getDescricao(), 20));
-		contasPagarReport.setDataVencimento(contasPagar.getDataVencimento());
-		contasPagarReport.setBaixado(contasPagar.isBaixado() ? "Sim" : "Não");
-		contasPagarReport.setValorTotal(contasPagar.getValorParcela());
-		contasPagarReport.setValorAcrescimo(contasPagar.getValorAcrescimo());
-		contasPagarReport.setValorDesconto(contasPagar.getValorDesconto().negate());
-		contasPagarReport.setValorPago(contasPagar.getValorPago().negate());
-		contasPagarReport.setValorLiquido(valorLiquido);
+		contasReceberReport.setCodigoConta(contasReceber.getIdContasReceber());
+		contasReceberReport.setCliente(cortar(contasReceber.getCliente().getNome(), 37));
+		contasReceberReport.setFormaPagamento(cortar(contasReceber.getFormasPagamento().getDescricao(), 20));
+		contasReceberReport.setDataVencimento(contasReceber.getDataVencimento());
+		contasReceberReport.setBaixado(contasReceber.isBaixado() ? "Sim" : "Não");
+		contasReceberReport.setValorTotal(contasReceber.getValorParcela());
+		contasReceberReport.setValorAcrescimo(contasReceber.getValorAcrescimo());
+		contasReceberReport.setValorDesconto(contasReceber.getValorDesconto().negate());
+		contasReceberReport.setValorPago(contasReceber.getValorPago().negate());
+		contasReceberReport.setValorLiquido(valorLiquido);
 
-		return contasPagarReport;
+		return contasReceberReport;
 	}
 
 	private String cortar(String texto, int tamanho) {
