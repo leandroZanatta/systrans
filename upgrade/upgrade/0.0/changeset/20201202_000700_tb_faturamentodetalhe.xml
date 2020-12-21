@@ -20,11 +20,11 @@
 			</column>
 
 			<column name="cd_veiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO">
-				<constraints nullable="false" foreignKeyName="faturamentodetalhe_veiculo_fk" references="tb_veiculo(id_veiculo)" />
+				<constraints nullable="true" foreignKeyName="faturamentodetalhe_veiculo_fk" references="tb_veiculo(id_veiculo)" />
 			</column>
 
 			<column name="cd_motorista" type="${numeric.18x0}" remarks="CÓDIGO DO MOTORISTA">
-				<constraints nullable="false" foreignKeyName="faturamentodetalhe_motorista_fk" references="tb_motorista(id_motorista)" />
+				<constraints nullable="true" foreignKeyName="faturamentodetalhe_motorista_fk" references="tb_motorista(id_motorista)" />
 			</column>
 
 			<column name="nr_documento" type="${varchar.100}" remarks="NÚMERO DO DOCUMENTO" />

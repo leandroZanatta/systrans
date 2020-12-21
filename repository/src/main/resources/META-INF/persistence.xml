@@ -51,6 +51,7 @@
 		<class>br.com.lar.repository.model.FaturamentoEntradaPagamentos</class>
 		<class>br.com.lar.repository.model.ContasPagarVeiculo</class>
 		<class>br.com.lar.repository.model.ContasReceberVeiculo</class>
+		<class>br.com.lar.repository.model.OperacaoFinanceiro</class>
 	</persistence-unit>
 
 </persistence>

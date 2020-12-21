@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20201220_141600" author="Leandro Zanatta" logicalFilePath="20201220_141600_tb_operacaofinanceiro.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_operacaofinanceiro" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_operacaofinanceiro">
+
+			<column name="id_operacaofinanceiro" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="operacaofinanceiro_pk" nullable="false" />
+			</column>
+
+			<column name="cd_historico" type="${numeric.18x0}" remarks="CÓDIGO DO HISTÓRICO">
+				<constraints nullable="false" foreignKeyName="operacaofinanceiro_historico_fk" references="tb_historico(id_historico)" />
+			</column>
+
+			<column name="cd_pagamento" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO DA CONTA GERADA">
+				<constraints nullable="false" foreignKeyName="operacaofinanceiro_pagamento_fk" references="tb_formapagamento(id_formapagamento)" />
+			</column>
+
+			<column name="cd_contacredora" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="operacaofinanceiro_contacredora_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+
+			<column name="cd_contadevedora" type="${numeric.18x0}" remarks="CÓDIGO DA FORMA DE PAGAMENTO">
+				<constraints nullable="false" foreignKeyName="operacaofinanceiro_contadevedora_fk" references="tb_planocontas(id_planocontas)" />
+			</column>
+		</createTable>
+
+		<createSequence sequenceName="gen_operacaofinanceiro" />
+
+	</changeSet>
+</databaseChangeLog>

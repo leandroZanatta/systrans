@@ -39,18 +39,13 @@ public class ContasPagar implements Serializable {
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
 
-	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
-	private Long codigoCaixaCabecalho;
-
-	@Column(name = "cd_cliente", insertable = false, updatable = false)
-	private Long codigoCliente;
+	@ManyToOne
+	@JoinColumn(name = "cd_diarioDetalhe")
+	private DiarioDetalhe diarioDetalhe;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
 	private Cliente cliente;
-
-	@Column(name = "cd_formaspagamento", insertable = false, updatable = false)
-	private Long codigoFormaPagamento;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_formaspagamento")
@@ -96,6 +91,15 @@ public class ContasPagar implements Serializable {
 
 	@Column(name = "cd_status")
 	private Long codigoStatus;
+
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
+	@Column(name = "cd_cliente", insertable = false, updatable = false)
+	private Long codigoCliente;
+
+	@Column(name = "cd_formaspagamento", insertable = false, updatable = false)
+	private Long codigoFormaPagamento;
 
 	@OneToOne(mappedBy = "contasPagar")
 	private VinculoEntradaContasPagar vinculoEntradaContasPagar;

@@ -16,8 +16,6 @@ import br.com.lar.ui.FrmEstado;
 import br.com.lar.ui.FrmFechamentoCaixa;
 import br.com.lar.ui.FrmFormasPagamento;
 import br.com.lar.ui.FrmFuncionario;
-import br.com.lar.ui.FrmGerarContasPagar;
-import br.com.lar.ui.FrmGerarContasReceber;
 import br.com.lar.ui.FrmGrupo;
 import br.com.lar.ui.FrmHistoricoCusto;
 import br.com.lar.ui.FrmHistoricoOperacoes;
@@ -62,8 +60,6 @@ public enum ProgramasEnum {
 
 	CADASTRO_PLANO_CONTAS(23L, FrmPlanoContas.class),
 
-	CADASTRO_CONTAS_RECEBER(26L, FrmGerarContasReceber.class),
-
 	HISTORICO_OPERACOES(30L, FrmCadastroOperacoes.class),
 
 	PAGAMENTO_OPERACOES(31L, FrmHistoricoOperacoes.class),
@@ -83,8 +79,6 @@ public enum ProgramasEnum {
 	RESUMO_CAIXA(34L, FrmResumoCaixa.class),
 
 	CADASTRO_CAIXA(35L, FrmCaixa.class),
-
-	CADASTRO_CONTAS_PAGAR(37L, FrmGerarContasPagar.class),
 
 	CONSULTA_CONTAS_PAGAR(38L, FrmConsultarContasPagar.class),
 

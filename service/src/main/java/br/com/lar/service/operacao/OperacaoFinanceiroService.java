@@ -1,30 +1,27 @@
 package br.com.lar.service.operacao;
 
-import com.mysema.query.BooleanBuilder;
-
-import br.com.lar.repository.dao.OperacaoDAO;
-import br.com.lar.repository.model.Operacao;
+import br.com.lar.repository.dao.OperacaoFinanceiroDAO;
+import br.com.lar.repository.model.OperacaoFinanceiro;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
-import br.com.sysdesc.util.classes.StringUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
 
-public class OperacaoService extends AbstractPesquisableServiceImpl<Operacao> {
+public class OperacaoFinanceiroService extends AbstractPesquisableServiceImpl<OperacaoFinanceiro> {
 
-	private OperacaoDAO operacaoDAO;
+	private OperacaoFinanceiroDAO operacaoFinanceiroDAO;
 
-	public OperacaoService() {
-		this(new OperacaoDAO());
+	public OperacaoFinanceiroService() {
+		this(new OperacaoFinanceiroDAO());
 	}
 
-	public OperacaoService(OperacaoDAO operacaoDAO) {
-		super(operacaoDAO, Operacao::getIdOperacao);
+	public OperacaoFinanceiroService(OperacaoFinanceiroDAO operacaoFinanceiroDAO) {
+		super(operacaoFinanceiroDAO, OperacaoFinanceiro::getIdOperacaoFinanceiro);
 
-		this.operacaoDAO = operacaoDAO;
+		this.operacaoFinanceiroDAO = operacaoFinanceiroDAO;
 	}
 
 	@Override
-	public void validar(Operacao objetoPersistir) {
+	public void validar(OperacaoFinanceiro objetoPersistir) {
 
 		if (objetoPersistir.getHistorico() == null) {
 			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
@@ -34,14 +31,10 @@ public class OperacaoService extends AbstractPesquisableServiceImpl<Operacao> {
 			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORMA_PAGAMAMENTO);
 		}
 
-		boolean operacaoExiste = operacaoDAO.validarBuscarOperacao(objetoPersistir);
+		boolean operacaoExiste = operacaoFinanceiroDAO.validarBuscarOperacao(objetoPersistir);
 
 		if (operacaoExiste) {
 			throw new SysDescException(MensagemConstants.MENSAGEM_OPERACAO_CADASTRADA);
-		}
-
-		if (StringUtil.isNullOrEmpty(objetoPersistir.getDescricao())) {
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
 		}
 
 		if (objetoPersistir.getContaCredora() == null) {
@@ -53,8 +46,4 @@ public class OperacaoService extends AbstractPesquisableServiceImpl<Operacao> {
 		}
 	}
 
-	public BooleanBuilder buscarHistoricoCredorPorPlanoContas(Long idPlanoContas) {
-
-		return operacaoDAO.buscarHistoricoCredorPorPlanoContas(idPlanoContas);
-	}
 }
