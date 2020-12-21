@@ -9,7 +9,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.ToLongFunction;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -292,7 +293,14 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 
 		initComponents();
 
-		filtrarContasPagar();
+		addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameActivated(InternalFrameEvent e) {
+				filtrarContasPagar();
+				super.internalFrameActivated(e);
+			}
+		});
+
 	}
 
 	private void baixarContas() {
@@ -313,16 +321,9 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 			contasPagars.add(contasPagarTableModel.getRow(row));
 		}
 
-		if (!isUnique(contasPagars, conta -> conta.getCliente().getIdCliente())) {
+		if (contasPagars.stream().anyMatch(ContasPagar::isBaixado)) {
 
-			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de clientes diferentes");
-
-			return;
-		}
-
-		if (!isUnique(contasPagars, conta -> conta.getFormasPagamento().getIdFormaPagamento())) {
-
-			JOptionPane.showMessageDialog(this, "Não é possivel baixar contas de formas de pagamento diferentes");
+			JOptionPane.showMessageDialog(this, "NÃO É POSSÍVEL EFETUAR BAIXA DE CONTAS COM SITUAÇÃO BAIXADA. VERIFIQUE!");
 
 			return;
 		}
@@ -330,11 +331,6 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		FrmBaixarContasPagar frmBaixarContasPagar = new FrmBaixarContasPagar(getCodigoUsuario(), contasPagars);
 		FrmApplication.getInstance().posicionarFrame(frmBaixarContasPagar, null);
 
-	}
-
-	private boolean isUnique(List<ContasPagar> contasPagars, ToLongFunction<ContasPagar> chave) {
-
-		return contasPagars.stream().mapToLong(chave).boxed().distinct().count() == 1;
 	}
 
 	private void filtrarContasPagar() {

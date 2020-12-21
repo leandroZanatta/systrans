@@ -37,12 +37,6 @@ public class DiarioCabecalho implements Serializable {
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
 
-	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
-	private Long codigoCaixaCabecalho;
-
-	@Column(name = "cd_historico", insertable = false, updatable = false)
-	private Long codigoHistorico;
-
 	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataMovimento;
@@ -53,6 +47,12 @@ public class DiarioCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "diarioCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DiarioDetalhe> diarioDetalhes;
+
+	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
+	private Long codigoCaixaCabecalho;
+
+	@Column(name = "cd_historico", insertable = false, updatable = false)
+	private Long codigoHistorico;
 
 	@OneToMany(mappedBy = "diarioCabecalho")
 	private List<VinculoEntrada> vinculoSaidas;

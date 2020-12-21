@@ -43,41 +43,50 @@ public class ContasPagarReportBuilder {
 
 		Style valueStyle = new Style("valueStyle");
 		valueStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
+		valueStyle.setFont(new Font(10, "Times New Roman", false));
+
+		Style textStyle = new Style("textStyle");
+		textStyle.setFont(new Font(10, "Times New Roman", false));
 
 		Style totalStyle = new Style("totalStyle");
 		totalStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
 		totalStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
 
 		AbstractColumn valorLiquido = ColumnBuilder.getNew().setColumnProperty("valorLiquido", BigDecimal.class.getName()).setTitle("Valor Líquido")
-				.setPattern("#,##0.00").setWidth(95).setHeaderStyle(valueStyle).setStyle(valueStyle).build();
+				.setPattern("#,##0.00").setWidth(95).setStyle(valueStyle).build();
 
 		AbstractColumn valorBruto = ColumnBuilder.getNew().setColumnProperty("valorTotal", BigDecimal.class.getName()).setTitle("Valor Bruto")
 				.setPattern("#,##0.00")
-				.setWidth(85).setHeaderStyle(valueStyle).setStyle(valueStyle).build();
+				.setWidth(85).setStyle(valueStyle).build();
 
 		AbstractColumn valorDesconto = ColumnBuilder.getNew().setColumnProperty("valorDesconto", BigDecimal.class.getName()).setTitle("Desconto")
 				.setPattern("#,##0.00")
-				.setWidth(85).setHeaderStyle(valueStyle).setStyle(valueStyle).build();
+				.setWidth(85).setStyle(valueStyle).build();
 
 		AbstractColumn valorAcrescimo = ColumnBuilder.getNew().setColumnProperty("valorAcrescimo", BigDecimal.class.getName()).setTitle("Acréscimo")
 				.setPattern("#,##0.00")
-				.setWidth(85).setHeaderStyle(valueStyle).setStyle(valueStyle).build();
+				.setWidth(85).setStyle(valueStyle).build();
 
 		AbstractColumn valorPago = ColumnBuilder.getNew().setColumnProperty("valorPago", BigDecimal.class.getName()).setTitle("Pago")
 				.setPattern("#,##0.00")
-				.setWidth(85).setHeaderStyle(valueStyle).setStyle(valueStyle).build();
+				.setWidth(85).setStyle(valueStyle).build();
 
 		drb.setTitle(title).setTitleStyle(titleStyle).setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
 				.setBottomMargin(margin)
 				.setPrintBackgroundOnOddRows(false).setGrandTotalLegendStyle(totalStyle).setGrandTotalLegend("Totais");
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código:").setWidth(90).build());
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("cliente", String.class.getName()).setTitle("Cliente").setWidth(185).build());
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("formaPagamento", String.class.getName()).setTitle("Forma de Pagamento").setWidth(185)
+		drb.addColumn(ColumnBuilder.getNew().setStyle(valueStyle).setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código")
+				.setWidth(50).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("cliente", String.class.getName()).setTitle("Cliente")
+				.setWidth(300).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("formaPagamento", String.class.getName())
+				.setTitle("Forma de Pagamento").setWidth(150)
 				.build());
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("baixado", String.class.getName()).setTitle("Baixado").setWidth(55).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("baixado", String.class.getName()).setTitle("Baixado")
+				.setWidth(55).build());
 
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("dataVencimento", Date.class.getName()).setTitle("Vencimento").setPattern("dd/MM/yyyy")
-				.setWidth(85).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("dataVencimento", Date.class.getName()).setTitle("Vencimento")
+				.setPattern("dd/MM/yyyy")
+				.setWidth(80).build());
 
 		drb.addColumn(valorBruto);
 		drb.addColumn(valorDesconto);
@@ -126,8 +135,8 @@ public class ContasPagarReportBuilder {
 				.subtract(contasPagar.getValorPago());
 
 		contasPagarReport.setCodigoConta(contasPagar.getIdContasPagar());
-		contasPagarReport.setCliente(contasPagar.getCliente().getNome());
-		contasPagarReport.setFormaPagamento(contasPagar.getFormasPagamento().getDescricao());
+		contasPagarReport.setCliente(cortar(contasPagar.getCliente().getNome(), 37));
+		contasPagarReport.setFormaPagamento(cortar(contasPagar.getFormasPagamento().getDescricao(), 20));
 		contasPagarReport.setDataVencimento(contasPagar.getDataVencimento());
 		contasPagarReport.setBaixado(contasPagar.isBaixado() ? "Sim" : "Não");
 		contasPagarReport.setValorTotal(contasPagar.getValorParcela());
@@ -137,6 +146,11 @@ public class ContasPagarReportBuilder {
 		contasPagarReport.setValorLiquido(valorLiquido);
 
 		return contasPagarReport;
+	}
+
+	private String cortar(String texto, int tamanho) {
+
+		return texto.length() > tamanho ? texto.substring(0, tamanho) : texto;
 	}
 
 }
