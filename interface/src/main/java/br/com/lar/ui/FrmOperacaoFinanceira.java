@@ -38,7 +38,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 	private JLabel lbContaCredora;
 	private JTextFieldId txCodigo;
 	private CampoPesquisa<Historico> pesquisaHistorico;
-	private CampoPesquisa<PlanoContas> pesquisaHistoricoCredor;
+	private CampoPesquisa<PlanoContas> pesquisaContaDevedora;
 	private HistoricoService historicoService = new HistoricoService();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private PlanoContasService planoContasService = new PlanoContasService();
@@ -46,7 +46,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 	private JLabel lblFormaDePagamento_1;
 	private CampoPesquisa<FormasPagamento> pesquisaFormasPagamento;
 	private final TipoHistoricoOperacaoEnum historico;
-	private CampoPesquisa<PlanoContas> pesquisaContaDevedora;
+	private CampoPesquisa<PlanoContas> pesquisaContaCredora;
 
 	public FrmOperacaoFinanceira(Long permissaoPrograma, Long codigoUsuario, TipoHistoricoOperacaoEnum historico) {
 		super(permissaoPrograma, codigoUsuario);
@@ -92,7 +92,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 			}
 		};
 
-		pesquisaHistoricoCredor = new CampoPesquisa<PlanoContas>(planoContasService, PesquisaEnum.PES_PLANOCONTAS.getCodigoPesquisa(),
+		pesquisaContaDevedora = new CampoPesquisa<PlanoContas>(planoContasService, PesquisaEnum.PES_PLANOCONTAS.getCodigoPesquisa(),
 				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
@@ -129,7 +129,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 		painelContent.add(lbCodigo, "cell 0 0");
 		painelContent.add(lblFormaDePagamento, "cell 0 4");
 
-		pesquisaContaDevedora = new CampoPesquisa<PlanoContas>(planoContasService, PesquisaEnum.PES_PLANOCONTAS.getCodigoPesquisa(),
+		pesquisaContaCredora = new CampoPesquisa<PlanoContas>(planoContasService, PesquisaEnum.PES_PLANOCONTAS.getCodigoPesquisa(),
 				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
@@ -158,7 +158,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 
 			}
 		};
-		painelContent.add(pesquisaContaDevedora, "cell 0 5,grow");
+		painelContent.add(pesquisaContaCredora, "cell 0 5,grow");
 
 		lblFormaDePagamento_1 = new JLabel("Forma de Pagamento:");
 		painelContent.add(lblFormaDePagamento_1, "cell 0 6");
@@ -168,7 +168,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 		painelContent.add(lbHistorico, "cell 0 2");
 		painelContent.add(txCodigo, "cell 0 1,,width 50:100:100");
 		painelContent.add(pesquisaHistorico, "cell 0 3,growx");
-		painelContent.add(pesquisaHistoricoCredor, "cell 0 9,growx");
+		painelContent.add(pesquisaContaDevedora, "cell 0 9,growx");
 
 		painelBotoes = new PanelActions<OperacaoFinanceiro>(this, operacaoFinanceiroService,
 				PesquisaEnum.PES_HISTORICOOPERACOES.getCodigoPesquisa()) {
@@ -180,16 +180,16 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 				txCodigo.setValue(objeto.getIdOperacaoFinanceiro());
 				pesquisaHistorico.setValue(objeto.getHistorico());
 				pesquisaFormasPagamento.setValue(objeto.getFormasPagamento());
-				pesquisaHistoricoCredor.setValue(objeto.getContaCredora());
 				pesquisaContaDevedora.setValue(objeto.getContaDevedora());
+				pesquisaContaCredora.setValue(objeto.getContaCredora());
 			}
 
 			@Override
 			public boolean preencherObjeto(OperacaoFinanceiro objetoPesquisa) {
 				objetoPesquisa.setIdOperacaoFinanceiro(txCodigo.getValue());
 				objetoPesquisa.setHistorico(pesquisaHistorico.getObjetoPesquisado());
-				objetoPesquisa.setContaCredora(pesquisaHistoricoCredor.getObjetoPesquisado());
 				objetoPesquisa.setContaDevedora(pesquisaContaDevedora.getObjetoPesquisado());
+				objetoPesquisa.setContaCredora(pesquisaContaCredora.getObjetoPesquisado());
 				objetoPesquisa.setFormasPagamento(pesquisaFormasPagamento.getObjetoPesquisado());
 
 				return true;
