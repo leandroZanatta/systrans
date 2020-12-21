@@ -104,6 +104,9 @@ public class ContasPagar implements Serializable {
 	@OneToOne(mappedBy = "contasPagar")
 	private VinculoEntradaContasPagar vinculoEntradaContasPagar;
 
+	@OneToMany(mappedBy = "contasPagar")
+	private List<ContasPagarPagamento> contasPagarPagamentos;
+
 	@OneToMany(mappedBy = "contasPagar", cascade = CascadeType.ALL)
 	private List<ContasPagarVeiculo> contasPagarVeiculos = new ArrayList<>();
 

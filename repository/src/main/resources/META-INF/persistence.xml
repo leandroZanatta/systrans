@@ -52,6 +52,7 @@
 		<class>br.com.lar.repository.model.ContasPagarVeiculo</class>
 		<class>br.com.lar.repository.model.ContasReceberVeiculo</class>
 		<class>br.com.lar.repository.model.OperacaoFinanceiro</class>
+		<class>br.com.lar.repository.model.ContasPagarPagamento</class>
 	</persistence-unit>
 
 </persistence>
