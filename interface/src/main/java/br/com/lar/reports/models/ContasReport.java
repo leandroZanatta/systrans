@@ -6,7 +6,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class ContasPagarReport {
+public class ContasReport {
 
 	private Long codigoConta;
 	private String cliente;
