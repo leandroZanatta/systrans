@@ -80,7 +80,6 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 		default:
 			throw new SysDescException("Campo não pode ser editado");
 		}
-		super.setValueAt(aValue, rowIndex, columnIndex);
 	}
 
 	@Override

@@ -496,7 +496,7 @@
 			<column name="tx_icone" value="relatorio-financeiro.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-		
+
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="49" />
 			<column name="cd_aplicativo" value="1" />
@@ -506,7 +506,7 @@
 			<column name="tx_icone" value="relatorio-financeiro-pagar.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-		
+
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="50" />
 			<column name="cd_aplicativo" value="1" />
@@ -516,7 +516,7 @@
 			<column name="tx_icone" value="relatorio-financeiro-receber.png" />
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
-		
+
 		<insert tableName="tb_programa">
 			<column name="id_programa" value="51" />
 			<column name="cd_aplicativo" value="1" />
@@ -527,4 +527,24 @@
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="20201221_200300" author="Leandro Zanatta">
+
+		<delete tableName="tb_permissaoprograma">
+			<where>cd_programa=26</where>
+		</delete>
+
+		<delete tableName="tb_permissaoprograma">
+			<where>cd_programa=37</where>
+		</delete>
+
+		<delete tableName="tb_programa">
+			<where>id_programa=26</where>
+		</delete>
+
+		<delete tableName="tb_programa">
+			<where>id_programa=37</where>
+		</delete>
+	</changeSet>
+
 </databaseChangeLog>

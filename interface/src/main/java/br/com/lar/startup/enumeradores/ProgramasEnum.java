@@ -30,6 +30,7 @@ import br.com.lar.ui.FrmUsuario;
 import br.com.lar.ui.FrmVeiculo;
 import br.com.lar.ui.relatorios.FrmRelatorioContasPagar;
 import br.com.lar.ui.relatorios.FrmRelatorioContasReceber;
+import br.com.lar.ui.relatorios.FrmRelatorioDespesas;
 import br.com.lar.ui.relatorios.FrmRelatorioDiario;
 import br.com.sysdesc.components.AbstractInternalFrame;
 
@@ -87,7 +88,7 @@ public enum ProgramasEnum {
 
 	RELATORIO_DIARIO(45L, FrmRelatorioDiario.class),
 
-	RELATORIO_DESPEZAS(47L, FrmRelatorioDiario.class),
+	RELATORIO_DESPEZAS(47L, FrmRelatorioDespesas.class),
 
 	RELATORIO_RECEITAS(51L, FrmRelatorioDiario.class),
 

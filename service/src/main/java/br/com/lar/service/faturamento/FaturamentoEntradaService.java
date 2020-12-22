@@ -31,6 +31,7 @@ import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.RateioUtil;
 import br.com.systrans.util.constants.MensagemConstants;
 import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
+import br.com.systrans.util.vo.PesquisaFaturamentoVO;
 
 public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<FaturamentoEntradasCabecalho> {
 
@@ -226,5 +227,10 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		} finally {
 			entityManager.getTransaction().commit();
 		}
+	}
+
+	public List<FaturamentoEntradasCabecalho> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
+
+		return faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
 	}
 }
