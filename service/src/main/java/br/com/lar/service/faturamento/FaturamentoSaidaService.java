@@ -128,7 +128,7 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 			caixaDetalhe.setCaixaCabecalho(objetoPersistir.getCaixaCabecalho());
 			caixaDetalhe.setDataMovimento(new Date());
 			caixaDetalhe.setTipoSaldo(operacao.getHistorico().getTipoHistorico());
-			caixaDetalhe.setPlanoContas(operacao.getContaCredora());
+			caixaDetalhe.setPlanoContas(operacao.getContaDevedora());
 			caixaDetalhe.setValorDetalhe(recebimento.getValorParcela());
 
 			caixaDetalhes.add(caixaDetalhe);

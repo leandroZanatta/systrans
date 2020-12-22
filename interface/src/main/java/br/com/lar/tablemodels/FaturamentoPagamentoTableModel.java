@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import br.com.lar.repository.model.FaturamentoPagamentos;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.exception.SysDescException;
 
 public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 
@@ -59,6 +60,27 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+		FaturamentoPagamentos faturamentoPagamento = rows.get(rowIndex);
+
+		switch (columnIndex) {
+
+		case 2:
+			faturamentoPagamento.setDataVencimento((Date) aValue);
+			break;
+
+		case 4:
+			faturamentoPagamento.setValorParcela((BigDecimal) aValue);
+			break;
+
+		default:
+			throw new SysDescException("Campo não pode ser editado");
+		}
+
 	}
 
 	@Override
