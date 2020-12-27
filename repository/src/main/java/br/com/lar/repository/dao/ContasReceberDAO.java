@@ -43,7 +43,7 @@ public class ContasReceberDAO extends PesquisableDAOImpl<ContasReceber> {
 			query.where(clausulas);
 		}
 
-		return query.list(contasReceber);
+		return query.orderBy(contasReceber.dataVencimento.asc()).list(contasReceber);
 	}
 
 	private BooleanBuilder montarClausulasFiltroContasReceber(PesquisaContasVO pesquisaContasReceberVO) {

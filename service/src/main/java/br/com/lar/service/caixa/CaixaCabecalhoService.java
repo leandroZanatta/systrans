@@ -1,6 +1,7 @@
 package br.com.lar.service.caixa;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -191,8 +192,11 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 		if (BigDecimalUtil.diferente(resumoMovimento, resumoPagamentos)) {
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_RESUMO_CAIXA_INVALIDO, resumoMovimento, resumoPagamentos,
-					resumoMovimento.subtract(resumoPagamentos));
+			DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_RESUMO_CAIXA_INVALIDO, decimalFormat.format(resumoMovimento.doubleValue()),
+					decimalFormat.format(resumoPagamentos.doubleValue()),
+					decimalFormat.format(resumoMovimento.subtract(resumoPagamentos).doubleValue()));
 		}
 
 	}

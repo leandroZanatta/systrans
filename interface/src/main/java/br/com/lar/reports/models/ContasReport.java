@@ -15,6 +15,7 @@ public class ContasReport {
 	private BigDecimal valorTotal;
 	private BigDecimal valorDesconto;
 	private BigDecimal valorAcrescimo;
+	private BigDecimal valorJuros;
 	private BigDecimal valorPago;
 	private BigDecimal valorLiquido;
 	private String baixado;

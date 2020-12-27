@@ -2,14 +2,19 @@ package br.com.lar.ui;
 
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -27,6 +32,7 @@ import br.com.sysdesc.components.JmoneyFieldColumn;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.sysdesc.util.resources.Resources;
+import br.com.systrans.util.RateioUtil;
 import br.com.systrans.util.constants.MensagemConstants;
 import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import br.com.systrans.util.vo.ResumoPagamentosVO;
@@ -87,16 +93,34 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 	}
 
 	private void initComponents() {
+		JLabel lbValorParcelas = new JLabel("Valor Parcelas:");
+		JButton btnConfigurar = new JButton("Configurar");
+		JLabel lblDescontos = new JLabel("Descontos:");
+		JLabel lblAcrscimos = new JLabel("Acréscimos:");
+		JLabel lblJuros = new JLabel("Juros:");
+		JLabel lblValorPagar = new JLabel("Valor á Pagar:");
+		JPopupMenu jPopupMenu = new JPopupMenu();
+		JMenuItem jMenuItemCP = new JMenuItem("Operação Contas á Pagar");
+		JMenuItem jMenuItemOF = new JMenuItem("Operação Financeiro");
 
-		setSize(800, 261);
-		setClosable(Boolean.TRUE);
-		setTitle("BAIXA DE CONTAS Á PAGAR");
+		txValorParcelas = new JMoneyField();
+		txDesconto = new JMoneyField();
+		txAcrescimo = new JMoneyField();
+		txValorJuros = new JMoneyField();
+		txValorPagar = new JMoneyField();
 
 		JPanel container = new JPanel();
 		JPanel panel = new JPanel();
 		JLabel lblFormaDePagamento = new JLabel("Forma de Pagamento:");
 		JButton btBaixar = new JButton("Baixar");
 		JButton btCancelar = new JButton("Cancelar");
+
+		table = new JTable(contasPagarPagamentoTableModel);
+		new JmoneyFieldColumn(table, 4);
+		new JmoneyFieldColumn(table, 5);
+		new JmoneyFieldColumn(table, 6);
+		new JmoneyFieldColumn(table, 7);
+		JScrollPane scrollPane = new JScrollPane(table);
 
 		pesquisaFormaPagamento = new CampoPesquisa<FormasPagamento>(formasPagamentoService, PesquisaEnum.PES_FORMAS_PAGAMENTO.getCodigoPesquisa(),
 				this.codigoUsuario) {
@@ -109,64 +133,99 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 			}
 		};
 
+		txValorPagar.setEnabled(false);
+
+		jMenuItemCP.addActionListener(e -> abrirConfiguracaoContasPagar());
+		jMenuItemOF.addActionListener(e -> abrirConfiguracaoOperacaoFinanceira());
+
+		btnConfigurar.addActionListener(e -> jPopupMenu.show(btnConfigurar, 0, -45));
 		btBaixar.addActionListener((e) -> baixarContas());
 		btCancelar.addActionListener(e -> dispose());
-
-		getContentPane().add(container, BorderLayout.CENTER);
-		container.setLayout(new MigLayout("", "[grow][grow][grow][grow][grow]", "[grow][][][][][grow]"));
-
-		JScrollPane scrollPane = new JScrollPane();
-		container.add(scrollPane, "cell 0 0 5 1,grow");
-
-		table = new JTable(contasPagarPagamentoTableModel);
-		new JmoneyFieldColumn(table, 4);
-		new JmoneyFieldColumn(table, 5);
-		new JmoneyFieldColumn(table, 6);
-		new JmoneyFieldColumn(table, 7);
+		txDesconto.addChangeValue(value -> this.calcularRateioDesconto(value));
+		txAcrescimo.addChangeValue(value -> this.calcularRateioAcrescimo(value));
+		txValorJuros.addChangeValue(value -> this.calcularRateioJuros(value));
+		txValorParcelas.setEnabled(false);
 
 		contasPagarPagamentoTableModel.addChangeListener(valorTotal -> {
 			calcularValorTotal(valorTotal);
 		});
 
-		scrollPane.setViewportView(table);
+		getContentPane().add(container, BorderLayout.CENTER);
+		container.setLayout(new MigLayout("", "[grow][grow][grow][grow][grow]", "[grow][][][][][grow]"));
+
+		container.add(scrollPane, "cell 0 0 5 1,grow");
+
 		container.add(lblFormaDePagamento, "cell 0 1");
-		container.add(pesquisaFormaPagamento, "cell 0 2 5 1,grow");
-		JLabel lbValorParcelas = new JLabel("Valor Parcelas:");
 		container.add(lbValorParcelas, "cell 0 3,alignx left,aligny top");
-
-		JLabel lblDescontos = new JLabel("Descontos:");
-
 		container.add(lblDescontos, "cell 1 3");
-		JLabel lblAcrscimos = new JLabel("Acréscimos:");
 		container.add(lblAcrscimos, "cell 2 3");
-
-		JLabel lblJuros = new JLabel("Juros:");
 		container.add(lblJuros, "cell 3 3");
-		JLabel lblValorPagar = new JLabel("Valor á Pagar:");
 		container.add(lblValorPagar, "cell 4 3");
-		txValorParcelas = new JMoneyField();
 
-		txValorParcelas.setEnabled(false);
-		container.add(txValorParcelas, "cell 0 4,growx");
-		txDesconto = new JMoneyField();
-		txDesconto.setEnabled(false);
 		container.add(txDesconto, "cell 1 4,growx");
-		txAcrescimo = new JMoneyField();
-		txAcrescimo.setEnabled(false);
+		container.add(txValorParcelas, "cell 0 4,growx");
 		container.add(txAcrescimo, "cell 2 4,growx");
-
-		txValorJuros = new JMoneyField();
-		txValorJuros.setEnabled(false);
 		container.add(txValorJuros, "cell 3 4,growx");
-		txValorPagar = new JMoneyField();
-		txValorPagar.setEnabled(false);
 		container.add(txValorPagar, "cell 4 4,growx");
+		container.add(pesquisaFormaPagamento, "cell 0 2 5 1,grow");
 		container.add(panel, "cell 0 5 5 1,growx,aligny top");
-		JButton btnConfigurar = new JButton("Configurar");
-		btnConfigurar.addActionListener(e -> abrirConfiguracao());
+
+		jPopupMenu.add(jMenuItemCP);
+		jPopupMenu.add(jMenuItemOF);
+
 		panel.add(btBaixar);
 		panel.add(btnConfigurar);
 		panel.add(btCancelar);
+
+		setSize(800, 261);
+		setClosable(Boolean.TRUE);
+		setTitle("BAIXA DE CONTAS Á PAGAR");
+
+		calcularValorTotal(contasPagarPagamentoTableModel.obterValorTotal());
+	}
+
+	private void calcularRateioJuros(BigDecimal value) {
+
+		efetuarRateioConta(value, PagamentoContasProjection::getJuros, PagamentoContasProjection::setJuros);
+	}
+
+	private void calcularRateioAcrescimo(BigDecimal value) {
+
+		efetuarRateioConta(value, PagamentoContasProjection::getAcrescimos, PagamentoContasProjection::setAcrescimos);
+	}
+
+	private void calcularRateioDesconto(BigDecimal value) {
+
+		efetuarRateioConta(value, PagamentoContasProjection::getDecontos, PagamentoContasProjection::setDecontos);
+	}
+
+	private <T> void efetuarRateioConta(BigDecimal value, Function<PagamentoContasProjection, BigDecimal> funcaoGet,
+			BiConsumer<PagamentoContasProjection, BigDecimal> funcaoSet) {
+
+		List<PagamentoContasProjection> pagamentoContasProjections = contasPagarPagamentoTableModel.getRows();
+
+		BigDecimal valorTotalParcelas = contasPagarPagamentoTableModel.obterValorTotal().getValorParcelas();
+
+		pagamentoContasProjections.forEach(pagamento -> {
+
+			BigDecimal valorRateio = pagamento.getValorParcela().multiply(value).divide(valorTotalParcelas, 2, RoundingMode.HALF_EVEN);
+
+			funcaoSet.accept(pagamento, valorRateio);
+
+		});
+
+		RateioUtil.efetuarRateio(pagamentoContasProjections, funcaoGet, funcaoSet, value);
+
+		pagamentoContasProjections.forEach(pagamento -> {
+
+			BigDecimal valorRecalculado = pagamento.getValorParcela().add(pagamento.getAcrescimos()).add(pagamento.getJuros())
+					.subtract(pagamento.getDecontos());
+
+			pagamento.setValorPagar(valorRecalculado);
+
+		});
+
+		contasPagarPagamentoTableModel.fireTableDataChanged();
 
 		calcularValorTotal(contasPagarPagamentoTableModel.obterValorTotal());
 	}
@@ -202,10 +261,20 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 		txValorJuros.setValue(resumoPagamentosVO.getValorJuros());
 	}
 
-	private void abrirConfiguracao() {
+	private void abrirConfiguracaoOperacaoFinanceira() {
 
-		FrmOperacaoFinanceira frmOperacaoFinanceira = new FrmOperacaoFinanceira(ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(), codigoUsuario,
-				TipoHistoricoOperacaoEnum.CREDOR);
+		FrmParametroOperacaoFinanceira frmOperacaoFinanceira = new FrmParametroOperacaoFinanceira(ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(),
+				codigoUsuario,
+				TipoHistoricoOperacaoEnum.DEVEDOR);
+
+		FrmApplication.getInstance().posicionarFrame(frmOperacaoFinanceira, null);
+	}
+
+	private void abrirConfiguracaoContasPagar() {
+
+		FrmOperacaoFinanceira frmOperacaoFinanceira = new FrmOperacaoFinanceira(ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(),
+				codigoUsuario,
+				TipoHistoricoOperacaoEnum.DEVEDOR);
 
 		FrmApplication.getInstance().posicionarFrame(frmOperacaoFinanceira, null);
 	}

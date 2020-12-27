@@ -66,6 +66,7 @@
 	<include file="0.0/changeset/20201220_141600_tb_operacaofinanceiro.xml" />
 	<include file="0.0/changeset/20201221_004300_add_campos_contas.xml" />
 	<include file="0.0/changeset/20201221_160200_tb_contaspagarpagamento.xml" />
+	<include file="0.0/changeset/20201226_121300_tb_parametrooperacaofinanceira.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />
