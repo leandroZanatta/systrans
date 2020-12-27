@@ -20,9 +20,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tb_caixacabecalho")
 @SequenceGenerator(name = "GEN_CAIXACABECALHO", sequenceName = "GEN_CAIXACABECALHO", allocationSize = 1)

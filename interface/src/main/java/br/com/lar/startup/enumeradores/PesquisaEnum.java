@@ -21,6 +21,7 @@ import br.com.lar.repository.model.QHistorico;
 import br.com.lar.repository.model.QHistoricoCusto;
 import br.com.lar.repository.model.QMotorista;
 import br.com.lar.repository.model.QOperacao;
+import br.com.lar.repository.model.QParametroOperacaoFinanceira;
 import br.com.lar.repository.model.QPlanoContas;
 import br.com.lar.repository.model.QVeiculo;
 import br.com.sysdesc.pesquisa.repository.model.QPerfil;
@@ -69,7 +70,9 @@ public enum PesquisaEnum {
 
 	PES_HISTORICO_CUSTO(21L, "Histórico de Custo", QHistoricoCusto.class),
 
-	PES_FATURAMENTO_ENTRADA(22L, "Faturamento - Entradas", QFaturamentoEntradasCabecalho.class);
+	PES_FATURAMENTO_ENTRADA(22L, "Faturamento - Entradas", QFaturamentoEntradasCabecalho.class),
+
+	PES_PARAMETRO_OPERACAO_FINANCEIRA(22L, "Parâmetro de operação Financeira", QParametroOperacaoFinanceira.class);
 
 	private static Map<Long, PesquisaEnum> map = new HashMap<>();
 

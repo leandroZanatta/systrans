@@ -1,5 +1,11 @@
 package br.com.lar.service.contaspagar;
 
+import static br.com.systrans.util.enumeradores.TipoContaEnum.ACRESCIMOS;
+import static br.com.systrans.util.enumeradores.TipoContaEnum.DESCONTOS;
+import static br.com.systrans.util.enumeradores.TipoContaEnum.JUROS;
+import static br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum.CREDOR;
+import static br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum.DEVEDOR;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,21 +23,25 @@ import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.OperacaoFinanceiro;
+import br.com.lar.repository.model.ParametroOperacaoFinanceira;
 import br.com.lar.repository.model.PlanoContas;
 import br.com.lar.repository.projection.PagamentoContasProjection;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.lar.service.operacao.OperacaoFinanceiroService;
+import br.com.lar.service.operacao.ParametroOperacaoFinanceiraService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
+import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.constants.MensagemUtilConstants;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.constants.MensagemConstants;
-import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
+import br.com.systrans.util.enumeradores.TipoContaEnum;
 import br.com.systrans.util.vo.PesquisaContasVO;
 
 public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPagar> {
 
 	private OperacaoFinanceiroService operacaoFinanceiroService = new OperacaoFinanceiroService();
 	private CaixaService caixaService = new CaixaService();
+	private ParametroOperacaoFinanceiraService parametroOperacaoFinanceiraService = new ParametroOperacaoFinanceiraService();
 	private ContasPagarDAO contasPagarDAO;
 
 	public ContasPagarService() {
@@ -92,21 +102,17 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 			BigDecimal valorLiquido = calcularValorLiquido(contaPagar);
 
-			ContasPagar contaPagarModelo = contaPagar.getContasPagar();
-			contaPagarModelo.setValorPago(contaPagarModelo.getValorPago().add(valorLiquido));
-			contaPagarModelo.setBaixado(valorLiquido.compareTo(contaPagar.getValorParcela()) == 0);
-
 			CaixaDetalhe caixaDetalheCredor = new CaixaDetalhe();
 			caixaDetalheCredor.setCaixaCabecalho(caixaCabecalho);
 			caixaDetalheCredor.setDataMovimento(dataMovimento);
-			caixaDetalheCredor.setTipoSaldo(TipoHistoricoOperacaoEnum.CREDOR.getCodigo());
+			caixaDetalheCredor.setTipoSaldo(CREDOR.getCodigo());
 			caixaDetalheCredor.setPlanoContas(operacaoFinanceiro.getContaCredora());
 			caixaDetalheCredor.setValorDetalhe(valorLiquido);
 
 			CaixaDetalhe caixaDetalheDevedor = new CaixaDetalhe();
 			caixaDetalheDevedor.setCaixaCabecalho(caixaCabecalho);
 			caixaDetalheDevedor.setDataMovimento(dataMovimento);
-			caixaDetalheDevedor.setTipoSaldo(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo());
+			caixaDetalheDevedor.setTipoSaldo(DEVEDOR.getCodigo());
 			caixaDetalheDevedor.setPlanoContas(operacaoFinanceiro.getContaDevedora());
 			caixaDetalheDevedor.setValorDetalhe(valorLiquido);
 
@@ -118,14 +124,20 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 			DiarioDetalhe diarioCredito = new DiarioDetalhe();
 			diarioCredito.setDiarioCabecalho(diarioCabecalho);
 			diarioCredito.setPlanoContas(operacaoFinanceiro.getContaDevedora());
-			diarioCredito.setTipoSaldo(TipoHistoricoOperacaoEnum.CREDOR.getCodigo());
+			diarioCredito.setTipoSaldo(CREDOR.getCodigo());
 			diarioCredito.setValorDetalhe(valorLiquido);
 
 			DiarioDetalhe diarioDebito = new DiarioDetalhe();
 			diarioDebito.setDiarioCabecalho(diarioCabecalho);
 			diarioDebito.setPlanoContas(operacaoFinanceiro.getContaCredora());
-			diarioDebito.setTipoSaldo(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo());
+			diarioDebito.setTipoSaldo(DEVEDOR.getCodigo());
 			diarioDebito.setValorDetalhe(valorLiquido);
+
+			gerarDescontosAcrescimos(caixaCabecalho, formasPagamento, contaPagar, dataMovimento, diarioCabecalhos, caixaDetalhes);
+
+			ContasPagar contaPagarModelo = contaPagar.getContasPagar();
+			contaPagarModelo.setValorPago(contaPagarModelo.getValorPago().add(contaPagar.getValorPagar()));
+			contaPagarModelo.setBaixado(valorLiquido.compareTo(contaPagar.getValorParcela()) == 0);
 
 			diarioCabecalho.setDiarioDetalhes(Arrays.asList(diarioCredito, diarioDebito));
 			contasPagarPagamentos.add(contasPagarPagamento);
@@ -156,6 +168,77 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 			throw new SysDescException(MensagemUtilConstants.MENSAGEM_TIPO_DADO_INVALIDO);
 		}
+
+	}
+
+	private void gerarDescontosAcrescimos(CaixaCabecalho caixaCabecalho, FormasPagamento pagamento, PagamentoContasProjection contaPagar,
+			Date dataMovimento, List<DiarioCabecalho> diarios, List<CaixaDetalhe> caixaDetalhes) {
+
+		ContasPagar contasPagar = contaPagar.getContasPagar();
+
+		if (BigDecimalUtil.maior(contaPagar.getDecontos(), BigDecimal.ZERO)) {
+
+			gerarParametrosFinanceiros(contaPagar.getDecontos(), DESCONTOS, pagamento, caixaCabecalho, dataMovimento, diarios, caixaDetalhes);
+
+			contasPagar.setValorDesconto(contaPagar.getDecontos());
+		}
+
+		if (BigDecimalUtil.maior(contaPagar.getAcrescimos(), BigDecimal.ZERO)) {
+
+			gerarParametrosFinanceiros(contaPagar.getAcrescimos(), ACRESCIMOS, pagamento, caixaCabecalho, dataMovimento, diarios, caixaDetalhes);
+
+			contasPagar.setValorAcrescimo(contaPagar.getAcrescimos());
+		}
+
+		if (BigDecimalUtil.maior(contaPagar.getJuros(), BigDecimal.ZERO)) {
+
+			gerarParametrosFinanceiros(contaPagar.getJuros(), JUROS, pagamento, caixaCabecalho, dataMovimento, diarios, caixaDetalhes);
+
+			contasPagar.setValorJuros(contaPagar.getJuros());
+		}
+	}
+
+	private void gerarParametrosFinanceiros(BigDecimal valorVerificar, TipoContaEnum tipoContaEnum, FormasPagamento formasPagamento,
+			CaixaCabecalho caixaCabecalho, Date dataMovimento, List<DiarioCabecalho> diarioCabecalhos, List<CaixaDetalhe> caixaDetalhes) {
+
+		ParametroOperacaoFinanceira parametroFinanceiro = parametroOperacaoFinanceiraService.buscarParametroOperacao(
+				DEVEDOR.getCodigo(), tipoContaEnum.getCodigo(), formasPagamento.getIdFormaPagamento());
+
+		if (parametroFinanceiro == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_PARAMETRO_OPERACAO_FINANCEIRA_NAO_EXISTE,
+					tipoContaEnum.getDescricao().toUpperCase(), formasPagamento.getDescricao());
+		}
+
+		DiarioCabecalho diarioCabecalho = new DiarioCabecalho();
+		diarioCabecalho.setCaixaCabecalho(caixaCabecalho);
+		diarioCabecalho.setDataMovimento(dataMovimento);
+		diarioCabecalho.setHistorico(parametroFinanceiro.getHistorico());
+
+		DiarioDetalhe diarioCredor = new DiarioDetalhe();
+		diarioCredor.setDiarioCabecalho(diarioCabecalho);
+		diarioCredor.setTipoSaldo(CREDOR.getCodigo());
+		diarioCredor.setPlanoContas(parametroFinanceiro.getContaCredora());
+		diarioCredor.setValorDetalhe(valorVerificar);
+
+		DiarioDetalhe diarioDevedor = new DiarioDetalhe();
+		diarioDevedor.setDiarioCabecalho(diarioCabecalho);
+		diarioDevedor.setTipoSaldo(DEVEDOR.getCodigo());
+		diarioDevedor.setPlanoContas(parametroFinanceiro.getContaDevedora());
+		diarioDevedor.setValorDetalhe(valorVerificar);
+
+		diarioCabecalho.setDiarioDetalhes(Arrays.asList(diarioCredor, diarioDevedor));
+
+		CaixaDetalhe caixaDetalhe = new CaixaDetalhe();
+		caixaDetalhe.setCaixaCabecalho(caixaCabecalho);
+		caixaDetalhe.setDataMovimento(dataMovimento);
+		caixaDetalhe.setTipoSaldo(tipoContaEnum.equals(TipoContaEnum.DESCONTOS) ? CREDOR.getCodigo() : DEVEDOR.getCodigo());
+		caixaDetalhe.setPlanoContas(
+				tipoContaEnum.equals(TipoContaEnum.DESCONTOS) ? parametroFinanceiro.getContaDevedora() : parametroFinanceiro.getContaCredora());
+		caixaDetalhe.setValorDetalhe(valorVerificar);
+
+		caixaDetalhes.add(caixaDetalhe);
+		diarioCabecalhos.add(diarioCabecalho);
 
 	}
 
