@@ -51,4 +51,10 @@ public class FaturamentoEntradasDetalhe implements Serializable {
 	@Column(name = "vl_desconto")
 	private BigDecimal valorDesconto;
 
+	@Column(name = "cd_faturamentoentradascabecalho", insertable = false, updatable = false)
+	private Long codigoFaturamentoEntradasCabecalho;
+
+	@Column(name = "cd_veiculo", insertable = false, updatable = false)
+	private Long codigoVeiculo;
+
 }

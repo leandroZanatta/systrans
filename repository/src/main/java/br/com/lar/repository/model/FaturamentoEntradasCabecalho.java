@@ -57,6 +57,12 @@ public class FaturamentoEntradasCabecalho implements Serializable {
 	@Column(name = "vl_bruto")
 	private BigDecimal valorBruto;
 
+	@Column(name = "cd_historico", insertable = false, updatable = false)
+	private Long codigoHistorico;
+
+	@Column(name = "cd_centrocusto", insertable = false, updatable = false)
+	private Long codigoCentroCusto;
+
 	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FaturamentoEntradaPagamentos> faturamentoEntradaPagamentos;
 
