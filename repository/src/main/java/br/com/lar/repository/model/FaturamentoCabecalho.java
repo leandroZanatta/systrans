@@ -66,4 +66,8 @@ public class FaturamentoCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "faturamento")
 	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers;
+
+	@Column(name = "cd_historico", insertable = false, updatable = false)
+	private Long codigoHistorico;
+
 }

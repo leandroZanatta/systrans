@@ -31,6 +31,12 @@ public class FaturamentoDetalhe implements Serializable {
 	@JoinColumn(name = "cd_faturamentocabecalho")
 	private FaturamentoCabecalho faturamentoCabecalho;
 
+	@Column(name = "cd_faturamentocabecalho", insertable = false, updatable = false)
+	private Long codigoFaturamentoCabecalho;
+
+	@Column(name = "cd_veiculo", insertable = false, updatable = false)
+	private Long codigoVeiculo;
+
 	@ManyToOne
 	@JoinColumn(name = "cd_veiculo")
 	private Veiculo veiculo;
