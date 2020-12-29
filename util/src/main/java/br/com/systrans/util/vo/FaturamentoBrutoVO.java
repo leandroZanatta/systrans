@@ -2,15 +2,14 @@ package br.com.systrans.util.vo;
 
 import java.math.BigDecimal;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class FaturamentoBrutoVO {
 
-	private BigDecimal totalReceitas;
-
-	private BigDecimal totalDespesas;
-
-	private BigDecimal valorFaturamento;
-
+	private String descricao;
+	private BigDecimal valor;
+	private Integer agrupamento;
 }
