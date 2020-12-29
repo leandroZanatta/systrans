@@ -2,6 +2,7 @@ package br.com.lar.ui.relatorios;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisaMultiSelect;
+import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.classes.StringUtil;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 import net.sf.jasperreports.engine.JRException;
@@ -55,10 +58,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 		setSize(366, 280);
 		setClosable(Boolean.TRUE);
-		setTitle("Relatório de Despesas");
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		setTitle("Relatório de Faturamento Bruto");
 
 		JPanel container = new JPanel();
 		JPanel pnlVencimento = new JPanel();
@@ -137,12 +137,17 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		lbAte.setBounds(172, 24, 25, 14);
 		lblHistrico.setBounds(10, 10, 68, 14);
 		lbVeiculo.setBounds(10, 55, 68, 14);
-		lbCentroCusto.setBounds(10, 100, 68, 14);
+		lbCentroCusto.setBounds(10, 100, 150, 14);
 		pesquisaHistorico.setBounds(10, 25, 335, 22);
 		pesquisaVeiculo.setBounds(10, 70, 335, 22);
 		pesquisaCentroCusto.setBounds(10, 115, 335, 22);
 		dtMovimentoInicial.setBounds(38, 21, 124, 20);
 		dtMovimentoFinal.setBounds(205, 21, 124, 20);
+
+		Calendar calendar = Calendar.getInstance();
+		dtMovimentoFinal.setDate(calendar.getTime());
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		dtMovimentoInicial.setDate(calendar.getTime());
 
 		btnGerar.addActionListener(e -> gerarRelatorio());
 
@@ -178,13 +183,53 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			pesquisaFaturamentoBrutoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
 
-			FaturamentoBrutoVO faturamentoBrutoVO = faturamentoService
-					.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
+			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
-			new FaturamentoBrutoReportBuilder().build("Relatório de Faturamento").setData(faturamentoBrutoVO).view();
+			new FaturamentoBrutoReportBuilder().build("Relatório de Faturamento", montarSubTitulo())
+					.setData(faturamentoBrutoVOs).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á pagar");
 		}
+	}
+
+	private List<String> montarSubTitulo() {
+		List<String> subtitulo = new ArrayList<>();
+
+		if (!StringUtil.isNullOrEmpty(pesquisaHistorico.getText())) {
+			subtitulo.add("Histórico: " + pesquisaHistorico.getText().replace("<", "").replace(">", ""));
+		}
+
+		if (!StringUtil.isNullOrEmpty(pesquisaVeiculo.getText())) {
+			subtitulo.add("Veículo: " + pesquisaVeiculo.getText().replace("<", "").replace(">", ""));
+		}
+
+		if (!StringUtil.isNullOrEmpty(pesquisaCentroCusto.getText())) {
+			subtitulo.add("Centro de Custo: " + pesquisaCentroCusto.getText().replace("<", "").replace(">", ""));
+		}
+
+		if (dtMovimentoFinal.getDate() != null || dtMovimentoInicial.getDate() != null) {
+
+			StringBuilder stringBuilder = new StringBuilder("Data de movimento: ");
+
+			if (dtMovimentoFinal.getDate() != null && dtMovimentoInicial.getDate() != null) {
+
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
+						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+			} else if (dtMovimentoInicial.getDate() != null) {
+
+				stringBuilder.append("A partir De: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
+
+			} else {
+				stringBuilder.append("Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		return subtitulo;
 	}
 }
