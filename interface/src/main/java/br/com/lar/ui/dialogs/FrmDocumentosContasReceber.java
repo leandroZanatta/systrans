@@ -18,14 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import org.apache.commons.io.FileUtils;
-
-import com.asprise.imaging.core.Imaging;
-import com.asprise.imaging.core.Request;
-import com.asprise.imaging.core.RequestOutputItem;
-import com.asprise.imaging.core.Result;
-import com.asprise.imaging.scan.ui.workbench.AspriseScanUI;
-
 import br.com.lar.repository.model.DocumentoEntrada;
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
 import br.com.lar.service.faturamento.DocumentoEntradaService;
@@ -127,19 +119,16 @@ public class FrmDocumentosContasReceber extends JDialog {
 
 	private void abrirScanner() {
 
-		Result result = new AspriseScanUI().setRequest(
-				new Request().addOutputItem(
-						new RequestOutputItem(Imaging.OUTPUT_SAVE, Imaging.FORMAT_PDF)
-								.setSavePath("${TMP}\\\\${TMS}${EXT}")))
-				.showDialog(null, "Documentos de Entradas", true, null);
+		ScannerImage scannerImageTest = new ScannerImage();
+		scannerImageTest.setVisible(true);
 
-		if (result != null) {
-			salvarScannerPDF(result.getPdfFile());
+		if (scannerImageTest.created()) {
+			salvarScannerPDF(scannerImageTest.getPdfBytes());
 		}
 
 	}
 
-	private void salvarScannerPDF(File pdfFile) {
+	private void salvarScannerPDF(byte[] pdfbytes) {
 
 		try {
 			Calendar calendar = Calendar.getInstance();
@@ -150,7 +139,10 @@ public class FrmDocumentosContasReceber extends JDialog {
 
 			File arquivoEscanear = new File(arquivo, new Date().getTime() + ".pdf");
 
-			FileUtils.copyFile(pdfFile, new FileOutputStream(arquivoEscanear));
+			try (FileOutputStream fileOutputStream = new FileOutputStream(arquivoEscanear)) {
+
+				fileOutputStream.write(pdfbytes);
+			}
 
 			DocumentoEntrada documentoEntrada = new DocumentoEntrada();
 			documentoEntrada.setFaturamentoEntrada(faturamentoEntrada);
