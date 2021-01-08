@@ -96,18 +96,6 @@
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13.2</version>
 		</dependency>
-
-		<dependency>
-			<groupId>br.com.sysdesc</groupId>
-			<artifactId>scan-jar</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>br.com.sysdesc</groupId>
-			<artifactId>twain-scan</artifactId>
-			<version>0.0.1</version>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
