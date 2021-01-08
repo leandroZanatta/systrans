@@ -4,14 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -19,17 +22,12 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import lombok.extern.slf4j.Slf4j;
-import uk.co.mmscomputing.device.scanner.Scanner;
-import uk.co.mmscomputing.device.scanner.ScannerIOException;
-import uk.co.mmscomputing.device.scanner.ScannerIOMetadata;
-import uk.co.mmscomputing.device.scanner.ScannerListener;
 
 @Slf4j
-public class ScannerImage extends JDialog implements ScannerListener {
+public class ScannerImage extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private Scanner scanner;
 	private File scannedFile;
 	private ImagePanel imagePanel;
 	private Boolean created = Boolean.FALSE;
@@ -38,27 +36,18 @@ public class ScannerImage extends JDialog implements ScannerListener {
 
 	public ScannerImage() {
 		initComponents();
-		scanner = Scanner.getDevice();
-		scanner.addListener(this);
-		setVisible(true);
 	}
 
 	private void initComponents() {
 		setModal(true);
 		imagePanel = new ImagePanel();
-		JButton capturar = new JButton("Capturar Imagem");
+		JButton capturar = new JButton("Selecionar Arquivo");
 		salvar = new JButton("Salvar");
 		salvar.setEnabled(false);
 
-		capturar.addActionListener(e -> {
-			try {
-				scanner.acquire();
-			} catch (ScannerIOException ex) {
-				log.error("Erro ao abrir scanner:", ex);
-			}
-		});
-
+		capturar.addActionListener(e -> abrirSeletorArquivos());
 		salvar.addActionListener(e -> salvarPDF());
+
 		setSize(410, 510);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -67,6 +56,29 @@ public class ScannerImage extends JDialog implements ScannerListener {
 		getContentPane().add(salvar, BorderLayout.SOUTH);
 		getContentPane().add(imagePanel, BorderLayout.CENTER);
 		setTitle("Hello Scanner!");
+	}
+
+	private void abrirSeletorArquivos() {
+
+		try {
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.addChoosableFileFilter(new ImageFilter());
+			fileChooser.setAcceptAllFileFilterUsed(false);
+
+			int option = fileChooser.showOpenDialog(this);
+			if (option == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+
+				imagePanel.setScannedImage(ImageIO.read(file));
+
+				this.scannedFile = file;
+
+				salvar.setEnabled(true);
+			}
+		} catch (IOException e) {
+
+			JOptionPane.showMessageDialog(this, "Não foi possível criar a imagem");
+		}
 	}
 
 	private void salvarPDF() {
@@ -99,30 +111,9 @@ public class ScannerImage extends JDialog implements ScannerListener {
 			log.info("Conversão gerada com sucesso");
 
 			dispose();
+
 		} catch (DocumentException | IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void update(ScannerIOMetadata.Type type, ScannerIOMetadata siom) {
-
-		if (type.equals(ScannerIOMetadata.EXCEPTION)) {
-
-			log.error("Tipo de scanneamento Exception:", siom.getException());
-
-			salvar.setEnabled(false);
-		}
-
-		if (type.equals(ScannerIOMetadata.ACQUIRED)) {
-			log.info("Criado arquivo:" + siom.getFile().getAbsolutePath());
-
-			salvar.setEnabled(siom.getFile().exists());
-
-			scannedFile = siom.getFile();
-			BufferedImage bufferedImage = siom.getImage();
-
-			imagePanel.setScannedImage(bufferedImage);
 		}
 	}
 
@@ -138,6 +129,53 @@ public class ScannerImage extends JDialog implements ScannerListener {
 	public byte[] getPdfBytes() {
 
 		return this.pdfBytes;
+	}
+}
+
+class ImageFilter extends FileFilter {
+	public static final String JPEG = "jpeg";
+	public static final String JPG = "jpg";
+	public static final String GIF = "gif";
+	public static final String TIFF = "tiff";
+	public static final String TIF = "tif";
+	public static final String PNG = "png";
+
+	@Override
+	public boolean accept(File f) {
+		if (f.isDirectory()) {
+			return true;
+		}
+
+		String extension = getExtension(f);
+		if (extension != null) {
+			if (extension.equals(TIFF) ||
+					extension.equals(TIF) ||
+					extension.equals(GIF) ||
+					extension.equals(JPEG) ||
+					extension.equals(JPG) ||
+					extension.equals(PNG)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getDescription() {
+		return "Image Only";
+	}
+
+	String getExtension(File f) {
+		String ext = null;
+		String s = f.getName();
+		int i = s.lastIndexOf('.');
+
+		if (i > 0 && i < s.length() - 1) {
+			ext = s.substring(i + 1).toLowerCase();
+		}
+		return ext;
 	}
 }
 
