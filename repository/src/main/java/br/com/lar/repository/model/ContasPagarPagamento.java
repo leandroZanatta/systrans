@@ -36,6 +36,9 @@ public class ContasPagarPagamento implements Serializable {
 	@JoinColumn(name = "cd_contaspagar")
 	private ContasPagar contasPagar;
 
+	@Column(name = "cd_contaspagar", insertable = false, updatable = false)
+	private Long codigoContasPagar;
+
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
 	private CaixaCabecalho caixaCabecalho;
