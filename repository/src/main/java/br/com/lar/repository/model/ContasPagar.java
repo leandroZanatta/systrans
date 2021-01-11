@@ -101,6 +101,9 @@ public class ContasPagar implements Serializable {
 	@Column(name = "cd_formaspagamento", insertable = false, updatable = false)
 	private Long codigoFormaPagamento;
 
+	@Column(name = "cd_historico", insertable = false, updatable = false)
+	private Long codigoHistorico;
+
 	@OneToOne(mappedBy = "contasPagar")
 	private VinculoEntradaContasPagar vinculoEntradaContasPagar;
 

@@ -1,9 +1,11 @@
 package br.com.lar.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import br.com.sysdesc.util.classes.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -33,6 +36,8 @@ public class ScannerImage extends JDialog {
 	private Boolean created = Boolean.FALSE;
 	private byte[] pdfBytes;
 	private JButton salvar;
+	private int width;
+	private int height;
 
 	public ScannerImage() {
 		initComponents();
@@ -69,7 +74,12 @@ public class ScannerImage extends JDialog {
 			if (option == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 
-				imagePanel.setScannedImage(ImageIO.read(file));
+				BufferedImage image = ImageIO.read(file);
+
+				this.width = image.getWidth();
+				this.height = image.getHeight();
+
+				imagePanel.setScannedImage(image);
 
 				this.scannedFile = file;
 
@@ -96,6 +106,10 @@ public class ScannerImage extends JDialog {
 			log.info("Buscando Imagem da URL:" + scannedFile.toURI().toURL());
 
 			com.itextpdf.text.Image image = com.itextpdf.text.Image.getInstance(scannedFile.toURI().toURL());
+
+			Dimension dimension = ImageUtil.scaleImage(this.width, this.height, 595, 842);
+
+			image.scaleToFit((float) dimension.getWidth(), (float) dimension.getHeight());
 
 			log.info("Imagem Criada:");
 
@@ -184,11 +198,17 @@ class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Image scannedImage;
 
-	public void setScannedImage(Image scannedImage) {
+	public void setScannedImage(BufferedImage scannedImage) {
+
 		this.scannedImage = scannedImage;
+
 		if (scannedImage != null) {
-			this.scannedImage = scannedImage.getScaledInstance(400, 500, 0);
+
+			Dimension dimension = ImageUtil.scaleImage(scannedImage.getWidth(), scannedImage.getHeight(), 400, 500);
+
+			this.scannedImage = scannedImage.getScaledInstance((int) dimension.getWidth(), (int) dimension.getHeight(), 0);
 		}
+
 		super.repaint();
 	}
 

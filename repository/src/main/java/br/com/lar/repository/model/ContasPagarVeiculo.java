@@ -34,6 +34,9 @@ public class ContasPagarVeiculo implements Serializable {
 	@Column(name = "cd_contaspagar", insertable = false, updatable = false)
 	private Long codigoContasPagar;
 
+	@Column(name = "cd_veiculo", insertable = false, updatable = false)
+	private Long codigoVeiculo;
+
 	@ManyToOne
 	@JoinColumn(name = "cd_veiculo")
 	private Veiculo veiculo;
