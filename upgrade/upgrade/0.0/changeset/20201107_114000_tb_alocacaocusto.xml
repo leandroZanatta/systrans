@@ -47,4 +47,10 @@
 
 		<createSequence sequenceName="gen_alocacaocusto" />
 	</changeSet>
+
+	<changeSet id="2021_123800" author="Leandro Zanatta" logicalFilePath="20201107_114000_tb_alocacaocusto.xml">
+		<dropNotNullConstraint columnDataType="${numeric.18x0}" columnName="cd_centrocusto" tableName="tb_alocacaocusto" />
+		<dropNotNullConstraint columnDataType="${numeric.18x0}" columnName="cd_veiculo" tableName="tb_alocacaocusto" />
+		<dropNotNullConstraint columnDataType="${numeric.18x0}" columnName="cd_motorista" tableName="tb_alocacaocusto" />
+	</changeSet>
 </databaseChangeLog>
