@@ -54,6 +54,7 @@
 		<class>br.com.lar.repository.model.OperacaoFinanceiro</class>
 		<class>br.com.lar.repository.model.ContasPagarPagamento</class>
 		<class>br.com.lar.repository.model.ParametroOperacaoFinanceira</class>
+		<class>br.com.lar.repository.model.VinculoEntradaCusto</class>
 	</persistence-unit>
 
 </persistence>

@@ -18,4 +18,6 @@ public class PesquisaFaturamentoBrutoVO {
 
 	private Date dataMovimentoFinal;
 
+	private boolean usaAlocacaoCusto;
+
 }

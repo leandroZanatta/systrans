@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,6 +47,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 	private CampoPesquisaMultiSelect<CentroCusto> pesquisaCentroCusto;
 	private JDateChooser dtMovimentoInicial;
 	private JDateChooser dtMovimentoFinal;
+	private JCheckBox chckbxUsarAlocaoDe;
 
 	public FrmRelatorioFaturamento(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -56,7 +58,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(366, 280);
+		setSize(366, 311);
 		setClosable(Boolean.TRUE);
 		setTitle("Relatório de Faturamento Bruto");
 
@@ -70,6 +72,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		JLabel lbCentroCusto = new JLabel("Centro Custo:");
 		dtMovimentoInicial = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
 		dtMovimentoFinal = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
+		chckbxUsarAlocaoDe = new JCheckBox("Usar alocação de custos");
 
 		JButton btnGerar = new JButton("Gerar");
 
@@ -131,7 +134,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER, TitledBorder.TOP,
 						null, new Color(0, 0, 0)));
 
-		pnlActions.setBounds(7, 210, 340, 32);
+		pnlActions.setBounds(7, 238, 340, 32);
 		pnlVencimento.setBounds(7, 147, 340, 52);
 		lbDe.setBounds(10, 24, 23, 14);
 		lbAte.setBounds(172, 24, 25, 14);
@@ -143,6 +146,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pesquisaCentroCusto.setBounds(10, 115, 335, 22);
 		dtMovimentoInicial.setBounds(38, 21, 124, 20);
 		dtMovimentoFinal.setBounds(205, 21, 124, 20);
+		chckbxUsarAlocaoDe.setBounds(183, 208, 161, 23);
 
 		Calendar calendar = Calendar.getInstance();
 		dtMovimentoFinal.setDate(calendar.getTime());
@@ -166,6 +170,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pnlVencimento.add(dtMovimentoInicial);
 		pnlVencimento.add(dtMovimentoFinal);
 		pnlActions.add(btnGerar);
+		container.add(chckbxUsarAlocaoDe);
 	}
 
 	private void gerarRelatorio() {
@@ -182,6 +187,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 					.mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
 			pesquisaFaturamentoBrutoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
+			pesquisaFaturamentoBrutoVO.setUsaAlocacaoCusto(chckbxUsarAlocaoDe.isSelected());
 
 			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
@@ -228,6 +234,11 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			}
 
 			subtitulo.add(stringBuilder.toString());
+		}
+
+		if (chckbxUsarAlocaoDe.isSelected()) {
+
+			subtitulo.add("USANDO ALOCAÇÃO DE CUSTOS");
 		}
 
 		return subtitulo;
