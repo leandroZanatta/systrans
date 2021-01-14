@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 
 import br.com.lar.repository.dao.FaturamentoEntradaCabecalhoDAO;
+import br.com.lar.repository.dao.HistoricoCustoDAO;
 import br.com.lar.repository.dao.OperacaoDAO;
+import br.com.lar.repository.model.AlocacaoCusto;
 import br.com.lar.repository.model.CaixaDetalhe;
 import br.com.lar.repository.model.ContasPagar;
 import br.com.lar.repository.model.ContasPagarVeiculo;
@@ -19,12 +21,14 @@ import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.HistoricoCusto;
 import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.model.VinculoEntrada;
 import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
+import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import br.com.sysdesc.util.exception.SysDescException;
@@ -38,6 +42,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 	private FaturamentoEntradaCabecalhoDAO faturamentoEntradaDAO;
 	private CaixaService caixaService = new CaixaService();
 	private OperacaoDAO operacaoDAO = new OperacaoDAO();
+	private HistoricoCustoDAO historicoCustoDAO = new HistoricoCustoDAO();
 
 	public FaturamentoEntradaService() {
 		this(new FaturamentoEntradaCabecalhoDAO());
@@ -81,6 +86,11 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
 		}
 
+		if (!historicoCustoDAO.existeHistorico(objetoPersistir.getHistorico())) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_CUSTO_NAO_CONFIGURADO, objetoPersistir.getHistorico().getDescricao());
+		}
+
 		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoEntradaPagamentos().stream().map(FaturamentoEntradaPagamentos::getValorParcela)
 				.reduce(BigDecimal.ZERO,
 						BigDecimal::add);
@@ -110,6 +120,37 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 		List<ContasPagar> contasPagars = new ArrayList<>();
 		List<CaixaDetalhe> caixaDetalhes = new ArrayList<>();
+		List<AlocacaoCusto> alocacaoCustos = new ArrayList<>();
+
+		HistoricoCusto historicoCusto = historicoCustoDAO.buscarHistorico(objetoPersistir.getHistorico().getIdHistorico());
+
+		objetoPersistir.getFaturamentoEntradasDetalhes().forEach(detalhe -> {
+
+			List<AlocacaoCusto> alocacaoDetalhe = new ArrayList<>();
+
+			BigDecimal valorLiquido = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
+			BigDecimal valorParcela = valorLiquido.divide(BigDecimal.valueOf(historicoCusto.getMesesAlocacao()), 2, RoundingMode.HALF_EVEN);
+			Date periodo = DateUtil.addMonth(DateUtil.setDay(new Date(), 1L), 1L);
+
+			for (int mes = 1; mes <= historicoCusto.getMesesAlocacao(); mes++) {
+
+				AlocacaoCusto alocacaoCusto = new AlocacaoCusto();
+				alocacaoCusto.setCentroCusto(objetoPersistir.getCentroCusto());
+				alocacaoCusto.setHistoricoCusto(historicoCusto);
+				alocacaoCusto.setMotorista(detalhe.getMotorista());
+				alocacaoCusto.setNumeroParcela(Long.valueOf(mes));
+				alocacaoCusto.setPeriodo(periodo);
+				alocacaoCusto.setValorParcela(valorParcela);
+				alocacaoCusto.setVeiculo(detalhe.getVeiculo());
+
+				alocacaoDetalhe.add(alocacaoCusto);
+			}
+
+			RateioUtil.efetuarRateio(alocacaoDetalhe, AlocacaoCusto::getValorParcela, AlocacaoCusto::setValorParcela,
+					valorParcela);
+
+			alocacaoCustos.addAll(alocacaoDetalhe);
+		});
 
 		objetoPersistir.getFaturamentoEntradaPagamentos().forEach(pagamento -> {
 
@@ -198,6 +239,11 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 			if (!ListUtil.isNullOrEmpty(contasPagars)) {
 
 				contasPagars.forEach(entityManager::persist);
+			}
+
+			if (!ListUtil.isNullOrEmpty(alocacaoCustos)) {
+
+				alocacaoCustos.forEach(entityManager::persist);
 			}
 
 			caixaDetalhes.forEach(entityManager::persist);

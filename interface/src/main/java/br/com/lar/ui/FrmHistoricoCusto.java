@@ -49,7 +49,7 @@ public class FrmHistoricoCusto extends AbstractInternalFrame {
 
 		setSize(450, 220);
 		setClosable(Boolean.TRUE);
-		setTitle("CADASTRO DE CENTROS DE CUSTO");
+		setTitle("CADASTRO DE HISTÓRICO DE CUSTOS");
 
 		painelContent = new JPanel();
 

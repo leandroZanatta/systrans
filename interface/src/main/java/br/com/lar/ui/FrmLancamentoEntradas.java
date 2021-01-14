@@ -208,7 +208,10 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 		};
 
-		panelActions.addSaveListener(faturamento -> txCodigo.setValue(faturamento.getIdFaturamentoEntradasCabecalho()));
+		panelActions.addSaveListener(faturamento -> {
+			txCodigo.setValue(faturamento.getIdFaturamentoEntradasCabecalho());
+			tabbePane.setSelectedIndex(0);
+		});
 		panelActions.addNewListener(faturamento -> dtMovimento.setDate(new Date()));
 
 		painelContent.add(panelActions, "cell 0 14,growx");

@@ -17,6 +17,11 @@ public class HistoricoCustoDAO extends PesquisableDAOImpl<HistoricoCusto> {
 		super(historicoCusto, historicoCusto.idHistoricoCusto);
 	}
 
+	public boolean existeHistorico(Historico historico) {
+
+		return existeHistorico(null, historico);
+	}
+
 	public boolean existeHistorico(Long idHistoricoCusto, Historico historico) {
 
 		BooleanBuilder booleanBuilder = new BooleanBuilder(historicoCusto.codigoHistorico.eq(historico.getIdHistorico()));
@@ -27,6 +32,11 @@ public class HistoricoCustoDAO extends PesquisableDAOImpl<HistoricoCusto> {
 		}
 
 		return from().where(booleanBuilder).exists();
+	}
+
+	public HistoricoCusto buscarHistorico(Long idHistorico) {
+
+		return from().where(historicoCusto.codigoHistorico.eq(idHistorico)).singleResult(historicoCusto);
 	}
 
 }

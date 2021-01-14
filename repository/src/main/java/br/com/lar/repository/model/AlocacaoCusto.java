@@ -46,9 +46,6 @@ public class AlocacaoCusto implements Serializable {
 	@JoinColumn(name = "cd_motorista")
 	private Motorista motorista;
 
-	@Column(name = "fl_tipocusto")
-	private String flagTipoCusto;
-
 	@Column(name = "dt_periodo")
 	@Temporal(TemporalType.DATE)
 	private Date periodo;
