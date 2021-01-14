@@ -26,6 +26,7 @@ import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.model.VinculoEntrada;
 import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
+import br.com.lar.repository.model.VinculoEntradaCusto;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.ListUtil;
@@ -143,6 +144,12 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 				alocacaoCusto.setVeiculo(detalhe.getVeiculo());
 
 				alocacaoDetalhe.add(alocacaoCusto);
+
+				VinculoEntradaCusto vinculo = new VinculoEntradaCusto();
+				vinculo.setAlocacaoCusto(alocacaoCusto);
+				vinculo.setFaturamentoEntradasDetalhe(detalhe);
+
+				detalhe.getVinculoEntradaCustos().add(vinculo);
 			}
 
 			RateioUtil.efetuarRateio(alocacaoDetalhe, AlocacaoCusto::getValorParcela, AlocacaoCusto::setValorParcela,
@@ -269,6 +276,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 					return vinculoEntradaContasPagar;
 				}).forEach(entityManager::persist);
 			}
+
 		} finally {
 			entityManager.getTransaction().commit();
 		}

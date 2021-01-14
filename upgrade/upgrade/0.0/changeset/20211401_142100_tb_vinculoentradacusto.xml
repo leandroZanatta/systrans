@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20211401_142100" author="Leandro Zanatta" logicalFilePath="20211401_142100_tb_vinculoentradacusto.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_vinculoentradacusto" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_vinculoentradacusto">
+
+			<column name="id_vinculoentradacusto" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="vinculoentradacusto_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentradasdetalhe" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO DE ENTRADA">
+				<constraints nullable="false" foreignKeyName="vinculoentradacusto_faturamentoentradasdetalhe_fk"
+					references="tb_faturamentoentradasdetalhe(id_faturamentoentradasdetalhe)" />
+			</column>
+
+			<column name="cd_alocacaocusto" type="${numeric.18x0}" remarks="CÓDIGO DA ALOCAÇÃO DE CUSTO">
+				<constraints primaryKey="true" nullable="false" foreignKeyName="vinculoentradacusto_alocacaocusto_fk"
+					references="tb_alocacaocusto(id_alocacaocusto)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_vinculoentradacusto" />
+	</changeSet>
+</databaseChangeLog>

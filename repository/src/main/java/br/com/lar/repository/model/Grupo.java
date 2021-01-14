@@ -12,9 +12,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tb_grupo")
 @SequenceGenerator(name = "GEN_GRUPO", allocationSize = 1, sequenceName = "GEN_GRUPO")

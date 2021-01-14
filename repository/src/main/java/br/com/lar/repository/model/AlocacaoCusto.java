@@ -55,4 +55,11 @@ public class AlocacaoCusto implements Serializable {
 
 	@Column(name = "vl_parcela")
 	private BigDecimal valorParcela;
+
+	@Column(name = "cd_centrocusto", insertable = false, updatable = false)
+	private Long codigoCentroCusto;
+
+	@Column(name = "cd_veiculo", insertable = false, updatable = false)
+	private Long codigoVeiculo;
+
 }
