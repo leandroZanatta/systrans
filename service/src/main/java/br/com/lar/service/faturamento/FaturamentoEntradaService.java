@@ -28,7 +28,6 @@ import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
-import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import br.com.sysdesc.util.exception.SysDescException;
@@ -130,7 +129,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 			BigDecimal valorLiquido = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
 			BigDecimal valorParcela = valorLiquido.divide(BigDecimal.valueOf(historicoCusto.getMesesAlocacao()), 2, RoundingMode.HALF_EVEN);
-			Date periodo = DateUtil.addMonth(DateUtil.setDay(new Date(), 1L), 1L);
+			Date periodo = new Date();
 
 			for (int mes = 1; mes <= historicoCusto.getMesesAlocacao(); mes++) {
 
