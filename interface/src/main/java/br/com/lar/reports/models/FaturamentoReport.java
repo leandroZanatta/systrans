@@ -6,9 +6,10 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class FaturmaentoReport {
+public class FaturamentoReport {
 
 	private Long codigoConta;
+	private String veiculo;
 	private String cliente;
 	private Date dataMovimento;
 	private BigDecimal valorTotal;

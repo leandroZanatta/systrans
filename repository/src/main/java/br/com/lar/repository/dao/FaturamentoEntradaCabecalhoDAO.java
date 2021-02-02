@@ -2,6 +2,7 @@ package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QAlocacaoCusto.alocacaoCusto;
 import static br.com.lar.repository.model.QCentroCusto.centroCusto;
+import static br.com.lar.repository.model.QCliente.cliente;
 import static br.com.lar.repository.model.QFaturamentoEntradasCabecalho.faturamentoEntradasCabecalho;
 import static br.com.lar.repository.model.QFaturamentoEntradasDetalhe.faturamentoEntradasDetalhe;
 import static br.com.lar.repository.model.QHistorico.historico;
@@ -15,7 +16,6 @@ import java.util.List;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.JPASubQuery;
-import com.mysema.query.jpa.JPQLQuery;
 import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Predicate;
@@ -26,6 +26,7 @@ import com.mysema.query.types.path.NumberPath;
 
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
 import br.com.lar.repository.projection.FaturamentoBrutoReportProjection;
+import br.com.lar.repository.projection.FaturamentoEntradaProjection;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.ListUtil;
@@ -42,7 +43,7 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 		super(faturamentoEntradasCabecalho, faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho);
 	}
 
-	public List<FaturamentoEntradasCabecalho> filtrarFaturamento(PesquisaFaturamentoVO pesquisaVO) {
+	public List<FaturamentoEntradaProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaVO) {
 
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -53,17 +54,23 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoFornecedor())) {
 
-			booleanBuilder.and(faturamentoEntradasCabecalho.cliente.idCliente.eq(pesquisaVO.getCodigoFornecedor()));
+			booleanBuilder.and(faturamentoEntradasCabecalho.codigoCliente.eq(pesquisaVO.getCodigoFornecedor()));
 		}
 
 		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoHistorico())) {
 
-			booleanBuilder.and(faturamentoEntradasCabecalho.historico.idHistorico.eq(pesquisaVO.getCodigoHistorico()));
+			booleanBuilder.and(faturamentoEntradasCabecalho.codigoHistorico.eq(pesquisaVO.getCodigoHistorico()));
 		}
 
 		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoCentroCusto())) {
 
-			booleanBuilder.and(faturamentoEntradasCabecalho.centroCusto.idCentroCusto.eq(pesquisaVO.getCodigoCentroCusto()));
+			booleanBuilder.and(faturamentoEntradasCabecalho.codigoCentroCusto.eq(pesquisaVO.getCodigoCentroCusto()));
+		}
+
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoVeiculo())) {
+
+			booleanBuilder.and(
+					faturamentoEntradasDetalhe.codigoVeiculo.eq(pesquisaVO.getCodigoVeiculo()).or(faturamentoEntradasDetalhe.codigoVeiculo.isNull()));
 		}
 
 		if (pesquisaVO.getDataMovimentoInicial() != null || pesquisaVO.getDataMovimentoFinal() != null) {
@@ -79,14 +86,24 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 			booleanBuilder.and(getValorFaturamento(pesquisaVO.getValorInicial(), pesquisaVO.getValorFinal()));
 		}
 
-		JPQLQuery query = from();
+		JPASQLQuery query = sqlFrom()
+
+				.innerJoin(faturamentoEntradasDetalhe)
+				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho))
+				.innerJoin(cliente).on(faturamentoEntradasCabecalho.codigoCliente.eq(cliente.idCliente)).leftJoin(veiculo)
+				.on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo));
+
+		query.groupBy(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho, cliente.nome, faturamentoEntradasCabecalho.dataMovimento,
+				veiculo.placa.coalesce("TODOS"));
 
 		if (booleanBuilder.hasValue()) {
 
 			query.where(booleanBuilder);
 		}
 
-		return query.list(faturamentoEntradasCabecalho);
+		return query.list(Projections.fields(FaturamentoEntradaProjection.class, faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho,
+				cliente.nome.as("cliente"), faturamentoEntradasCabecalho.dataMovimento, veiculo.placa.coalesce("TODOS").as("veiculo"),
+				faturamentoEntradasDetalhe.valorBruto.sum().as("valorBruto")));
 	}
 
 	public List<FaturamentoBrutoReportProjection> filtrarFaturamentoBruto(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
