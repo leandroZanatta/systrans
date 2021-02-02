@@ -2,6 +2,8 @@ package br.com.lar.ui.relatorios;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.function.Function;
@@ -18,10 +20,10 @@ import com.toedter.calendar.JDateChooser;
 import br.com.lar.reports.FaturamentoEntradasReportBuilder;
 import br.com.lar.repository.model.CentroCusto;
 import br.com.lar.repository.model.Cliente;
-import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Veiculo;
+import br.com.lar.repository.projection.FaturamentoEntradaProjection;
 import br.com.lar.service.centrocusto.CentroCustoService;
 import br.com.lar.service.cliente.ClienteService;
 import br.com.lar.service.faturamento.FaturamentoEntradaService;
@@ -34,6 +36,10 @@ import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
+import br.com.sysdesc.util.classes.BigDecimalUtil;
+import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.classes.LongUtil;
+import br.com.sysdesc.util.classes.StringUtil;
 import br.com.systrans.util.vo.PesquisaFaturamentoVO;
 import net.sf.jasperreports.engine.JRException;
 
@@ -249,12 +255,98 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 			pesquisaFaturamentoVO.setValorFinal(txValorFinal.getValue());
 			pesquisaFaturamentoVO.setCodigoDocumento(txDocumento.getText());
 
-			List<FaturamentoEntradasCabecalho> faturamentoEntradasCabecalhos = faturamentoEntradaService.filtrarFaturamento(pesquisaFaturamentoVO);
+			List<FaturamentoEntradaProjection> faturamentoEntradasCabecalhos = faturamentoEntradaService.filtrarFaturamento(pesquisaFaturamentoVO);
 
-			new FaturamentoEntradasReportBuilder().build("Relatório de Despesas").setData(faturamentoEntradasCabecalhos).view();
+			new FaturamentoEntradasReportBuilder().build("Relatório de Despesas", montarSubTitulo()).setData(faturamentoEntradasCabecalhos).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á pagar");
 		}
+	}
+
+	private List<String> montarSubTitulo() {
+
+		List<String> subtitulo = new ArrayList<>();
+
+		Cliente cliente = pesquisaCliente.getObjetoPesquisado();
+		FormasPagamento formasPagamento = pesquisaPagamento.getObjetoPesquisado();
+		Historico historico = pesquisaHistorico.getObjetoPesquisado();
+		Veiculo veiculo = pesquisaVeiculo.getObjetoPesquisado();
+		CentroCusto centroCusto = pesquisaCentroCusto.getObjetoPesquisado();
+
+		if (!LongUtil.isNullOrZero(txCodigo.getValue())) {
+			subtitulo.add("Código: " + txCodigo.getValue());
+		}
+
+		if (!StringUtil.isNullOrEmpty(txDocumento.getText())) {
+			subtitulo.add("Documento: " + txDocumento.getText());
+		}
+
+		if (cliente != null) {
+			subtitulo.add("Fornecedor: " + cliente.getNome());
+		}
+
+		if (formasPagamento != null) {
+			subtitulo.add("Forma de Pagamento: " + formasPagamento.getDescricao());
+		}
+
+		if (historico != null) {
+			subtitulo.add("Histórico: " + historico.getDescricao());
+		}
+
+		if (veiculo != null) {
+			subtitulo.add("Veículo: " + veiculo.getPlaca());
+		}
+
+		if (centroCusto != null) {
+			subtitulo.add("Centro de Custo: " + centroCusto.getDescricao());
+		}
+
+		if (dtMovimentoFinal.getDate() != null || dtMovimentoInicial.getDate() != null) {
+
+			StringBuilder stringBuilder = new StringBuilder("Data de movimento: ");
+
+			if (dtMovimentoFinal.getDate() != null && dtMovimentoInicial.getDate() != null) {
+
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
+						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+			} else if (dtMovimentoInicial.getDate() != null) {
+
+				stringBuilder.append("A partir De: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
+
+			} else {
+				stringBuilder.append("Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		if (!BigDecimalUtil.isNullOrZero(txValorInicial.getValue()) || !BigDecimalUtil.isNullOrZero(txValorFinal.getValue())) {
+
+			NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
+
+			StringBuilder stringBuilder = new StringBuilder("Valor Faturamento: ");
+
+			if (!BigDecimalUtil.isNullOrZero(txValorFinal.getValue()) && !BigDecimalUtil.isNullOrZero(txValorInicial.getValue())) {
+
+				stringBuilder.append("Entre: ").append(numberFormat.format(txValorInicial.getValue())).append(" e: ")
+						.append(numberFormat.format(txValorFinal.getValue()));
+
+			} else if (!BigDecimalUtil.isNullOrZero(txValorInicial.getValue())) {
+
+				stringBuilder.append("A partir De: ").append(numberFormat.format(txValorInicial.getValue()));
+
+			} else {
+				stringBuilder.append("Até: ").append(numberFormat.format(txValorFinal.getValue()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		return subtitulo;
 	}
 }

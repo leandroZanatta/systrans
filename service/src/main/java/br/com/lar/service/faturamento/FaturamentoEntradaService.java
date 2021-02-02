@@ -27,6 +27,7 @@ import br.com.lar.repository.model.VinculoEntrada;
 import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.repository.model.VinculoEntradaCusto;
+import br.com.lar.repository.projection.FaturamentoEntradaProjection;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.ListUtil;
@@ -282,7 +283,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		}
 	}
 
-	public List<FaturamentoEntradasCabecalho> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
+	public List<FaturamentoEntradaProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
 
 		return faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
 	}

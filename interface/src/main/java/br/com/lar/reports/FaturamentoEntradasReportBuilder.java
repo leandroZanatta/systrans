@@ -18,8 +18,8 @@ import ar.com.fdvs.dj.domain.builders.DynamicReportBuilder;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
-import br.com.lar.reports.models.FaturmaentoReport;
-import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.reports.models.FaturamentoReport;
+import br.com.lar.repository.projection.FaturamentoEntradaProjection;
 import br.com.sysdesc.pesquisa.ui.components.ReportViewer;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -29,10 +29,10 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class FaturamentoEntradasReportBuilder {
 
 	private Integer margin = 20;
-	private List<FaturmaentoReport> data = new ArrayList<>();
+	private List<FaturamentoReport> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public FaturamentoEntradasReportBuilder build(String title) {
+	public FaturamentoEntradasReportBuilder build(String title, List<String> subtitle) {
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
@@ -55,14 +55,16 @@ public class FaturamentoEntradasReportBuilder {
 				.setPattern("#,##0.00")
 				.setWidth(75).setStyle(valueStyle).build();
 
-		drb.setTitle(title).setTitleStyle(titleStyle).setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
+		drb.setTitle(title).setTitleStyle(titleStyle).setSubtitle(subtitle.stream().collect(Collectors.joining("\\n"))).setDetailHeight(15)
+				.setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
 				.setBottomMargin(margin)
 				.setPrintBackgroundOnOddRows(false).setGrandTotalLegendStyle(totalStyle).setGrandTotalLegend("Totais");
 		drb.addColumn(ColumnBuilder.getNew().setStyle(valueStyle).setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código")
 				.setWidth(50).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("cliente", String.class.getName()).setTitle("Cliente")
-				.setWidth(500).build());
-
+				.setWidth(300).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("veiculo", String.class.getName()).setTitle("Veículo")
+				.setWidth(100).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("dataMovimento", Date.class.getName()).setTitle("Data Movimento")
 				.setPattern("dd/MM/yyyy HH:mm:ss")
 				.setWidth(120).build());
@@ -79,11 +81,11 @@ public class FaturamentoEntradasReportBuilder {
 		return this;
 	}
 
-	public FaturamentoEntradasReportBuilder setData(List<FaturamentoEntradasCabecalho> data) {
+	public FaturamentoEntradasReportBuilder setData(List<FaturamentoEntradaProjection> faturamentoEntradasCabecalhos) {
 
-		this.data = data.stream().map(this::mapearData).collect(Collectors.toList());
+		this.data = faturamentoEntradasCabecalhos.stream().map(this::mapearData).collect(Collectors.toList());
 
-		this.data.sort(Comparator.comparing(FaturmaentoReport::getDataMovimento));
+		this.data.sort(Comparator.comparing(FaturamentoReport::getDataMovimento));
 
 		return this;
 	}
@@ -97,14 +99,15 @@ public class FaturamentoEntradasReportBuilder {
 		new ReportViewer(jasperPrint).setVisible(Boolean.TRUE);
 	}
 
-	private FaturmaentoReport mapearData(FaturamentoEntradasCabecalho faturamentoEntradasCabecalho) {
+	private FaturamentoReport mapearData(FaturamentoEntradaProjection faturamentoEntradas) {
 
-		FaturmaentoReport faturmaentoReport = new FaturmaentoReport();
+		FaturamentoReport faturmaentoReport = new FaturamentoReport();
 
-		faturmaentoReport.setCodigoConta(faturamentoEntradasCabecalho.getIdFaturamentoEntradasCabecalho());
-		faturmaentoReport.setCliente(cortar(faturamentoEntradasCabecalho.getCliente().getNome(), 70));
-		faturmaentoReport.setDataMovimento(faturamentoEntradasCabecalho.getDataMovimento());
-		faturmaentoReport.setValorTotal(faturamentoEntradasCabecalho.getValorBruto());
+		faturmaentoReport.setCodigoConta(faturamentoEntradas.getIdFaturamentoEntradasCabecalho());
+		faturmaentoReport.setVeiculo(faturamentoEntradas.getVeiculo());
+		faturmaentoReport.setCliente(cortar(faturamentoEntradas.getCliente(), 40));
+		faturmaentoReport.setDataMovimento(faturamentoEntradas.getDataMovimento());
+		faturmaentoReport.setValorTotal(faturamentoEntradas.getValorBruto());
 
 		return faturmaentoReport;
 	}
