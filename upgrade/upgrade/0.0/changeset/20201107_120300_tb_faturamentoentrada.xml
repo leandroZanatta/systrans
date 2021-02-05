@@ -60,8 +60,4 @@
 		<createSequence sequenceName="gen_faturamentoentrada" />
 
 	</changeSet>
-
-	<changeSet id="20210114_194000" author="Leandro Zanatta" logicalFilePath="20201107_120300_tb_faturamentoentrada.xml">
-		<modifyDataType columnName="dt_movimento" newDataType="${timestamp}" tableName="tb_faturamentoentrada" />
-	</changeSet>
 </databaseChangeLog>
