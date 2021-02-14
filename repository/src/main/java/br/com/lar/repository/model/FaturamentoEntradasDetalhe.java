@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -62,6 +63,7 @@ public class FaturamentoEntradasDetalhe implements Serializable {
 	private Long codigoVeiculo;
 
 	@OneToMany(mappedBy = "faturamentoEntradasDetalhe", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<VinculoEntradaCusto> vinculoEntradaCustos = new ArrayList<>();
 
 }

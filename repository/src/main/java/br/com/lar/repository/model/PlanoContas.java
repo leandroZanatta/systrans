@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -57,6 +58,7 @@ public class PlanoContas implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_contaprincipal")
+	@ToString.Exclude
 	private PlanoContas contaPrincipal;
 
 }

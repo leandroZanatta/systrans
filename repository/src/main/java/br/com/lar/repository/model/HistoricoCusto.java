@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -42,5 +43,6 @@ public class HistoricoCusto implements Serializable {
 	private Long mesesAlocacao;
 
 	@OneToMany(mappedBy = "historicoCusto")
+	@ToString.Exclude
 	private List<AlocacaoCusto> alocacaoCustos;
 }

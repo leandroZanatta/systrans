@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -33,9 +34,11 @@ public class Historico implements Serializable {
 	private String descricao;
 
 	@OneToMany(mappedBy = "historico")
+	@ToString.Exclude
 	private List<Operacao> operacoes;
 
 	@OneToMany(mappedBy = "historico")
+	@ToString.Exclude
 	private List<OperacaoFinanceiro> operacaoFinanceiros;
 
 }

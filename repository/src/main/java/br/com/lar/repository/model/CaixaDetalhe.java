@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -36,10 +37,12 @@ public class CaixaDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_planocontas")
+	@ToString.Exclude
 	private PlanoContas planoContas;
 
 	@Column(name = "cd_planocontas", insertable = false, updatable = false)
@@ -56,9 +59,11 @@ public class CaixaDetalhe implements Serializable {
 	private BigDecimal valorDetalhe;
 
 	@OneToOne(mappedBy = "caixaDetalhe")
+	@ToString.Exclude
 	private VinculoEntradaCaixa vinculoEntradaCaixa;
 
 	@OneToOne(mappedBy = "caixaDetalhe")
+	@ToString.Exclude
 	private VinculoSaidaCaixa vinculoSaidaCaixa;
 
 }

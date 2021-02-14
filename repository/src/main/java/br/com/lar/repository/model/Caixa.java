@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import br.com.sysdesc.pesquisa.repository.model.Usuario;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -40,6 +41,7 @@ public class Caixa implements Serializable {
 	private Long codigoUsuario;
 
 	@OneToMany(mappedBy = "caixa")
+	@ToString.Exclude
 	private List<CaixaCabecalho> caixaCabecalhos;
 
 }

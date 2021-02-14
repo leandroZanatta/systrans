@@ -67,6 +67,10 @@ public class ContasReceberReportBuilder {
 				.setPattern("#,##0.00")
 				.setWidth(85).setStyle(valueStyle).build();
 
+		AbstractColumn valorJuros = ColumnBuilder.getNew().setColumnProperty("valorJuros", BigDecimal.class.getName()).setTitle("Juros")
+				.setPattern("#,##0.00")
+				.setWidth(85).setStyle(valueStyle).build();
+
 		AbstractColumn valorPago = ColumnBuilder.getNew().setColumnProperty("valorPago", BigDecimal.class.getName()).setTitle("Pago")
 				.setPattern("#,##0.00")
 				.setWidth(85).setStyle(valueStyle).build();
@@ -77,9 +81,9 @@ public class ContasReceberReportBuilder {
 		drb.addColumn(ColumnBuilder.getNew().setStyle(valueStyle).setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código")
 				.setWidth(50).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("cliente", String.class.getName()).setTitle("Cliente")
-				.setWidth(300).build());
+				.setWidth(220).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("formaPagamento", String.class.getName())
-				.setTitle("Forma de Pagamento").setWidth(150)
+				.setTitle("Forma de Pagamento").setWidth(145)
 				.build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("baixado", String.class.getName()).setTitle("Baixado")
 				.setWidth(55).build());
@@ -91,6 +95,7 @@ public class ContasReceberReportBuilder {
 		drb.addColumn(valorBruto);
 		drb.addColumn(valorDesconto);
 		drb.addColumn(valorAcrescimo);
+		drb.addColumn(valorJuros);
 		drb.addColumn(valorPago);
 		drb.addColumn(valorLiquido);
 
@@ -101,6 +106,7 @@ public class ContasReceberReportBuilder {
 		drb.addGlobalFooterVariable(valorBruto, DJCalculation.SUM, totalStyle);
 		drb.addGlobalFooterVariable(valorDesconto, DJCalculation.SUM, totalStyle);
 		drb.addGlobalFooterVariable(valorAcrescimo, DJCalculation.SUM, totalStyle);
+		drb.addGlobalFooterVariable(valorJuros, DJCalculation.SUM, totalStyle);
 		drb.addGlobalFooterVariable(valorPago, DJCalculation.SUM, totalStyle);
 		drb.addGlobalFooterVariable(valorLiquido, DJCalculation.SUM, totalStyle);
 
@@ -131,7 +137,8 @@ public class ContasReceberReportBuilder {
 
 		ContasReport contasReceberReport = new ContasReport();
 
-		BigDecimal valorLiquido = contasReceber.getValorParcela().add(contasReceber.getValorAcrescimo()).subtract(contasReceber.getValorDesconto())
+		BigDecimal valorLiquido = contasReceber.getValorParcela().add(contasReceber.getValorAcrescimo().add(contasReceber.getValorJuros()))
+				.subtract(contasReceber.getValorDesconto())
 				.subtract(contasReceber.getValorPago());
 
 		contasReceberReport.setCodigoConta(contasReceber.getIdContasReceber());
@@ -143,6 +150,7 @@ public class ContasReceberReportBuilder {
 		contasReceberReport.setValorAcrescimo(contasReceber.getValorAcrescimo());
 		contasReceberReport.setValorDesconto(contasReceber.getValorDesconto().negate());
 		contasReceberReport.setValorPago(contasReceber.getValorPago().negate());
+		contasReceberReport.setValorJuros(contasReceber.getValorJuros());
 		contasReceberReport.setValorLiquido(valorLiquido);
 
 		return contasReceberReport;

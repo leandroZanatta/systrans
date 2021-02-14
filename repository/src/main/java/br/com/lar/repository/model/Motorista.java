@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -46,8 +47,10 @@ public class Motorista implements Serializable {
 	private Date dataVencimento;
 
 	@OneToMany(mappedBy = "motorista")
+	@ToString.Exclude
 	private List<Veiculo> veiculos;
 
 	@OneToMany(mappedBy = "motorista")
+	@ToString.Exclude
 	private List<FaturamentoDetalhe> faturamentoDetalhes;
 }

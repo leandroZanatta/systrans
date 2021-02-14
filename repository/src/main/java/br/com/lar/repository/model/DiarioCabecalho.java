@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -35,6 +36,7 @@ public class DiarioCabecalho implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@Column(name = "dt_movimento")
@@ -43,9 +45,11 @@ public class DiarioCabecalho implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
 	private Historico historico;
 
 	@OneToMany(mappedBy = "diarioCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<DiarioDetalhe> diarioDetalhes;
 
 	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
@@ -55,15 +59,19 @@ public class DiarioCabecalho implements Serializable {
 	private Long codigoHistorico;
 
 	@OneToMany(mappedBy = "diarioCabecalho")
+	@ToString.Exclude
 	private List<VinculoEntrada> vinculoSaidas;
 
 	@OneToMany(mappedBy = "diarioCabecalho")
+	@ToString.Exclude
 	private List<VinculoSaida> vinculoEntradas;
 
 	@OneToOne(mappedBy = "diarioCabecalho")
+	@ToString.Exclude
 	private VinculoEntrada vinculoEntrada;
 
 	@OneToOne(mappedBy = "diarioCabecalho")
+	@ToString.Exclude
 	private VinculoSaida vinculoSaida;
 
 }

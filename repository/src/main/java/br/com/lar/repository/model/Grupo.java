@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -35,6 +36,7 @@ public class Grupo implements Serializable {
 	private String configuracao;
 
 	@OneToMany(mappedBy = "grupo")
+	@ToString.Exclude
 	private List<Cliente> clientes;
 
 }

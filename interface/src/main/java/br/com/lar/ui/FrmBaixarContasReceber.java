@@ -18,15 +18,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import br.com.lar.repository.model.ContasPagar;
+import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.projection.PagamentoContasProjection;
 import br.com.lar.service.caixa.CaixaCabecalhoService;
-import br.com.lar.service.contaspagar.ContasPagarService;
+import br.com.lar.service.contasreceber.ContasReceberService;
 import br.com.lar.service.formaspagamento.FormasPagamentoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.lar.startup.enumeradores.ProgramasEnum;
-import br.com.lar.tablemodels.ContasPagarPagamentoTableModel;
+import br.com.lar.tablemodels.ContasReceberPagamentoTableModel;
 import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JmoneyFieldColumn;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
@@ -38,7 +38,7 @@ import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
 import br.com.systrans.util.vo.ResumoPagamentosVO;
 import net.miginfocom.swing.MigLayout;
 
-public class FrmBaixarContasPagar extends JInternalFrame {
+public class FrmBaixarContasReceber extends JInternalFrame {
 	private static final String TEMPLATE_PESQUISA = "%d - %s";
 
 	private static final long serialVersionUID = 1L;
@@ -48,33 +48,32 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 	private JMoneyField txValorPagar;
 	private JMoneyField txValorJuros;
 	private CampoPesquisa<FormasPagamento> pesquisaFormaPagamento;
-	private ContasPagarService contasPagarService = new ContasPagarService();
 
-	private List<ContasPagar> contasPagars;
+	private List<ContasReceber> contasRecebers;
 	private final Long codigoUsuario;
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
-	private ContasPagarPagamentoTableModel contasPagarPagamentoTableModel;
+	private ContasReceberService contasReceberService = new ContasReceberService();
 	private CaixaCabecalhoService caixaCabecalhoService = new CaixaCabecalhoService();
-	private JTable table;
+	private ContasReceberPagamentoTableModel contasReceberPagamentoTableModel;
 
-	public FrmBaixarContasPagar(Long codigoUsuario, List<ContasPagar> contasPagars) {
-		this.contasPagars = contasPagars;
+	public FrmBaixarContasReceber(Long codigoUsuario, List<ContasReceber> contasRecebers) {
+		this.contasRecebers = contasRecebers;
 		this.codigoUsuario = codigoUsuario;
 
-		contasPagarPagamentoTableModel = this.instanciarContasPagar();
+		this.contasReceberPagamentoTableModel = this.instanciarContasReceber();
 
 		initComponents();
 	}
 
-	private ContasPagarPagamentoTableModel instanciarContasPagar() {
+	private ContasReceberPagamentoTableModel instanciarContasReceber() {
 
-		List<PagamentoContasProjection<ContasPagar>> rows = contasPagars.stream().map(conta -> {
+		List<PagamentoContasProjection<ContasReceber>> rows = contasRecebers.stream().map(conta -> {
 
 			BigDecimal valorTotal = calcularValorPagar(conta);
 
-			PagamentoContasProjection<ContasPagar> pagamentoContasProjection = new PagamentoContasProjection<>();
+			PagamentoContasProjection<ContasReceber> pagamentoContasProjection = new PagamentoContasProjection<>();
 			pagamentoContasProjection.setCliente(conta.getCliente().getNome());
-			pagamentoContasProjection.setIdConta(conta.getIdContasPagar());
+			pagamentoContasProjection.setIdConta(conta.getIdContasReceber());
 			pagamentoContasProjection.setVencimento(conta.getDataVencimento());
 			pagamentoContasProjection.setValorPagar(valorTotal);
 			pagamentoContasProjection.setValorParcela(valorTotal);
@@ -83,10 +82,10 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 			return pagamentoContasProjection;
 		}).collect(Collectors.toList());
 
-		return new ContasPagarPagamentoTableModel(rows);
+		return new ContasReceberPagamentoTableModel(rows);
 	}
 
-	private BigDecimal calcularValorPagar(ContasPagar conta) {
+	private BigDecimal calcularValorPagar(ContasReceber conta) {
 
 		return conta.getValorParcela().add(conta.getValorAcrescimo()).add(conta.getValorJuros()).subtract(conta.getValorPago())
 				.subtract(conta.getValorDesconto());
@@ -115,7 +114,7 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 		JButton btBaixar = new JButton("Baixar");
 		JButton btCancelar = new JButton("Cancelar");
 
-		table = new JTable(contasPagarPagamentoTableModel);
+		JTable table = new JTable(contasReceberPagamentoTableModel);
 		new JmoneyFieldColumn(table, 4);
 		new JmoneyFieldColumn(table, 5);
 		new JmoneyFieldColumn(table, 6);
@@ -137,7 +136,6 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 
 		jMenuItemCP.addActionListener(e -> abrirConfiguracaoContasPagar());
 		jMenuItemOF.addActionListener(e -> abrirConfiguracaoOperacaoFinanceira());
-
 		btnConfigurar.addActionListener(e -> jPopupMenu.show(btnConfigurar, 0, -45));
 		btBaixar.addActionListener(e -> baixarContas());
 		btCancelar.addActionListener(e -> dispose());
@@ -145,7 +143,7 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 		txAcrescimo.addChangeValue(this::calcularRateioAcrescimo);
 		txValorJuros.addChangeValue(this::calcularRateioJuros);
 		txValorParcelas.setEnabled(false);
-		contasPagarPagamentoTableModel.addChangeListener(this::calcularValorTotal);
+		contasReceberPagamentoTableModel.addChangeListener(this::calcularValorTotal);
 
 		getContentPane().add(container, BorderLayout.CENTER);
 		container.setLayout(new MigLayout("", "[grow][grow][grow][grow][grow]", "[grow][][][][][grow]"));
@@ -176,9 +174,9 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 
 		setSize(800, 261);
 		setClosable(Boolean.TRUE);
-		setTitle("BAIXA DE CONTAS Á PAGAR");
+		setTitle("BAIXA DE CONTAS Á RECEBER");
 
-		calcularValorTotal(contasPagarPagamentoTableModel.obterValorTotal());
+		calcularValorTotal(contasReceberPagamentoTableModel.obterValorTotal());
 	}
 
 	private void calcularRateioJuros(BigDecimal value) {
@@ -196,19 +194,18 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 		efetuarRateioConta(value, PagamentoContasProjection::getDecontos, PagamentoContasProjection::setDecontos);
 	}
 
-	private void efetuarRateioConta(BigDecimal value, Function<PagamentoContasProjection<ContasPagar>, BigDecimal> funcaoGet,
-			BiConsumer<PagamentoContasProjection<ContasPagar>, BigDecimal> funcaoSet) {
+	private void efetuarRateioConta(BigDecimal value, Function<PagamentoContasProjection<ContasReceber>, BigDecimal> funcaoGet,
+			BiConsumer<PagamentoContasProjection<ContasReceber>, BigDecimal> funcaoSet) {
 
-		List<PagamentoContasProjection<ContasPagar>> pagamentoContasProjections = contasPagarPagamentoTableModel.getRows();
+		List<PagamentoContasProjection<ContasReceber>> pagamentoContasProjections = contasReceberPagamentoTableModel.getRows();
 
-		BigDecimal valorTotalParcelas = contasPagarPagamentoTableModel.obterValorTotal().getValorParcelas();
+		BigDecimal valorTotalParcelas = contasReceberPagamentoTableModel.obterValorTotal().getValorParcelas();
 
 		pagamentoContasProjections.forEach(pagamento -> {
 
 			BigDecimal valorRateio = pagamento.getValorParcela().multiply(value).divide(valorTotalParcelas, 2, RoundingMode.HALF_EVEN);
 
 			funcaoSet.accept(pagamento, valorRateio);
-
 		});
 
 		RateioUtil.efetuarRateio(pagamentoContasProjections, funcaoGet, funcaoSet, value);
@@ -222,9 +219,9 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 
 		});
 
-		contasPagarPagamentoTableModel.fireTableDataChanged();
+		contasReceberPagamentoTableModel.fireTableDataChanged();
 
-		calcularValorTotal(contasPagarPagamentoTableModel.obterValorTotal());
+		calcularValorTotal(contasReceberPagamentoTableModel.obterValorTotal());
 	}
 
 	private void baixarContas() {
@@ -238,7 +235,7 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 
 		try {
 
-			this.contasPagarService.baixarContas(contasPagarPagamentoTableModel.getRows(), pesquisaFormaPagamento.getObjetoPesquisado(),
+			this.contasReceberService.baixarContas(contasReceberPagamentoTableModel.getRows(), pesquisaFormaPagamento.getObjetoPesquisado(),
 					caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
 
 			dispose();
@@ -260,18 +257,19 @@ public class FrmBaixarContasPagar extends JInternalFrame {
 
 	private void abrirConfiguracaoOperacaoFinanceira() {
 
-		FrmParametroOperacaoFinanceira frmOperacaoFinanceira = new FrmParametroOperacaoFinanceira(ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(),
+		FrmParametroOperacaoFinanceira frmParametroOperacaoFinanceira = new FrmParametroOperacaoFinanceira(
+				ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(),
 				codigoUsuario,
-				TipoHistoricoOperacaoEnum.DEVEDOR);
+				TipoHistoricoOperacaoEnum.CREDOR);
 
-		FrmApplication.getInstance().posicionarFrame(frmOperacaoFinanceira, null);
+		FrmApplication.getInstance().posicionarFrame(frmParametroOperacaoFinanceira, null);
 	}
 
 	private void abrirConfiguracaoContasPagar() {
 
 		FrmOperacaoFinanceira frmOperacaoFinanceira = new FrmOperacaoFinanceira(ProgramasEnum.PAGAMENTO_OPERACOES.getCodigo(),
 				codigoUsuario,
-				TipoHistoricoOperacaoEnum.DEVEDOR);
+				TipoHistoricoOperacaoEnum.CREDOR);
 
 		FrmApplication.getInstance().posicionarFrame(frmOperacaoFinanceira, null);
 	}

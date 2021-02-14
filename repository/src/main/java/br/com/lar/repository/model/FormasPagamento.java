@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -52,12 +53,15 @@ public class FormasPagamento implements Serializable {
 	private Long numeroDiasPagamento;
 
 	@OneToMany(mappedBy = "formasPagamento")
+	@ToString.Exclude
 	private List<ContasReceber> contasReceber;
 
 	@OneToMany(mappedBy = "formasPagamento")
+	@ToString.Exclude
 	private List<Operacao> operacoes;
 
 	@OneToMany(mappedBy = "formasPagamento")
+	@ToString.Exclude
 	private List<FaturamentoPagamentos> faturamentoPagamentos;
 
 }

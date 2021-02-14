@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -39,9 +40,11 @@ public class Cidade implements Serializable {
 	private Estado estado;
 
 	@OneToMany(mappedBy = "cidade")
+	@ToString.Exclude
 	private List<Cliente> clientes;
 
 	@OneToMany(mappedBy = "naturalidade")
+	@ToString.Exclude
 	private List<Cliente> naturalidades;
 
 	@Override
