@@ -56,7 +56,7 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 	private JScrollPane scrollPane;
 	private JPanel panel;
 	private JButton btnNewButton;
-	private JButton btnNewButton_1;
+	private JButton btBaixarContas;
 	private JCheckBox chBaixado;
 	private JDateChooser dtVencimentoInicial;
 	private JDateChooser dtVencimentoFinal;
@@ -88,9 +88,9 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		container.add(txCodigo);
 		txCodigo.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Fornecedor:");
-		lblNewLabel_1.setBounds(255, 10, 68, 14);
-		container.add(lblNewLabel_1);
+		JLabel lbFornecedor = new JLabel("Fornecedor:");
+		lbFornecedor.setBounds(255, 10, 68, 14);
+		container.add(lbFornecedor);
 
 		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), getCodigoUsuario()) {
 
@@ -117,13 +117,13 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 
 		container.add(pesquisaCliente);
 
-		JLabel lblNewLabel_5 = new JLabel("Documento:");
-		lblNewLabel_5.setBounds(10, 35, 68, 14);
-		container.add(lblNewLabel_5);
+		JLabel lbDocumento = new JLabel("Documento:");
+		lbDocumento.setBounds(10, 35, 68, 14);
+		container.add(lbDocumento);
 
-		JLabel lblNewLabel_4 = new JLabel("Pagamento:");
-		lblNewLabel_4.setBounds(255, 34, 68, 14);
-		container.add(lblNewLabel_4);
+		JLabel lbPagamento = new JLabel("Pagamento:");
+		lbPagamento.setBounds(255, 34, 68, 14);
+		container.add(lbPagamento);
 
 		container.add(pesquisaPagamento);
 
@@ -245,9 +245,9 @@ public class FrmConsultarContasPagar extends AbstractInternalFrame {
 		panel.setBounds(7, 380, 770, 33);
 		container.add(panel);
 
-		btnNewButton_1 = new JButton("Baixar");
-		btnNewButton_1.addActionListener((e) -> baixarContas());
-		panel.add(btnNewButton_1);
+		btBaixarContas = new JButton("Baixar");
+		btBaixarContas.addActionListener(e -> baixarContas());
+		panel.add(btBaixarContas);
 
 		btnNewButton = new JButton("Cancelar");
 		btnNewButton.addActionListener(e -> dispose());

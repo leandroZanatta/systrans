@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -52,6 +53,7 @@ public class Veiculo implements Serializable {
 	private BigDecimal capacidade;
 
 	@OneToMany(mappedBy = "veiculo")
+	@ToString.Exclude
 	private List<FaturamentoDetalhe> faturamentoDetalhes;
 
 }

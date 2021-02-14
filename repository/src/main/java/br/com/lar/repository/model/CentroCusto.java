@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -30,5 +31,6 @@ public class CentroCusto implements Serializable {
 	private String descricao;
 
 	@OneToMany(mappedBy = "centroCusto")
+	@ToString.Exclude
 	private List<AlocacaoCusto> alocacaoCustos;
 }

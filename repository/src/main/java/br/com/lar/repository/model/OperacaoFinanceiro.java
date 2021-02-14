@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -28,18 +29,22 @@ public class OperacaoFinanceiro implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
 	private Historico historico;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_contacredora")
+	@ToString.Exclude
 	private PlanoContas contaCredora;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_pagamento")
+	@ToString.Exclude
 	private FormasPagamento formasPagamento;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_contadevedora")
+	@ToString.Exclude
 	private PlanoContas contaDevedora;
 
 	@Column(name = "cd_contacredora", insertable = false, updatable = false)

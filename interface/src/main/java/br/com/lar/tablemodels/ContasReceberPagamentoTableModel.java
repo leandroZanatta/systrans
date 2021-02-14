@@ -9,23 +9,23 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.EventListenerList;
 
-import br.com.lar.repository.model.ContasPagar;
+import br.com.lar.repository.model.ContasReceber;
 import br.com.lar.repository.projection.PagamentoContasProjection;
 import br.com.sysdesc.components.AbstractInternalFrameTable;
 import br.com.sysdesc.components.listeners.ChangeListener;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.systrans.util.vo.ResumoPagamentosVO;
 
-public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
+public class ContasReceberPagamentoTableModel extends AbstractInternalFrameTable {
 
 	private static final long serialVersionUID = 1L;
-	private final List<PagamentoContasProjection<ContasPagar>> rows;
+	private final List<PagamentoContasProjection<ContasReceber>> rows;
 	private List<String> colunas = new ArrayList<>();
 	private NumberFormat codigoContasReceberFormat = NumberFormat.getNumberInstance();
 	private NumberFormat numberFormat = NumberFormat.getNumberInstance();
 	protected EventListenerList eventListenerList = new EventListenerList();
 
-	public ContasPagarPagamentoTableModel(List<PagamentoContasProjection<ContasPagar>> rows) {
+	public ContasReceberPagamentoTableModel(List<PagamentoContasProjection<ContasReceber>> rows) {
 
 		this.rows = rows;
 
@@ -56,7 +56,7 @@ public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		PagamentoContasProjection<ContasPagar> pagamentoContasVO = rows.get(rowIndex);
+		PagamentoContasProjection<ContasReceber> pagamentoContasVO = rows.get(rowIndex);
 
 		switch (columnIndex) {
 
@@ -94,7 +94,7 @@ public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
 
 		if (columnIndex >= 4) {
 
-			PagamentoContasProjection<ContasPagar> pagamentoContasVO = rows.get(rowIndex);
+			PagamentoContasProjection<ContasReceber> pagamentoContasVO = rows.get(rowIndex);
 
 			switch (columnIndex) {
 			case 4:
@@ -125,7 +125,7 @@ public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
 		}
 	}
 
-	private boolean validarValor(PagamentoContasProjection<ContasPagar> pagamentoContasVO, BigDecimal aValue) {
+	private boolean validarValor(PagamentoContasProjection<ContasReceber> pagamentoContasVO, BigDecimal aValue) {
 
 		if (pagamentoContasVO.getValorParcela().compareTo(aValue) <= 0) {
 
@@ -138,7 +138,7 @@ public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
 		return true;
 	}
 
-	private void recalcularValorPagar(PagamentoContasProjection<ContasPagar> vo) {
+	private void recalcularValorPagar(PagamentoContasProjection<ContasReceber> vo) {
 
 		BigDecimal valorRecalculado = vo.getValorParcela().add(vo.getAcrescimos()).add(vo.getJuros()).subtract(vo.getDecontos());
 
@@ -207,7 +207,7 @@ public class ContasPagarPagamentoTableModel extends AbstractInternalFrameTable {
 		return resumoPagamentosVO;
 	}
 
-	public List<PagamentoContasProjection<ContasPagar>> getRows() {
+	public List<PagamentoContasProjection<ContasReceber>> getRows() {
 
 		return this.rows;
 	}

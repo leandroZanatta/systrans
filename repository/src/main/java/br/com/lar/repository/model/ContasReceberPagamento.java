@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -32,23 +33,35 @@ public class ContasReceberPagamento implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_contasreceber")
+	@ToString.Exclude
 	private ContasReceber contasReceber;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_formaspagamento")
+	@ToString.Exclude
 	private FormasPagamento formasPagamento;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
 	private Historico historico;
 
-	@Column(name = "dt_pagamento")
+	@Column(name = "dt_movimento")
 	@Temporal(TemporalType.DATE)
-	private Date dataPagamento;
+	private Date dataMovimento;
+
+	@Column(name = "dt_cadastro")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataCadastro;
+
+	@Column(name = "dt_manutencao")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataManutencao;
 
 	@Column(name = "vl_desconto")
 	private BigDecimal valorDesconto;

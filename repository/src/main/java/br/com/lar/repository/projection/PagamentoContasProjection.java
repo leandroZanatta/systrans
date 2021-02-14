@@ -3,13 +3,12 @@ package br.com.lar.repository.projection;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.lar.repository.model.ContasPagar;
 import lombok.Data;
 
 @Data
-public class PagamentoContasProjection {
+public class PagamentoContasProjection<T> {
 
-	private Long idContasPagar;
+	private Long idConta;
 
 	private String cliente;
 
@@ -25,5 +24,5 @@ public class PagamentoContasProjection {
 
 	private BigDecimal valorPagar;
 
-	private ContasPagar contasPagar;
+	private T conta;
 }

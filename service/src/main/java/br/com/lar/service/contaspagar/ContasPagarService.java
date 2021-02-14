@@ -59,7 +59,8 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 		return contasPagarDAO.filtrarContasPagar(pesquisaContasReceberVO);
 	}
 
-	public void baixarContas(List<PagamentoContasProjection> contasPagars, FormasPagamento formasPagamento, CaixaCabecalho caixaCabecalho) {
+	public void baixarContas(List<PagamentoContasProjection<ContasPagar>> contasPagars, FormasPagamento formasPagamento,
+			CaixaCabecalho caixaCabecalho) {
 
 		caixaService.verificarCaixaAberto(caixaCabecalho);
 
@@ -70,7 +71,7 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 		contasPagars.forEach(contaPagar -> {
 
-			DiarioDetalhe diarioDetalhes = contaPagar.getContasPagar().getDiarioDetalhe();
+			DiarioDetalhe diarioDetalhes = contaPagar.getConta().getDiarioDetalhe();
 
 			PlanoContas planoContas = diarioDetalhes.getPlanoContas();
 
@@ -89,7 +90,7 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 			ContasPagarPagamento contasPagarPagamento = new ContasPagarPagamento();
 			contasPagarPagamento.setCaixaCabecalho(caixaCabecalho);
-			contasPagarPagamento.setContasPagar(contaPagar.getContasPagar());
+			contasPagarPagamento.setContasPagar(contaPagar.getConta());
 			contasPagarPagamento.setDataManutencao(dataMovimento);
 			contasPagarPagamento.setDataCadastro(dataMovimento);
 			contasPagarPagamento.setDataMovimento(caixaCabecalho.getDataMovimento());
@@ -135,7 +136,7 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 			gerarDescontosAcrescimos(caixaCabecalho, formasPagamento, contaPagar, dataMovimento, diarioCabecalhos, caixaDetalhes);
 
-			ContasPagar contaPagarModelo = contaPagar.getContasPagar();
+			ContasPagar contaPagarModelo = contaPagar.getConta();
 			contaPagarModelo.setValorPago(contaPagarModelo.getValorPago().add(contaPagar.getValorPagar()));
 			contaPagarModelo.setBaixado(valorLiquido.compareTo(contaPagar.getValorParcela()) == 0);
 
@@ -171,10 +172,10 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 	}
 
-	private void gerarDescontosAcrescimos(CaixaCabecalho caixaCabecalho, FormasPagamento pagamento, PagamentoContasProjection contaPagar,
+	private void gerarDescontosAcrescimos(CaixaCabecalho caixaCabecalho, FormasPagamento pagamento, PagamentoContasProjection<ContasPagar> contaPagar,
 			Date dataMovimento, List<DiarioCabecalho> diarios, List<CaixaDetalhe> caixaDetalhes) {
 
-		ContasPagar contasPagar = contaPagar.getContasPagar();
+		ContasPagar contasPagar = contaPagar.getConta();
 
 		if (BigDecimalUtil.maior(contaPagar.getDecontos(), BigDecimal.ZERO)) {
 
@@ -242,7 +243,7 @@ public class ContasPagarService extends AbstractPesquisableServiceImpl<ContasPag
 
 	}
 
-	private BigDecimal calcularValorLiquido(PagamentoContasProjection contaPagar) {
+	private BigDecimal calcularValorLiquido(PagamentoContasProjection<ContasPagar> contaPagar) {
 
 		return contaPagar.getValorPagar().add(contaPagar.getDecontos()).subtract(contaPagar.getJuros()).subtract(contaPagar.getAcrescimos());
 	}

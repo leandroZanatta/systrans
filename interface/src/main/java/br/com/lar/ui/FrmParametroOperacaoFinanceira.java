@@ -148,7 +148,7 @@ public class FrmParametroOperacaoFinanceira extends AbstractInternalFrame {
 
 				if (getTipoConta().equals(TipoContaEnum.DESCONTOS)) {
 
-					return historico.equals(TipoHistoricoOperacaoEnum.CREDOR) ? planoContasService.getContasCredoras()
+					return historico.equals(TipoHistoricoOperacaoEnum.CREDOR) ? planoContasService.getContasDevedoras()
 							: planoContasService.getContasBalanco();
 				}
 

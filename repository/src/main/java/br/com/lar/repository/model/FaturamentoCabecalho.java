@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -53,18 +54,23 @@ public class FaturamentoCabecalho implements Serializable {
 	private BigDecimal valorBruto;
 
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<FaturamentoDetalhe> faturamentoDetalhes;
 
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<FaturamentoPagamentos> faturamentoPagamentos;
 
 	@OneToMany(mappedBy = "faturamento")
+	@ToString.Exclude
 	private List<VinculoSaida> vinculoSaidas;
 
 	@OneToMany(mappedBy = "faturamento")
+	@ToString.Exclude
 	private List<VinculoSaidaCaixa> vinculoSaidaCaixas;
 
 	@OneToMany(mappedBy = "faturamento")
+	@ToString.Exclude
 	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers;
 
 	@Column(name = "cd_historico", insertable = false, updatable = false)

@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -47,9 +48,11 @@ public class Programa implements Serializable {
 	private boolean flagAcessoRapido;
 
 	@OneToMany(mappedBy = "programaPai", fetch = FetchType.EAGER)
+	@ToString.Exclude
 	private List<Programa> programas;
 
 	@OneToMany(mappedBy = "programa")
+	@ToString.Exclude
 	private List<PermissaoPrograma> permissaoProgramas;
 
 }

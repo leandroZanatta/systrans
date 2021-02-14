@@ -13,12 +13,15 @@ import java.util.function.Function;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -53,7 +56,7 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 	private JScrollPane scrollPane;
 	private JPanel panel;
 	private JButton btnNewButton;
-	private JButton btnNewButton_1;
+	private JButton btBaixarContas;
 	private JCheckBox chBaixado;
 	private JDateChooser dtVencimentoInicial;
 	private JDateChooser dtVencimentoFinal;
@@ -242,8 +245,9 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 		panel.setBounds(7, 380, 770, 33);
 		container.add(panel);
 
-		btnNewButton_1 = new JButton("Baixar");
-		panel.add(btnNewButton_1);
+		btBaixarContas = new JButton("Baixar");
+		btBaixarContas.addActionListener(e -> baixarContas());
+		panel.add(btBaixarContas);
 
 		btnNewButton = new JButton("Cancelar");
 		btnNewButton.addActionListener(e -> dispose());
@@ -288,7 +292,43 @@ public class FrmConsultarContasReceber extends AbstractInternalFrame {
 
 		initComponents();
 
-		filtrarContasReceber();
+		addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameActivated(InternalFrameEvent e) {
+				filtrarContasReceber();
+				super.internalFrameActivated(e);
+			}
+		});
+	}
+
+	private void baixarContas() {
+
+		if (table.getSelectedRowCount() < 1) {
+
+			JOptionPane.showMessageDialog(this, "Selecione ao menos uma conta á receber");
+
+			return;
+		}
+
+		List<ContasReceber> contasRecebers = new ArrayList<>();
+
+		int[] rows = table.getSelectedRows();
+
+		for (int row : rows) {
+
+			contasRecebers.add(contasReceberTableModel.getRow(row));
+		}
+
+		if (contasRecebers.stream().anyMatch(ContasReceber::isBaixado)) {
+
+			JOptionPane.showMessageDialog(this, "NÃO É POSSÍVEL EFETUAR BAIXA DE CONTAS COM SITUAÇÃO BAIXADA. VERIFIQUE!");
+
+			return;
+		}
+
+		FrmBaixarContasReceber frmBaixarContasReceber = new FrmBaixarContasReceber(getCodigoUsuario(), contasRecebers);
+		FrmApplication.getInstance().posicionarFrame(frmBaixarContasReceber, null);
+
 	}
 
 	private void filtrarContasReceber() {

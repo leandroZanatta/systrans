@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -29,6 +30,7 @@ public class DiarioDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_diariocabecalho")
+	@ToString.Exclude
 	private DiarioCabecalho diarioCabecalho;
 
 	@Column(name = "cd_diariocabecalho", insertable = false, updatable = false)
@@ -36,6 +38,7 @@ public class DiarioDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_planocontas")
+	@ToString.Exclude
 	private PlanoContas planoContas;
 
 	@Column(name = "cd_planocontas", insertable = false, updatable = false)

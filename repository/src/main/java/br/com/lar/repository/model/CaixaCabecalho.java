@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -59,6 +60,7 @@ public class CaixaCabecalho implements Serializable {
 	private Date dataFechamento;
 
 	@OneToMany(mappedBy = "caixaCabecalho", fetch = FetchType.EAGER)
+	@ToString.Exclude
 	private List<CaixaDetalhe> caixaDetalhes;
 
 }

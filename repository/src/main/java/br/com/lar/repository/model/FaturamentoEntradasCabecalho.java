@@ -21,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -67,21 +68,27 @@ public class FaturamentoEntradasCabecalho implements Serializable {
 	private Long codigoCentroCusto;
 
 	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<FaturamentoEntradaPagamentos> faturamentoEntradaPagamentos;
 
 	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
 	private List<FaturamentoEntradasDetalhe> faturamentoEntradasDetalhes;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
+	@ToString.Exclude
 	private List<DocumentoEntrada> documentoEntradas = new ArrayList<>();
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
+	@ToString.Exclude
 	private List<VinculoEntrada> vinculoEntradas;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
+	@ToString.Exclude
 	private List<VinculoEntradaCaixa> vinculoEntradaCaixas;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
+	@ToString.Exclude
 	private List<VinculoEntradaContasPagar> vinculoEntradaContasPagars;
 
 }

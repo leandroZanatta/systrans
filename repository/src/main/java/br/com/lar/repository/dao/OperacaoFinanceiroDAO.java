@@ -36,4 +36,10 @@ public class OperacaoFinanceiroDAO extends PesquisableDAOImpl<OperacaoFinanceiro
 				.singleResult(operacaoFinanceiro);
 	}
 
+	public OperacaoFinanceiro buscarPorPlanoDevedorEFormaPagamento(Long codigoPlanoContas, Long idFormaPagamento) {
+
+		return from().where(operacaoFinanceiro.codigoPagamento.eq(idFormaPagamento).and(operacaoFinanceiro.codigoContaDevedora.eq(codigoPlanoContas)))
+				.singleResult(operacaoFinanceiro);
+	}
+
 }
