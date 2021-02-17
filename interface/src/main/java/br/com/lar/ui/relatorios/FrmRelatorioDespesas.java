@@ -257,7 +257,9 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 
 			List<FaturamentoEntradaProjection> faturamentoEntradasCabecalhos = faturamentoEntradaService.filtrarFaturamento(pesquisaFaturamentoVO);
 
-			new FaturamentoEntradasReportBuilder().build("Relatório de Despesas", montarSubTitulo()).setData(faturamentoEntradasCabecalhos).view();
+			new FaturamentoEntradasReportBuilder()
+					.build("Relatório de Despesas", montarSubTitulo(), !LongUtil.isNullOrZero(pesquisaFaturamentoVO.getCodigoVeiculo()))
+					.setData(faturamentoEntradasCabecalhos).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á pagar");

@@ -1,6 +1,6 @@
 package br.com.lar.ui.relatorios;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -15,6 +15,7 @@ import br.com.lar.reports.DiarioReportBuilder;
 import br.com.lar.repository.projection.DiarioReportProjection;
 import br.com.lar.service.diario.DiarioService;
 import br.com.sysdesc.components.AbstractInternalFrame;
+import br.com.sysdesc.util.classes.DateUtil;
 import net.miginfocom.swing.MigLayout;
 import net.sf.jasperreports.engine.JRException;
 
@@ -70,14 +71,39 @@ public class FrmRelatorioDiario extends AbstractInternalFrame {
 		try {
 			List<DiarioReportProjection> diarioReports = diarioService.buscarDiarioPeriodo(txDataInicial.getDate(), txDataFinal.getDate());
 
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(txDataInicial.getDateFormatString());
-
-			new DiarioReportBuilder().build(String.format("HISTÓRICO PERÍODO %s - %s", simpleDateFormat.format(txDataInicial.getDate()),
-					simpleDateFormat.format(txDataFinal.getDate()))).setData(diarioReports).view();
+			new DiarioReportBuilder().build("HISTÓRICO DIÁRIO", montarSubTitulo()).setData(diarioReports).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório diário");
 		}
 	}
 
+	private List<String> montarSubTitulo() {
+
+		List<String> subtitulo = new ArrayList<>();
+
+		if (txDataInicial.getDate() != null || txDataFinal.getDate() != null) {
+
+			StringBuilder stringBuilder = new StringBuilder("Data de movimento: ");
+
+			if (txDataFinal.getDate() != null && txDataInicial.getDate() != null) {
+
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, txDataInicial.getDate()))
+						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, txDataFinal.getDate()));
+			} else if (txDataInicial.getDate() != null) {
+
+				stringBuilder.append("A partir De: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, txDataInicial.getDate()));
+
+			} else {
+				stringBuilder.append("Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, txDataFinal.getDate()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		return subtitulo;
+	}
 }

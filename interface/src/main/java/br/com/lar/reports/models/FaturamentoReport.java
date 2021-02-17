@@ -11,6 +11,7 @@ public class FaturamentoReport {
 	private Long codigoConta;
 	private String veiculo;
 	private String cliente;
+	private String historico;
 	private Date dataMovimento;
 	private BigDecimal valorTotal;
 }
