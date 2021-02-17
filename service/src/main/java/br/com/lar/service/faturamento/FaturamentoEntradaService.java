@@ -6,10 +6,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
+import br.com.lar.repository.dao.FaturamentoCabecalhoDAO;
 import br.com.lar.repository.dao.FaturamentoEntradaCabecalhoDAO;
 import br.com.lar.repository.dao.HistoricoCustoDAO;
 import br.com.lar.repository.dao.OperacaoDAO;
@@ -28,8 +30,10 @@ import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.repository.model.VinculoEntradaCusto;
 import br.com.lar.repository.projection.FaturamentoEntradaProjection;
+import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
+import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.enumeradores.TipoStatusEnum;
 import br.com.sysdesc.util.exception.SysDescException;
@@ -44,6 +48,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 	private CaixaService caixaService = new CaixaService();
 	private OperacaoDAO operacaoDAO = new OperacaoDAO();
 	private HistoricoCustoDAO historicoCustoDAO = new HistoricoCustoDAO();
+	private FaturamentoCabecalhoDAO faturamentoCabecalhoDAO = new FaturamentoCabecalhoDAO();
 
 	public FaturamentoEntradaService() {
 		this(new FaturamentoEntradaCabecalhoDAO());
@@ -131,7 +136,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 			BigDecimal valorLiquido = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
 			BigDecimal valorParcela = valorLiquido.divide(BigDecimal.valueOf(historicoCusto.getMesesAlocacao()), 2, RoundingMode.HALF_EVEN);
-			Date periodo = new Date();
+			Date periodo = objetoPersistir.getDataMovimento();
 
 			for (int mes = 1; mes <= historicoCusto.getMesesAlocacao(); mes++) {
 
@@ -151,6 +156,8 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 				vinculo.setFaturamentoEntradasDetalhe(detalhe);
 
 				detalhe.getVinculoEntradaCustos().add(vinculo);
+
+				periodo = DateUtil.addMonth(periodo, 1L);
 			}
 
 			RateioUtil.efetuarRateio(alocacaoDetalhe, AlocacaoCusto::getValorParcela, AlocacaoCusto::setValorParcela,
@@ -285,6 +292,33 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 	public List<FaturamentoEntradaProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
 
-		return faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
+		List<FaturamentoEntradaProjection> projections = faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
+
+		if (pesquisaFaturamentoVO.getCodigoVeiculo() != null && projections.stream().anyMatch(entrada -> entrada.getVeiculo().contains("TODOS"))) {
+
+			List<FaturamentoVeiculoProjection> faturamentoBrutoSaidaReportProjections = faturamentoCabecalhoDAO
+					.buscarFaturamentoVeiculo(pesquisaFaturamentoVO.getDataMovimentoInicial(), pesquisaFaturamentoVO.getDataMovimentoFinal());
+
+			BigDecimal valorTotal = faturamentoBrutoSaidaReportProjections.stream().map(FaturamentoVeiculoProjection::getValorBruto)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+			Optional<FaturamentoVeiculoProjection> optional = faturamentoBrutoSaidaReportProjections.stream()
+					.filter(item -> item.getCodigoVeiculo().equals(pesquisaFaturamentoVO.getCodigoVeiculo())).findFirst();
+
+			projections.stream().filter(entrada -> entrada.getVeiculo().contains("TODOS")).forEach(entrada -> {
+
+				if (!optional.isPresent()) {
+
+					entrada.setValorBruto(BigDecimal.ZERO);
+				} else {
+
+					entrada.setValorBruto(entrada.getValorBruto().divide(valorTotal, 8, RoundingMode.HALF_EVEN)
+							.multiply(optional.get().getValorBruto()).setScale(2, RoundingMode.HALF_EVEN));
+				}
+			});
+
+		}
+
+		return projections;
 	}
 }

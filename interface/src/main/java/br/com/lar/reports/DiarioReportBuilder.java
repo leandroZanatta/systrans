@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
@@ -38,7 +39,7 @@ public class DiarioReportBuilder {
 	private List<DiarioReportProjection> diarioReports = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public DiarioReportBuilder build(String title) {
+	public DiarioReportBuilder build(String title, List<String> subtitle) {
 
 		FastReportBuilder fastReportBuilder = new FastReportBuilder();
 
@@ -94,6 +95,7 @@ public class DiarioReportBuilder {
 		drb
 				.setTitleStyle(titleStyle)
 				.setTitle(title) // defines the title of the report
+				.setSubtitle(subtitle.stream().collect(Collectors.joining("\\n")))
 				.setDetailHeight(15).setLeftMargin(margin)
 				.setRightMargin(margin).setTopMargin(margin).setBottomMargin(margin)
 				.setPrintBackgroundOnOddRows(false)

@@ -90,10 +90,12 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 				.innerJoin(faturamentoEntradasDetalhe)
 				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho))
-				.innerJoin(cliente).on(faturamentoEntradasCabecalho.codigoCliente.eq(cliente.idCliente)).leftJoin(veiculo)
-				.on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo));
+				.innerJoin(cliente).on(faturamentoEntradasCabecalho.codigoCliente.eq(cliente.idCliente))
+				.innerJoin(historico).on(faturamentoEntradasCabecalho.codigoHistorico.eq(historico.idHistorico))
+				.leftJoin(veiculo).on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo));
 
 		query.groupBy(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho, cliente.nome, faturamentoEntradasCabecalho.dataMovimento,
+				historico.descricao,
 				veiculo.placa.coalesce("TODOS"));
 
 		if (booleanBuilder.hasValue()) {
@@ -103,6 +105,7 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 		return query.list(Projections.fields(FaturamentoEntradaProjection.class, faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho,
 				cliente.nome.as("cliente"), faturamentoEntradasCabecalho.dataMovimento, veiculo.placa.coalesce("TODOS").as("veiculo"),
+				historico.descricao.as("historico"),
 				faturamentoEntradasDetalhe.valorBruto.sum().as("valorBruto")));
 	}
 
@@ -170,13 +173,15 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 		EntityPathBase<Tuple> pathCustos = new EntityPathBase<>(Tuple.class, "custos");
 
-		JPASubQuery subsquery = subQuery().from(vinculoEntradaCusto);
+		JPASubQuery subquery = subQuery().from(vinculoEntradaCusto);
 
-		subsquery.leftJoin(alocacaoCusto).on(vinculoEntradaCusto.codigoAlocacaoCusto.eq(alocacaoCusto.idAlocacaoCusto));
+		subquery.leftJoin(alocacaoCusto).on(vinculoEntradaCusto.codigoAlocacaoCusto.eq(alocacaoCusto.idAlocacaoCusto));
 
-		subsquery.where(getDataMovimento(alocacaoCusto.periodo, pesquisaVO.getDataMovimentoInicial(), pesquisaVO.getDataMovimentoFinal()));
+		subquery.where(getDataMovimento(alocacaoCusto.periodo, pesquisaVO.getDataMovimentoInicial(), pesquisaVO.getDataMovimentoFinal()));
 
-		query.with(pathCustos, subsquery.list(vinculoEntradaCusto.codigoFaturamentoEntradasDetalhe.as(codigoDetalhe),
+		subquery.groupBy(vinculoEntradaCusto.codigoFaturamentoEntradasDetalhe, alocacaoCusto.codigoCentroCusto, alocacaoCusto.codigoVeiculo);
+
+		query.with(pathCustos, subquery.list(vinculoEntradaCusto.codigoFaturamentoEntradasDetalhe.as(codigoDetalhe),
 				alocacaoCusto.codigoCentroCusto.as(codigoCentroCusto), alocacaoCusto.codigoVeiculo.as(codigoVeiculo),
 				alocacaoCusto.valorParcela.sum().as(valorParcela)));
 
@@ -196,7 +201,6 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
 				centroCusto.descricao.coalesce("TODOS").as("centroCusto"), veiculo.placa.coalesce("TODOS").as("veiculo"),
 				valorParcela.sum().as("valorBruto")));
-
 	}
 
 	private Predicate getDataMovimento(TemporalExpression<Date> expression, Date dataMovimentoInicial, Date dataMovimentoFinal) {

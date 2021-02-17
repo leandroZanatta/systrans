@@ -2,6 +2,8 @@ package br.com.lar.ui.relatorios;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.function.Function;
@@ -29,6 +31,10 @@ import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
+import br.com.sysdesc.util.classes.BigDecimalUtil;
+import br.com.sysdesc.util.classes.DateUtil;
+import br.com.sysdesc.util.classes.LongUtil;
+import br.com.sysdesc.util.classes.StringUtil;
 import br.com.systrans.util.vo.PesquisaContasVO;
 import net.sf.jasperreports.engine.JRException;
 
@@ -201,10 +207,90 @@ public class FrmRelatorioContasReceber extends AbstractInternalFrame {
 
 			List<ContasReceber> contasRecebers = contasReceberService.filtrarContasReceber(pesquisaContasVO);
 
-			new ContasReceberReportBuilder().build("Relatório de Contas á Receber").setData(contasRecebers).view();
+			new ContasReceberReportBuilder().build("Relatório de Contas á Receber", montarSubTitulo()).setData(contasRecebers).view();
 		} catch (JRException e) {
 
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á receber");
 		}
+	}
+
+	private List<String> montarSubTitulo() {
+		List<String> subtitulo = new ArrayList<>();
+
+		if (!LongUtil.isNullOrZero(txCodigo.getValue())) {
+
+			subtitulo.add("Código: " + txCodigo.getValue());
+		}
+
+		if (pesquisaCliente.getObjetoPesquisado() != null) {
+
+			subtitulo.add("Cliente: " + pesquisaCliente.getObjetoPesquisado().getNome());
+		}
+
+		if (!StringUtil.isNullOrEmpty(txDocumento.getText())) {
+
+			subtitulo.add("Documento: " + txDocumento.getText());
+		}
+
+		if (pesquisaPagamento.getObjetoPesquisado() != null) {
+
+			subtitulo.add("Forma de Pagamento: " + pesquisaPagamento.getObjetoPesquisado().getDescricao());
+		}
+
+		if (dtVencimentoFinal.getDate() != null || dtVencimentoInicial.getDate() != null) {
+
+			StringBuilder stringBuilder = new StringBuilder("Data de movimento: ");
+
+			if (dtVencimentoFinal.getDate() != null && dtVencimentoInicial.getDate() != null) {
+
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtVencimentoInicial.getDate()))
+						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtVencimentoFinal.getDate()));
+			} else if (dtVencimentoInicial.getDate() != null) {
+
+				stringBuilder.append("A partir De: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtVencimentoInicial.getDate()));
+
+			} else {
+				stringBuilder.append("Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtVencimentoFinal.getDate()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		if (!BigDecimalUtil.isNullOrZero(txValorFinal.getValue()) || !BigDecimalUtil.isNullOrZero(txValorInicial.getValue())) {
+
+			NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
+
+			StringBuilder stringBuilder = new StringBuilder("Valor da parcela: ");
+
+			if (!BigDecimalUtil.isNullOrZero(txValorFinal.getValue()) && !BigDecimalUtil.isNullOrZero(txValorInicial.getValue())) {
+
+				stringBuilder.append("De: ").append(numberFormat.format(txValorInicial.getValue())).append(" Até: ")
+						.append(numberFormat.format(txValorFinal.getValue()));
+
+			} else if (!BigDecimalUtil.isNullOrZero(txValorInicial.getValue())) {
+
+				stringBuilder.append("A partir De: ").append(numberFormat.format(txValorInicial.getValue()));
+
+			} else {
+				stringBuilder.append("Até: ").append(numberFormat.format(txValorFinal.getValue()));
+
+			}
+
+			subtitulo.add(stringBuilder.toString());
+		}
+
+		if (chBaixado.isSelected()) {
+			subtitulo.add("Apenas documentos baixados");
+		}
+
+		if (chVencido.isSelected()) {
+
+			subtitulo.add("Apenas documentos vencidos");
+		}
+
+		return subtitulo;
 	}
 }

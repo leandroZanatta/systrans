@@ -60,7 +60,7 @@ public class FrmHistoricoCusto extends AbstractInternalFrame {
 		lblMesesAlocao = new JLabel("Meses Alocação:");
 		cbTipoAlocacao = new JComboBox<>();
 		txMesesAlocacao = new JNumericField(3);
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_HISTORICOOPERACOES.getCodigoPesquisa(),
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
 				getCodigoUsuario(), historicoService.getHistoricosDevedores()) {
 
 			private static final long serialVersionUID = 1L;

@@ -33,7 +33,7 @@ public class ContasReceberReportBuilder {
 	private List<ContasReport> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public ContasReceberReportBuilder build(String title) {
+	public ContasReceberReportBuilder build(String title, List<String> subtitle) {
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
@@ -75,7 +75,8 @@ public class ContasReceberReportBuilder {
 				.setPattern("#,##0.00")
 				.setWidth(85).setStyle(valueStyle).build();
 
-		drb.setTitle(title).setTitleStyle(titleStyle).setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
+		drb.setTitle(title).setTitleStyle(titleStyle).setSubtitle(subtitle.stream().collect(Collectors.joining("\\n")))
+				.setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
 				.setBottomMargin(margin)
 				.setPrintBackgroundOnOddRows(false).setGrandTotalLegendStyle(totalStyle).setGrandTotalLegend("Totais");
 		drb.addColumn(ColumnBuilder.getNew().setStyle(valueStyle).setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código")

@@ -14,6 +14,8 @@ public class FaturamentoEntradaProjection {
 
 	private String veiculo;
 
+	private String historico;
+
 	private Date dataMovimento;
 
 	private BigDecimal valorBruto;

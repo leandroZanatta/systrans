@@ -16,9 +16,9 @@ import com.mysema.query.types.Projections;
 
 import br.com.lar.repository.model.FaturamentoCabecalho;
 import br.com.lar.repository.projection.FaturamentoBrutoReportProjection;
+import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.ListUtil;
-import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 
 public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabecalho> {
@@ -86,7 +86,26 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 			return faturamentoCabecalho.dataMovimento.loe(dataMovimentoFinal);
 		}
 
-		throw new SysDescException("Pelo menos uma data deve ser informada");
+		return null;
+	}
+
+	public List<FaturamentoVeiculoProjection> buscarFaturamentoVeiculo(Date dataMovimentoInicial, Date dataMovimentoFinal) {
+
+		JPASQLQuery query = sqlFrom();
+
+		query.innerJoin(faturamentoDetalhe).on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho));
+
+		Predicate predicate = getDataMovimento(dataMovimentoInicial, dataMovimentoFinal);
+
+		if (predicate != null) {
+
+			query.where(predicate);
+		}
+
+		query.groupBy(faturamentoDetalhe.codigoVeiculo);
+
+		return query.list(Projections.fields(FaturamentoVeiculoProjection.class, faturamentoDetalhe.codigoVeiculo.as("codigoVeiculo"),
+				faturamentoDetalhe.valorBruto.sum().as("valorBruto")));
 	}
 
 }

@@ -17,6 +17,7 @@ import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.DynamicReportBuilder;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.Page;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import br.com.lar.reports.models.FaturamentoReport;
 import br.com.lar.repository.projection.FaturamentoEntradaProjection;
@@ -32,7 +33,7 @@ public class FaturamentoEntradasReportBuilder {
 	private List<FaturamentoReport> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public FaturamentoEntradasReportBuilder build(String title, List<String> subtitle) {
+	public FaturamentoEntradasReportBuilder build(String title, List<String> subtitle, boolean veiculoSelecionado) {
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
@@ -63,8 +64,15 @@ public class FaturamentoEntradasReportBuilder {
 				.setWidth(50).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("cliente", String.class.getName()).setTitle("Cliente")
 				.setWidth(300).build());
-		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("veiculo", String.class.getName()).setTitle("Veículo")
-				.setWidth(100).build());
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("historico", String.class.getName()).setTitle("Histórico")
+				.setWidth(300).build());
+
+		if (!veiculoSelecionado) {
+
+			drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("veiculo", String.class.getName()).setTitle("Veículo")
+					.setWidth(100).build());
+		}
+
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("dataMovimento", Date.class.getName()).setTitle("Data Movimento")
 				.setPattern("dd/MM/yyyy HH:mm:ss")
 				.setWidth(120).build());
@@ -75,6 +83,7 @@ public class FaturamentoEntradasReportBuilder {
 		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X_SLASH_Y, AutoText.POSITION_FOOTER, AutoText.ALIGNMENT_RIGHT);
 
 		drb.addGlobalFooterVariable(valorBruto, DJCalculation.SUM, totalStyle);
+		drb.setPageSizeAndOrientation(Page.Page_A4_Landscape());
 
 		dynamicReport = drb.build();
 
@@ -108,7 +117,7 @@ public class FaturamentoEntradasReportBuilder {
 		faturmaentoReport.setCliente(cortar(faturamentoEntradas.getCliente(), 40));
 		faturmaentoReport.setDataMovimento(faturamentoEntradas.getDataMovimento());
 		faturmaentoReport.setValorTotal(faturamentoEntradas.getValorBruto());
-
+		faturmaentoReport.setHistorico(cortar(faturamentoEntradas.getHistorico(), 40));
 		return faturmaentoReport;
 	}
 
