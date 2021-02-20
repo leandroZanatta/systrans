@@ -32,6 +32,11 @@ public class PlanoContasDAO extends PesquisableDAOImpl<PlanoContas> {
 		return from().where(booleanBuilder).count();
 	}
 
+	public BooleanBuilder getContasAnaliticas() {
+
+		return new BooleanBuilder(planoContas.contaAnalitica.eq(Boolean.TRUE));
+	}
+
 	public BooleanBuilder getContasSinteticas() {
 
 		return new BooleanBuilder(planoContas.contaAnalitica.eq(Boolean.FALSE));

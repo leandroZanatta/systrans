@@ -11,5 +11,6 @@ public class FaturamentoBrutoReportProjection {
 	private String centroCusto;
 	private String historico;
 	private String veiculo;
+	private Long codigoVeiculo;
 
 }

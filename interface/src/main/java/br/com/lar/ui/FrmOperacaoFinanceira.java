@@ -110,15 +110,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 					throw new SysDescException(Resources.translate(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO));
 				}
 
-				switch (TipoHistoricoOperacaoEnum.forValue(pesquisaHistorico.getObjetoPesquisado().getTipoHistorico())) {
-				case CREDOR:
-					return planoContasService.getContasCredoras();
-				case DEVEDOR:
-					return planoContasService.getContasBalanco();
-				default:
-					throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO);
-
-				}
+				return planoContasService.getContasAnaliticas();
 
 			}
 		};
@@ -146,16 +138,7 @@ public class FrmOperacaoFinanceira extends AbstractInternalFrame {
 					throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
 				}
 
-				switch (historico) {
-				case CREDOR:
-					return planoContasService.getContasBalanco();
-				case DEVEDOR:
-					return planoContasService.getContasDevedoras();
-				default:
-					throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_OPERACAO_NAO_ENCONTRADO);
-
-				}
-
+				return planoContasService.getContasAnaliticas();
 			}
 		};
 		painelContent.add(pesquisaContaCredora, "cell 0 5,grow");

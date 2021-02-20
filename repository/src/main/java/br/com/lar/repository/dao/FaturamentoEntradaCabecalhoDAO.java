@@ -121,6 +121,29 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 	private List<FaturamentoBrutoReportProjection> filtrarFaturmamentoBrutoEntradas(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
+		BooleanBuilder booleanBuilder = gerarClausulaFaturamentoBruto(pesquisaFaturamentoBrutoVO);
+
+		JPASQLQuery query = sqlFrom().leftJoin(faturamentoEntradasDetalhe)
+				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho))
+				.leftJoin(veiculo).on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(centroCusto)
+				.on(faturamentoEntradasCabecalho.codigoCentroCusto.eq(centroCusto.idCentroCusto)).leftJoin(historico)
+				.on(faturamentoEntradasCabecalho.codigoHistorico.eq(historico.idHistorico));
+
+		if (booleanBuilder.hasValue()) {
+
+			query.where(booleanBuilder);
+		}
+
+		query.groupBy(centroCusto.descricao, historico.descricao, veiculo.idVeiculo, veiculo.placa.coalesce("TODOS"));
+
+		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
+				centroCusto.descricao.as("centroCusto"), veiculo.idVeiculo.as("codigoVeiculo"), veiculo.placa.coalesce("TODOS").as("veiculo"),
+				faturamentoEntradasDetalhe.valorBruto.add(faturamentoEntradasDetalhe.valorAcrescimo)
+						.subtract(faturamentoEntradasDetalhe.valorDesconto).sum().as("valorBruto")));
+	}
+
+	private BooleanBuilder gerarClausulaFaturamentoBruto(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
 		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoHistoricos())) {
@@ -134,7 +157,8 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
 
-			booleanBuilder.and(faturamentoEntradasDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
+			booleanBuilder.and(faturamentoEntradasDetalhe.codigoVeiculo.isNull()
+					.or(faturamentoEntradasDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())));
 		}
 
 		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null || pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
@@ -143,24 +167,7 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 					.and(getDataMovimento(faturamentoEntradasCabecalho.dataMovimento, pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
 							pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
 		}
-
-		JPASQLQuery query = sqlFrom().leftJoin(faturamentoEntradasDetalhe)
-				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho))
-				.leftJoin(veiculo).on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(centroCusto)
-				.on(faturamentoEntradasCabecalho.codigoCentroCusto.eq(centroCusto.idCentroCusto)).leftJoin(historico)
-				.on(faturamentoEntradasCabecalho.codigoHistorico.eq(historico.idHistorico));
-
-		if (booleanBuilder.hasValue()) {
-
-			query.where(booleanBuilder);
-		}
-
-		query.groupBy(centroCusto.descricao, historico.descricao, veiculo.placa.coalesce("TODOS"));
-
-		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
-				centroCusto.descricao.as("centroCusto"), veiculo.placa.coalesce("TODOS").as("veiculo"),
-				faturamentoEntradasDetalhe.valorBruto.add(faturamentoEntradasDetalhe.valorAcrescimo)
-						.subtract(faturamentoEntradasDetalhe.valorDesconto).sum().as("valorBruto")));
+		return booleanBuilder;
 	}
 
 	private List<FaturamentoBrutoReportProjection> filtrarFaturamentoBrutoCentroCusto(PesquisaFaturamentoBrutoVO pesquisaVO) {
@@ -196,10 +203,13 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 		query.leftJoin(centroCusto).on(codigoCentroCusto.eq(centroCusto.idCentroCusto));
 
-		query.groupBy(centroCusto.descricao.coalesce("TODOS"), historico.descricao, veiculo.placa.coalesce("TODOS"));
+		query.where(gerarClausulaFaturamentoBruto(pesquisaVO));
+
+		query.groupBy(centroCusto.descricao.coalesce("TODOS"), historico.descricao, veiculo.idVeiculo, veiculo.placa.coalesce("TODOS"));
 
 		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
-				centroCusto.descricao.coalesce("TODOS").as("centroCusto"), veiculo.placa.coalesce("TODOS").as("veiculo"),
+				centroCusto.descricao.coalesce("TODOS").as("centroCusto"), veiculo.idVeiculo.as("codigoVeiculo"),
+				veiculo.placa.coalesce("TODOS").as("veiculo"),
 				valorParcela.sum().as("valorBruto")));
 	}
 

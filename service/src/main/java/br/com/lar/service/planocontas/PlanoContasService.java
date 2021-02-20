@@ -56,6 +56,11 @@ public class PlanoContasService extends AbstractPesquisableServiceImpl<PlanoCont
 		return planoContasDAO.getNextIdentifier(idPlanoContas, contaAnalitica) + 1L;
 	}
 
+	public BooleanBuilder getContasAnaliticas() {
+
+		return planoContasDAO.getContasAnaliticas();
+	}
+
 	public BooleanBuilder getContasSinteticas() {
 
 		return planoContasDAO.getContasSinteticas();
