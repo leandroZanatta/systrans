@@ -7,11 +7,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -48,6 +50,9 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 	private JDateChooser dtMovimentoInicial;
 	private JDateChooser dtMovimentoFinal;
 	private JCheckBox chckbxUsarAlocaoDe;
+	private JRadioButton rdbtnDetalhado;
+	private JRadioButton rdbtnNewRadioButton;
+	private JRadioButton rdbtnBsico;
 
 	public FrmRelatorioFaturamento(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -58,7 +63,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(366, 311);
+		setSize(435, 311);
 		setClosable(Boolean.TRUE);
 		setTitle("Relatório de Faturamento Bruto");
 
@@ -73,6 +78,9 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		dtMovimentoInicial = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
 		dtMovimentoFinal = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
 		chckbxUsarAlocaoDe = new JCheckBox("Usar alocação de custos");
+		rdbtnDetalhado = new JRadioButton("Detalhado");
+		rdbtnNewRadioButton = new JRadioButton("Histórico");
+		rdbtnBsico = new JRadioButton("Básico");
 
 		JButton btnGerar = new JButton("Gerar");
 
@@ -134,24 +142,28 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER, TitledBorder.TOP,
 						null, new Color(0, 0, 0)));
 
-		pnlActions.setBounds(7, 238, 340, 32);
-		pnlVencimento.setBounds(7, 147, 340, 52);
+		pnlActions.setBounds(7, 238, 402, 32);
+		pnlVencimento.setBounds(7, 147, 402, 52);
 		lbDe.setBounds(10, 24, 23, 14);
-		lbAte.setBounds(172, 24, 25, 14);
+		lbAte.setBounds(215, 24, 25, 14);
 		lblHistrico.setBounds(10, 10, 68, 14);
 		lbVeiculo.setBounds(10, 55, 68, 14);
 		lbCentroCusto.setBounds(10, 100, 150, 14);
-		pesquisaHistorico.setBounds(10, 25, 335, 22);
-		pesquisaVeiculo.setBounds(10, 70, 335, 22);
-		pesquisaCentroCusto.setBounds(10, 115, 335, 22);
-		dtMovimentoInicial.setBounds(38, 21, 124, 20);
-		dtMovimentoFinal.setBounds(205, 21, 124, 20);
-		chckbxUsarAlocaoDe.setBounds(183, 208, 161, 23);
+		pesquisaHistorico.setBounds(10, 25, 399, 22);
+		pesquisaVeiculo.setBounds(10, 70, 399, 22);
+		pesquisaCentroCusto.setBounds(10, 115, 399, 22);
+		dtMovimentoInicial.setBounds(30, 20, 150, 20);
+		dtMovimentoFinal.setBounds(240, 20, 150, 20);
+		chckbxUsarAlocaoDe.setBounds(254, 208, 161, 23);
+		rdbtnDetalhado.setBounds(6, 208, 96, 23);
+		rdbtnBsico.setBounds(187, 208, 70, 23);
+		rdbtnNewRadioButton.setBounds(100, 208, 79, 23);
 
 		Calendar calendar = Calendar.getInstance();
 		dtMovimentoFinal.setDate(calendar.getTime());
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		dtMovimentoInicial.setDate(calendar.getTime());
+		rdbtnDetalhado.setSelected(true);
 
 		btnGerar.addActionListener(e -> gerarRelatorio());
 
@@ -171,6 +183,14 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pnlVencimento.add(dtMovimentoFinal);
 		pnlActions.add(btnGerar);
 		container.add(chckbxUsarAlocaoDe);
+		container.add(rdbtnDetalhado);
+		container.add(rdbtnNewRadioButton);
+		container.add(rdbtnBsico);
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnDetalhado);
+		group.add(rdbtnNewRadioButton);
+		group.add(rdbtnBsico);
 	}
 
 	private void gerarRelatorio() {
@@ -188,6 +208,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			pesquisaFaturamentoBrutoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
 			pesquisaFaturamentoBrutoVO.setUsaAlocacaoCusto(chckbxUsarAlocaoDe.isSelected());
+			pesquisaFaturamentoBrutoVO.setCodigoRelatorio(getCodigoRelatorio());
 
 			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
@@ -197,6 +218,21 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á pagar");
 		}
+	}
+
+	private int getCodigoRelatorio() {
+
+		if (rdbtnDetalhado.isSelected()) {
+
+			return 2;
+		}
+
+		if (rdbtnNewRadioButton.isSelected()) {
+
+			return 1;
+		}
+
+		return 0;
 	}
 
 	private List<String> montarSubTitulo() {

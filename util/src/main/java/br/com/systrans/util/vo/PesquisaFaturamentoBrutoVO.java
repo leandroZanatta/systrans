@@ -20,4 +20,6 @@ public class PesquisaFaturamentoBrutoVO {
 
 	private boolean usaAlocacaoCusto;
 
+	private int codigoRelatorio;
+
 }
