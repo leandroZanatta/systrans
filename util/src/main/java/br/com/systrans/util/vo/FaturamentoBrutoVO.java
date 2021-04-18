@@ -10,6 +10,7 @@ import lombok.Data;
 public class FaturamentoBrutoVO {
 
 	private String descricao;
-	private BigDecimal valor;
+	private BigDecimal valorContabil;
+	private BigDecimal valorSocial;
 	private Integer agrupamento;
 }

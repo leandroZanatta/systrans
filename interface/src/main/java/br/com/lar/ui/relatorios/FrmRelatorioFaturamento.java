@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,7 +25,7 @@ import br.com.lar.repository.model.CentroCusto;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Veiculo;
 import br.com.lar.service.centrocusto.CentroCustoService;
-import br.com.lar.service.faturamento.FaturamentoService;
+import br.com.lar.service.faturamento.report.FaturamentoReportService;
 import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
@@ -40,7 +41,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private FaturamentoService faturamentoService = new FaturamentoService();
+	private FaturamentoReportService faturamentoService = new FaturamentoReportService();
 	private HistoricoService historicoService = new HistoricoService();
 	private VeiculoService veiculoService = new VeiculoService();
 	private CentroCustoService centroCustoService = new CentroCustoService();
@@ -49,10 +50,10 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 	private CampoPesquisaMultiSelect<CentroCusto> pesquisaCentroCusto;
 	private JDateChooser dtMovimentoInicial;
 	private JDateChooser dtMovimentoFinal;
-	private JCheckBox chckbxUsarAlocaoDe;
 	private JRadioButton rdbtnDetalhado;
 	private JRadioButton rdbtnNewRadioButton;
 	private JRadioButton rdbtnBsico;
+	private JComboBox<String> cbTipoBalanco;
 
 	public FrmRelatorioFaturamento(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -77,22 +78,22 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		JLabel lbCentroCusto = new JLabel("Centro Custo:");
 		dtMovimentoInicial = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
 		dtMovimentoFinal = new JDateChooser("dd/MM/yyyy", "##/##/#####", '_');
-		chckbxUsarAlocaoDe = new JCheckBox("Usar alocação de custos");
 		rdbtnDetalhado = new JRadioButton("Detalhado");
 		rdbtnNewRadioButton = new JRadioButton("Histórico");
 		rdbtnBsico = new JRadioButton("Básico");
 
 		JButton btnGerar = new JButton("Gerar");
 
-		pesquisaHistorico = new CampoPesquisaMultiSelect<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
-				getCodigoUsuario()) {
+		pesquisaHistorico = new CampoPesquisaMultiSelect<Historico>(historicoService,
+				PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<Historico> objetos) {
 
-				return objetos.stream().map(historico -> historico.getIdHistorico().toString()).collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(historico -> historico.getIdHistorico().toString())
+						.collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -101,14 +102,16 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				return String.format("%d - %s", objeto.getIdHistorico(), objeto.getDescricao());
 			}
 		};
-		pesquisaVeiculo = new CampoPesquisaMultiSelect<Veiculo>(veiculoService, PesquisaEnum.PES_VEICULOS.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaVeiculo = new CampoPesquisaMultiSelect<Veiculo>(veiculoService,
+				PesquisaEnum.PES_VEICULOS.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<Veiculo> objetos) {
 
-				return objetos.stream().map(veiculo -> veiculo.getIdVeiculo().toString()).collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(veiculo -> veiculo.getIdVeiculo().toString())
+						.collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -117,15 +120,16 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				return String.format("%d - %s", objeto.getIdVeiculo(), objeto.getPlaca());
 			}
 		};
-		pesquisaCentroCusto = new CampoPesquisaMultiSelect<CentroCusto>(centroCustoService, PesquisaEnum.PES_CENTRO_CUSTO.getCodigoPesquisa(),
-				getCodigoUsuario()) {
+		pesquisaCentroCusto = new CampoPesquisaMultiSelect<CentroCusto>(centroCustoService,
+				PesquisaEnum.PES_CENTRO_CUSTO.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<CentroCusto> objetos) {
 
-				return objetos.stream().map(centroCusto -> centroCusto.getIdCentroCusto().toString()).collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(centroCusto -> centroCusto.getIdCentroCusto().toString())
+						.collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -135,12 +139,13 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			}
 
 		};
+		cbTipoBalanco = new JComboBox<>();
 
+		cbTipoBalanco.setModel(new DefaultComboBoxModel<>(new String[] { "Contábil", "Social", "Consolidado" }));
 		container.setLayout(null);
 		pnlVencimento.setLayout(null);
-		pnlVencimento
-				.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER, TitledBorder.TOP,
-						null, new Color(0, 0, 0)));
+		pnlVencimento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento",
+				TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
 		pnlActions.setBounds(7, 238, 402, 32);
 		pnlVencimento.setBounds(7, 147, 402, 52);
@@ -154,10 +159,10 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pesquisaCentroCusto.setBounds(10, 115, 399, 22);
 		dtMovimentoInicial.setBounds(30, 20, 150, 20);
 		dtMovimentoFinal.setBounds(240, 20, 150, 20);
-		chckbxUsarAlocaoDe.setBounds(254, 208, 161, 23);
 		rdbtnDetalhado.setBounds(6, 208, 96, 23);
 		rdbtnBsico.setBounds(187, 208, 70, 23);
 		rdbtnNewRadioButton.setBounds(100, 208, 79, 23);
+		cbTipoBalanco.setBounds(259, 210, 150, 20);
 
 		Calendar calendar = Calendar.getInstance();
 		dtMovimentoFinal.setDate(calendar.getTime());
@@ -182,10 +187,10 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pnlVencimento.add(dtMovimentoInicial);
 		pnlVencimento.add(dtMovimentoFinal);
 		pnlActions.add(btnGerar);
-		container.add(chckbxUsarAlocaoDe);
 		container.add(rdbtnDetalhado);
 		container.add(rdbtnNewRadioButton);
 		container.add(rdbtnBsico);
+		container.add(cbTipoBalanco);
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnDetalhado);
@@ -207,12 +212,14 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 					.mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
 			pesquisaFaturamentoBrutoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
-			pesquisaFaturamentoBrutoVO.setUsaAlocacaoCusto(chckbxUsarAlocaoDe.isSelected());
+			pesquisaFaturamentoBrutoVO.setTipoBalanco(cbTipoBalanco.getSelectedIndex());
 			pesquisaFaturamentoBrutoVO.setCodigoRelatorio(getCodigoRelatorio());
 
-			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
+			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService
+					.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
-			new FaturamentoBrutoReportBuilder().build("Relatório de Faturamento", montarSubTitulo())
+			new FaturamentoBrutoReportBuilder()
+					.build("Relatório de Faturamento", montarSubTitulo(), pesquisaFaturamentoBrutoVO.getTipoBalanco())
 					.setData(faturamentoBrutoVOs).view();
 
 		} catch (JRException e) {
@@ -256,8 +263,10 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 			if (dtMovimentoFinal.getDate() != null && dtMovimentoInicial.getDate() != null) {
 
-				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
-						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+				stringBuilder.append("De: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
+						.append(" Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
 			} else if (dtMovimentoInicial.getDate() != null) {
 
 				stringBuilder.append("A partir De: ")
@@ -272,10 +281,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			subtitulo.add(stringBuilder.toString());
 		}
 
-		if (chckbxUsarAlocaoDe.isSelected()) {
-
-			subtitulo.add("USANDO ALOCAÇÃO DE CUSTOS");
-		}
+		subtitulo.add("USANDO BALANÇO: " + cbTipoBalanco.getSelectedItem().toString());
 
 		return subtitulo;
 	}

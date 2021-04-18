@@ -28,32 +28,41 @@ public class ContasPagarPagamentoDAO extends PesquisableDAOImpl<ContasPagarPagam
 		super(contasPagarPagamento, contasPagarPagamento.idContasPagarPagamento);
 	}
 
-	public List<DespesasFinanceirasProjection> filtrarDespesasFinanceiras(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public List<DespesasFinanceirasProjection> filtrarDespesasFinanceiras(
+			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
 		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar))
-				.leftJoin(contasPagarVeiculo)
-				.on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
-				.leftJoin(veiculo)
-				.on(contasPagarVeiculo.codigoVeiculo.eq(veiculo.idVeiculo))
+				.leftJoin(contasPagarVeiculo).on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
+				.leftJoin(veiculo).on(contasPagarVeiculo.codigoVeiculo.eq(veiculo.idVeiculo))
 				.where(montarClausulasFiltroDespesasFinanceiras(pesquisaFaturamentoBrutoVO))
-				.list(Projections.fields(DespesasFinanceirasProjection.class, contasPagarPagamento.valorJuros, contasPagarPagamento.valorAcrescimo,
-						veiculo.placa.coalesce("TODOS").as("veiculo")));
+				.list(Projections.fields(DespesasFinanceirasProjection.class, contasPagarPagamento.valorJuros,
+						contasPagarPagamento.valorAcrescimo, veiculo.placa.coalesce("TODOS").as("veiculo")));
 	}
 
-	private BooleanBuilder montarClausulasFiltroDespesasFinanceiras(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public BigDecimal filtrarDespesasFinanceirasGeral(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		BooleanBuilder booleanBuilder = new BooleanBuilder(
-				contasPagarPagamento.valorAcrescimo.ne(BigDecimal.ZERO).or(contasPagarPagamento.valorJuros.ne(BigDecimal.ZERO)));
+		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar))
+				.leftJoin(contasPagarVeiculo).on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
+				.where(montarClausulasFiltroDespesasFinanceiras(pesquisaFaturamentoBrutoVO))
+				.singleResult(contasPagarPagamento.valorJuros.add(contasPagarPagamento.valorAcrescimo).sum());
+	}
+
+	private BooleanBuilder montarClausulasFiltroDespesasFinanceiras(
+			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		BooleanBuilder booleanBuilder = new BooleanBuilder(contasPagarPagamento.valorAcrescimo.ne(BigDecimal.ZERO)
+				.or(contasPagarPagamento.valorJuros.ne(BigDecimal.ZERO)));
 
 		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
 
 			booleanBuilder.and(contasPagarVeiculo.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
 		}
 
-		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null || pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
+		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null
+				|| pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
 
-			booleanBuilder
-					.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(), pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
+			booleanBuilder.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
+					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
 		}
 
 		return booleanBuilder;
