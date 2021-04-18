@@ -18,7 +18,7 @@ public class PesquisaFaturamentoBrutoVO {
 
 	private Date dataMovimentoFinal;
 
-	private boolean usaAlocacaoCusto;
+	private int tipoBalanco;
 
 	private int codigoRelatorio;
 
