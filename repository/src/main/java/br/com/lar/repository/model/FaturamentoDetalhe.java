@@ -14,6 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -29,6 +31,8 @@ public class FaturamentoDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamentocabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FaturamentoCabecalho faturamentoCabecalho;
 
 	@Column(name = "cd_faturamentocabecalho", insertable = false, updatable = false)
@@ -39,10 +43,14 @@ public class FaturamentoDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_veiculo")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Veiculo veiculo;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_motorista")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Motorista motorista;
 
 	@Column(name = "nr_documento")

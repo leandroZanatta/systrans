@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -32,18 +34,26 @@ public class AlocacaoCusto implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historicocusto")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private HistoricoCusto historicoCusto;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_centrocusto")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CentroCusto centroCusto;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_veiculo")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Veiculo veiculo;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_motorista")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Motorista motorista;
 
 	@Column(name = "dt_periodo")

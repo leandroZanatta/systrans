@@ -19,26 +19,26 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "tb_vinculoentrada")
-@SequenceGenerator(name = "GEN_VINCULOENTRADA", allocationSize = 1, sequenceName = "GEN_VINCULOENTRADA")
-public class VinculoEntrada implements Serializable {
+@Table(name = "tb_vinculoentradacontaspagarveiculo")
+@SequenceGenerator(name = "GEN_VINCULOENTRADACONTASPAGARVEICULO", allocationSize = 1, sequenceName = "GEN_VINCULOENTRADACONTASPAGARVEICULO")
+public class VinculoEntradaContasPagarVeiculo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_VINCULOENTRADA")
-	@Column(name = "id_vinculoentrada")
-	private Long idVinculoEntrada;
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GEN_VINCULOENTRADACONTASPAGARVEICULO")
+	@Column(name = "id_vinculoentradacontaspagarveiculo")
+	private Long idVinculoEntradaContasPagarVeiculo;
 
 	@ManyToOne
-	@JoinColumn(name = "cd_faturamentoentrada")
+	@JoinColumn(name = "cd_faturamentoentradasdetalhe")
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private FaturamentoEntradasCabecalho faturamentoEntrada;
+	private FaturamentoEntradasDetalhe faturamentoEntradasDetalhe;
 
 	@OneToOne
-	@JoinColumn(name = "cd_diariocabecalho")
+	@JoinColumn(name = "cd_contaspagarveiculo")
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private DiarioCabecalho diarioCabecalho;
+	private ContasPagarVeiculo contasPagarVeiculo;
 
 }

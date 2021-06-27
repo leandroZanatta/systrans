@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import br.com.sysdesc.pesquisa.repository.model.Usuario;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -32,6 +33,8 @@ public class Caixa implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_usuario")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Usuario usuario;
 
 	@Column(name = "tx_descricao")
@@ -42,6 +45,7 @@ public class Caixa implements Serializable {
 
 	@OneToMany(mappedBy = "caixa")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<CaixaCabecalho> caixaCabecalhos;
 
 }

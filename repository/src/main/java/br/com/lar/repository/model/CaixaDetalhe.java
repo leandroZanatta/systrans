@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -38,11 +39,13 @@ public class CaixaDetalhe implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_planocontas")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private PlanoContas planoContas;
 
 	@Column(name = "cd_planocontas", insertable = false, updatable = false)
@@ -60,10 +63,12 @@ public class CaixaDetalhe implements Serializable {
 
 	@OneToOne(mappedBy = "caixaDetalhe")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private VinculoEntradaCaixa vinculoEntradaCaixa;
 
 	@OneToOne(mappedBy = "caixaDetalhe")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private VinculoSaidaCaixa vinculoSaidaCaixa;
 
 }

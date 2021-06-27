@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -39,9 +40,13 @@ public class CaixaCabecalho implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixa")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Caixa caixa;
 
 	@OneToOne(mappedBy = "caixaCabecalho", optional = true, cascade = CascadeType.ALL)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaSaldo caixaSaldo;
 
 	@Column(name = "cd_caixa", insertable = false, updatable = false)
@@ -61,6 +66,7 @@ public class CaixaCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "caixaCabecalho", fetch = FetchType.EAGER)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<CaixaDetalhe> caixaDetalhes;
 
 }

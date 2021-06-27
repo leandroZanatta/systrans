@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -32,6 +34,8 @@ public class Funcionario implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cliente cliente;
 
 	@Column(name = "tx_cargo")

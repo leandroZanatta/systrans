@@ -16,6 +16,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -47,14 +49,20 @@ public class Cliente implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cidade")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cidade cidade;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_grupo")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Grupo grupo;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_naturalidade")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cidade naturalidade;
 
 	@Column(name = "tx_endereco")

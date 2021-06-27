@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -31,6 +32,8 @@ public class HistoricoCusto implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Historico historico;
 
 	@Column(name = "cd_historico", insertable = false, updatable = false)
@@ -44,5 +47,6 @@ public class HistoricoCusto implements Serializable {
 
 	@OneToMany(mappedBy = "historicoCusto")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<AlocacaoCusto> alocacaoCustos;
 }

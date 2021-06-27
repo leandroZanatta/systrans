@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -37,14 +38,18 @@ public class Cidade implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_estado")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Estado estado;
 
 	@OneToMany(mappedBy = "cidade")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<Cliente> clientes;
 
 	@OneToMany(mappedBy = "naturalidade")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<Cliente> naturalidades;
 
 	@Override

@@ -84,16 +84,15 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 		JButton btnGerar = new JButton("Gerar");
 
-		pesquisaHistorico = new CampoPesquisaMultiSelect<Historico>(historicoService,
-				PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaHistorico = new CampoPesquisaMultiSelect<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
+				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<Historico> objetos) {
 
-				return objetos.stream().map(historico -> historico.getIdHistorico().toString())
-						.collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(historico -> historico.getIdHistorico().toString()).collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -102,16 +101,14 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				return String.format("%d - %s", objeto.getIdHistorico(), objeto.getDescricao());
 			}
 		};
-		pesquisaVeiculo = new CampoPesquisaMultiSelect<Veiculo>(veiculoService,
-				PesquisaEnum.PES_VEICULOS.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaVeiculo = new CampoPesquisaMultiSelect<Veiculo>(veiculoService, PesquisaEnum.PES_VEICULOS.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<Veiculo> objetos) {
 
-				return objetos.stream().map(veiculo -> veiculo.getIdVeiculo().toString())
-						.collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(veiculo -> veiculo.getIdVeiculo().toString()).collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -120,16 +117,15 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 				return String.format("%d - %s", objeto.getIdVeiculo(), objeto.getPlaca());
 			}
 		};
-		pesquisaCentroCusto = new CampoPesquisaMultiSelect<CentroCusto>(centroCustoService,
-				PesquisaEnum.PES_CENTRO_CUSTO.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaCentroCusto = new CampoPesquisaMultiSelect<CentroCusto>(centroCustoService, PesquisaEnum.PES_CENTRO_CUSTO.getCodigoPesquisa(),
+				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected String formatarValorCampoMultiple(List<CentroCusto> objetos) {
 
-				return objetos.stream().map(centroCusto -> centroCusto.getIdCentroCusto().toString())
-						.collect(Collectors.joining(",", "<", ">"));
+				return objetos.stream().map(centroCusto -> centroCusto.getIdCentroCusto().toString()).collect(Collectors.joining(",", "<", ">"));
 			}
 
 			@Override
@@ -144,8 +140,8 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		cbTipoBalanco.setModel(new DefaultComboBoxModel<>(new String[] { "Contábil", "Social", "Consolidado" }));
 		container.setLayout(null);
 		pnlVencimento.setLayout(null);
-		pnlVencimento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento",
-				TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlVencimento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER,
+				TitledBorder.TOP, null, new Color(0, 0, 0)));
 
 		pnlActions.setBounds(7, 238, 402, 32);
 		pnlVencimento.setBounds(7, 147, 402, 52);
@@ -206,25 +202,36 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 			pesquisaFaturamentoBrutoVO.setCodigoCentroCustos(pesquisaCentroCusto.getObjetosPesquisado().stream()
 					.mapToLong(CentroCusto::getIdCentroCusto).boxed().collect(Collectors.toList()));
-			pesquisaFaturamentoBrutoVO.setCodigoHistoricos(pesquisaHistorico.getObjetosPesquisado().stream()
-					.mapToLong(Historico::getIdHistorico).boxed().collect(Collectors.toList()));
-			pesquisaFaturamentoBrutoVO.setCodigoVeiculos(pesquisaVeiculo.getObjetosPesquisado().stream()
-					.mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
+			pesquisaFaturamentoBrutoVO.setCodigoHistoricos(
+					pesquisaHistorico.getObjetosPesquisado().stream().mapToLong(Historico::getIdHistorico).boxed().collect(Collectors.toList()));
+			pesquisaFaturamentoBrutoVO.setCodigoVeiculos(
+					pesquisaVeiculo.getObjetosPesquisado().stream().mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
 			pesquisaFaturamentoBrutoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
 			pesquisaFaturamentoBrutoVO.setTipoBalanco(cbTipoBalanco.getSelectedIndex());
 			pesquisaFaturamentoBrutoVO.setCodigoRelatorio(getCodigoRelatorio());
 
-			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService
-					.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
+			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
-			new FaturamentoBrutoReportBuilder()
-					.build("Relatório de Faturamento", montarSubTitulo(), pesquisaFaturamentoBrutoVO.getTipoBalanco())
+			new FaturamentoBrutoReportBuilder().build(montarTitulo(), montarSubTitulo(), pesquisaFaturamentoBrutoVO.getTipoBalanco())
 					.setData(faturamentoBrutoVOs).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar relatório de contas á pagar");
 		}
+	}
+
+	private String montarTitulo() {
+
+		if (rdbtnDetalhado.isSelected()) {
+
+			return "RELATÓRIO DE FATURAMENTO DETALHADO";
+		} else if (rdbtnBsico.isSelected()) {
+
+			return "RELATÓRIO DE FATURAMENTO BÁSICO";
+		}
+
+		return "RELATÓRIO DE FATURAMENTO HISTÓRICO";
 	}
 
 	private int getCodigoRelatorio() {
@@ -263,18 +270,14 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 			if (dtMovimentoFinal.getDate() != null && dtMovimentoInicial.getDate() != null) {
 
-				stringBuilder.append("De: ")
-						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
-						.append(" Até: ")
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate())).append(" Até: ")
 						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
 			} else if (dtMovimentoInicial.getDate() != null) {
 
-				stringBuilder.append("A partir De: ")
-						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
+				stringBuilder.append("A partir De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
 
 			} else {
-				stringBuilder.append("Até: ")
-						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+				stringBuilder.append("Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
 
 			}
 

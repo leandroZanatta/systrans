@@ -55,6 +55,11 @@
 		<class>br.com.lar.repository.model.ContasPagarPagamento</class>
 		<class>br.com.lar.repository.model.ParametroOperacaoFinanceira</class>
 		<class>br.com.lar.repository.model.VinculoEntradaCusto</class>
+		<class>br.com.lar.repository.model.VinculoEntradaContasPagarVeiculo</class>
+		<properties>
+			<property name="eclipselink.logging.level" value="INFO" />
+			<property name="eclipselink.logging.parameters" value="false" />
+		</properties>
 	</persistence-unit>
 
 </persistence>

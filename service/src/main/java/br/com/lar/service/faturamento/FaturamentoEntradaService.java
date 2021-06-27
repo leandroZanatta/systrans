@@ -23,11 +23,14 @@ import br.com.lar.repository.model.DiarioCabecalho;
 import br.com.lar.repository.model.DiarioDetalhe;
 import br.com.lar.repository.model.FaturamentoEntradaPagamentos;
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
+import br.com.lar.repository.model.FaturamentoEntradasDetalhe;
 import br.com.lar.repository.model.HistoricoCusto;
 import br.com.lar.repository.model.Operacao;
+import br.com.lar.repository.model.Veiculo;
 import br.com.lar.repository.model.VinculoEntrada;
 import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
+import br.com.lar.repository.model.VinculoEntradaContasPagarVeiculo;
 import br.com.lar.repository.model.VinculoEntradaCusto;
 import br.com.lar.repository.projection.FaturamentoEntradaProjection;
 import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
@@ -98,16 +101,14 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		}
 
 		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoEntradaPagamentos().stream().map(FaturamentoEntradaPagamentos::getValorParcela)
-				.reduce(BigDecimal.ZERO,
-						BigDecimal::add);
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		if (valorPagamentos.compareTo(objetoPersistir.getValorBruto()) != 0) {
 
 			DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
 			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO,
-					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()),
-					decimalFormat.format(valorPagamentos.doubleValue()),
+					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()), decimalFormat.format(valorPagamentos.doubleValue()),
 					decimalFormat.format(objetoPersistir.getValorBruto().subtract(valorPagamentos).doubleValue()));
 		}
 
@@ -160,8 +161,7 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 				periodo = DateUtil.addMonth(periodo, 1L);
 			}
 
-			RateioUtil.efetuarRateio(alocacaoDetalhe, AlocacaoCusto::getValorParcela, AlocacaoCusto::setValorParcela,
-					valorParcela);
+			RateioUtil.efetuarRateio(alocacaoDetalhe, AlocacaoCusto::getValorParcela, AlocacaoCusto::setValorParcela, valorLiquido);
 
 			alocacaoCustos.addAll(alocacaoDetalhe);
 		});
@@ -214,31 +214,17 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 				contasPagar.setValorJuros(BigDecimal.ZERO);
 				contasPagar.setValorPago(BigDecimal.ZERO);
 				contasPagar.setValorParcela(pagamento.getValorParcela());
-
-				List<ContasPagarVeiculo> contasPagarVeiculos = objetoPersistir.getFaturamentoEntradasDetalhes().stream().map(detalhe -> {
-
-					BigDecimal valorDetalhe = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
-
-					ContasPagarVeiculo contasPagarVeiculo = new ContasPagarVeiculo();
-					contasPagarVeiculo.setContasPagar(contasPagar);
-					contasPagarVeiculo.setDocumento(detalhe.getNumeroDocumento());
-					contasPagarVeiculo.setMotorista(detalhe.getMotorista());
-					contasPagarVeiculo.setVeiculo(detalhe.getVeiculo());
-					contasPagarVeiculo.setValorParcela(
-							valorDetalhe.multiply(pagamento.getValorParcela()).divide(objetoPersistir.getValorBruto(), 2,
-									RoundingMode.HALF_EVEN));
-
-					return contasPagarVeiculo;
-				}).collect(Collectors.toList());
-
-				RateioUtil.efetuarRateio(contasPagarVeiculos, ContasPagarVeiculo::getValorParcela, ContasPagarVeiculo::setValorParcela,
-						pagamento.getValorParcela());
-
-				contasPagar.setContasPagarVeiculos(contasPagarVeiculos);
+				contasPagar.setContasPagarVeiculos(new ArrayList<>());
 
 				contasPagars.add(contasPagar);
 			}
 		});
+
+		if (!contasPagars.isEmpty()) {
+
+			objetoPersistir.getFaturamentoEntradasDetalhes()
+					.forEach(detalhe -> criarVinculosContasPagarVeiculo(contasPagars, detalhe, detalhe.getVeiculo()));
+		}
 
 		EntityManager entityManager = faturamentoEntradaDAO.getEntityManager();
 
@@ -251,8 +237,16 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 			entityManager.persist(diarioCabecalho);
 
 			if (!ListUtil.isNullOrEmpty(contasPagars)) {
+				contasPagars.forEach(conta -> {
 
-				contasPagars.forEach(entityManager::persist);
+					entityManager.persist(conta);
+
+					if (!ListUtil.isNullOrEmpty(conta.getContasPagarVeiculos())) {
+
+						conta.getContasPagarVeiculos().forEach(entityManager::persist);
+					}
+				});
+
 			}
 
 			if (!ListUtil.isNullOrEmpty(alocacaoCustos)) {
@@ -320,5 +314,37 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		}
 
 		return projections;
+	}
+
+	public void criarVinculosContasPagarVeiculo(List<ContasPagar> contasPagar, FaturamentoEntradasDetalhe detalhe, Veiculo novoVeiculo) {
+
+		FaturamentoEntradasCabecalho cabecalho = detalhe.getFaturamentoEntradasCabecalho();
+		BigDecimal valorDetalhe = detalhe.getValorBruto().subtract(detalhe.getValorDesconto()).add(detalhe.getValorAcrescimo());
+
+		List<ContasPagarVeiculo> contasPagarVeiculos = contasPagar.stream()
+				.map(contaPagar -> criarContasPagarVeiculo(detalhe, cabecalho, valorDetalhe, contaPagar)).collect(Collectors.toList());
+
+		RateioUtil.efetuarRateio(contasPagarVeiculos, ContasPagarVeiculo::getValorParcela, ContasPagarVeiculo::setValorParcela, valorDetalhe);
+	}
+
+	private ContasPagarVeiculo criarContasPagarVeiculo(FaturamentoEntradasDetalhe detalhe, FaturamentoEntradasCabecalho cabecalho,
+			BigDecimal valorDetalhe, ContasPagar contaPagar) {
+
+		ContasPagarVeiculo contasPagarVeiculo = new ContasPagarVeiculo();
+		contasPagarVeiculo.setContasPagar(contaPagar);
+		contasPagarVeiculo.setDocumento(detalhe.getNumeroDocumento());
+		contasPagarVeiculo.setMotorista(detalhe.getMotorista());
+		contasPagarVeiculo.setVeiculo(detalhe.getVeiculo());
+		contasPagarVeiculo
+				.setValorParcela(contaPagar.getValorParcela().multiply(valorDetalhe).divide(cabecalho.getValorBruto(), 2, RoundingMode.HALF_EVEN));
+
+		VinculoEntradaContasPagarVeiculo vinculoEntradaContasPagarVeiculo = new VinculoEntradaContasPagarVeiculo();
+		vinculoEntradaContasPagarVeiculo.setContasPagarVeiculo(contasPagarVeiculo);
+		vinculoEntradaContasPagarVeiculo.setFaturamentoEntradasDetalhe(detalhe);
+
+		detalhe.getVinculoEntradaContasPagarVeiculos().add(vinculoEntradaContasPagarVeiculo);
+		contaPagar.getContasPagarVeiculos().add(contasPagarVeiculo);
+
+		return contasPagarVeiculo;
 	}
 }

@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -34,6 +35,8 @@ public class Motorista implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_funcionario")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Funcionario funcionario;
 
 	@Column(name = "tx_cnh")
@@ -48,9 +51,11 @@ public class Motorista implements Serializable {
 
 	@OneToMany(mappedBy = "motorista")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<Veiculo> veiculos;
 
 	@OneToMany(mappedBy = "motorista")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<FaturamentoDetalhe> faturamentoDetalhes;
 }

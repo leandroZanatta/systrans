@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -37,6 +38,7 @@ public class DiarioCabecalho implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@Column(name = "dt_movimento")
@@ -46,10 +48,12 @@ public class DiarioCabecalho implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Historico historico;
 
 	@OneToMany(mappedBy = "diarioCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<DiarioDetalhe> diarioDetalhes;
 
 	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
@@ -60,18 +64,22 @@ public class DiarioCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "diarioCabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoEntrada> vinculoSaidas;
 
 	@OneToMany(mappedBy = "diarioCabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoSaida> vinculoEntradas;
 
 	@OneToOne(mappedBy = "diarioCabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private VinculoEntrada vinculoEntrada;
 
 	@OneToOne(mappedBy = "diarioCabecalho")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private VinculoSaida vinculoSaida;
 
 }

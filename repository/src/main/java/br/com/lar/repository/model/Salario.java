@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -32,6 +34,8 @@ public class Salario implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_funcionario")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Funcionario funcionario;
 
 	@Column(name = "dt_alteracao")

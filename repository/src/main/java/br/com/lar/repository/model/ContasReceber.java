@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -38,10 +39,14 @@ public class ContasReceber implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_diarioDetalhe")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private DiarioDetalhe diarioDetalhe;
 
 	@Column(name = "cd_caixacabecalho", insertable = false, updatable = false)
@@ -52,6 +57,8 @@ public class ContasReceber implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cliente cliente;
 
 	@Column(name = "cd_formaspagamento", insertable = false, updatable = false)
@@ -59,10 +66,14 @@ public class ContasReceber implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_formaspagamento")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FormasPagamento formasPagamento;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Historico historico;
 
 	@Column(name = "dt_movimento")
@@ -104,13 +115,16 @@ public class ContasReceber implements Serializable {
 
 	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<ContasReceberPagamento> contasReceberPagamentos = new ArrayList<>();
 
 	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<ContasReceberVeiculo> contasReceberVeiculos = new ArrayList<>();
 
 	@OneToOne(mappedBy = "contasReceber")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private VinculoSaidaContasReceber vinculoSaidaContasReceber;
 }
