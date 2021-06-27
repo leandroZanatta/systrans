@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20210609_215500" author="Leandro Zanatta" logicalFilePath="20210609_215500_tb_vinculoentradacontaspagarveiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_vinculoentradacontaspagarveiculo" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_vinculoentradacontaspagarveiculo">
+
+			<column name="id_vinculoentradacontaspagarveiculo" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="vinculoentradacontaspagarveiculo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_faturamentoentradasdetalhe" type="${numeric.18x0}" remarks="CÓDIGO DO FATURAMENTO DE ENTRADA">
+				<constraints nullable="false" foreignKeyName="vinculoentradacontaspagarveiculo_faturamentoentradasdetalhe_fk"
+					references="tb_faturamentoentradasdetalhe(id_faturamentoentradasdetalhe)" />
+			</column>
+
+			<column name="cd_contaspagarveiculo" type="${numeric.18x0}" remarks="CÓDIGO DO VEÍCULO DO CONTAS A PAGAR">
+				<constraints primaryKey="true" nullable="false" foreignKeyName="vinculoentradacontaspagarveiculo_contaspagarveiculo_fk"
+					references="tb_contaspagarveiculo(id_contaspagarveiculo)" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_vinculoentradacontaspagarveiculo" />
+	</changeSet>
+
+	<changeSet id="20210609_215500_1" author="Leandro Zanatta" logicalFilePath="20210609_215500_tb_vinculoentradacontaspagarveiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<tableExists tableName="tb_contaspagarveiculo" />
+		</preConditions>
+		<delete tableName="tb_contaspagarveiculo">
+			<where>cd_veiculo is null</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="20210609_215500_2" author="Leandro Zanatta" logicalFilePath="20210609_215500_tb_vinculoentradacontaspagarveiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<tableExists tableName="tb_vinculoentradacontaspagarveiculo" />
+		</preConditions>
+		<sql>
+
+			insert INTO tb_vinculoentradacontaspagarveiculo
+			SELECT
+			nextval('gen_vinculoentradacontaspagarveiculo'),ID_FATURAMENTOENTRADASDETALHE,vei.ID_CONTASPAGARVEICULO FROM TB_FATURAMENTOENTRADASDETALHE det
+			INNER JOIN TB_FATURAMENTOENTRADASCABECALHO cab ON DET.CD_FATURAMENTOENTRADASCABECALHO=cab.ID_FATURAMENTOENTRADASCABECALHO
+			INNER JOIN
+			TB_VINCULOENTRADACONTASPAGAR vin ON CAB.ID_FATURAMENTOENTRADASCABECALHO=vin.CD_FATURAMENTOENTRADA INNER JOIN TB_CONTASPAGAR con ON
+			con.ID_CONTASPAGAR=VIN.CD_CONTASPAGAR
+			INNER JOIN TB_CONTASPAGARVEICULO vei ON con.ID_CONTASPAGAR=VEI.CD_CONTASPAGAR AND
+			DET.CD_VEICULO=vei.CD_VEICULO
+			WHERE det.CD_VEICULO IS NOT NULL
+
+		</sql>
+	</changeSet>
+</databaseChangeLog>

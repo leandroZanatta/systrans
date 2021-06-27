@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -34,14 +35,20 @@ public class FaturamentoEntradasDetalhe implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamentoentradascabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FaturamentoEntradasCabecalho faturamentoEntradasCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_veiculo")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Veiculo veiculo;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_motorista")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Motorista motorista;
 
 	@Column(name = "nr_documento")
@@ -64,6 +71,12 @@ public class FaturamentoEntradasDetalhe implements Serializable {
 
 	@OneToMany(mappedBy = "faturamentoEntradasDetalhe", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoEntradaCusto> vinculoEntradaCustos = new ArrayList<>();
+
+	@OneToMany(mappedBy = "faturamentoEntradasDetalhe", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	private List<VinculoEntradaContasPagarVeiculo> vinculoEntradaContasPagarVeiculos = new ArrayList<>();
 
 }

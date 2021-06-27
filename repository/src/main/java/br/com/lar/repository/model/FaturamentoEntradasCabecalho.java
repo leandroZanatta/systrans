@@ -21,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -37,18 +38,26 @@ public class FaturamentoEntradasCabecalho implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cliente cliente;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Historico historico;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_centrocusto")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CentroCusto centroCusto;
 
 	@Column(name = "dt_movimento")
@@ -67,28 +76,34 @@ public class FaturamentoEntradasCabecalho implements Serializable {
 	@Column(name = "cd_centrocusto", insertable = false, updatable = false)
 	private Long codigoCentroCusto;
 
-	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.PERSIST)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<FaturamentoEntradaPagamentos> faturamentoEntradaPagamentos;
 
-	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.PERSIST)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<FaturamentoEntradasDetalhe> faturamentoEntradasDetalhes;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<DocumentoEntrada> documentoEntradas = new ArrayList<>();
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoEntrada> vinculoEntradas;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoEntradaCaixa> vinculoEntradaCaixas;
 
 	@OneToMany(mappedBy = "faturamentoEntrada")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoEntradaContasPagar> vinculoEntradaContasPagars;
 
 }

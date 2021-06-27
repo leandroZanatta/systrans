@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import br.com.sysdesc.pesquisa.repository.model.Perfil;
 import br.com.sysdesc.pesquisa.repository.model.Usuario;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -48,14 +50,20 @@ public class PermissaoPrograma implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_perfil", insertable = false, updatable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Perfil perfil;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_usuario", insertable = false, updatable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Usuario usuario;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_programa", insertable = false, updatable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Programa programa;
 
 }

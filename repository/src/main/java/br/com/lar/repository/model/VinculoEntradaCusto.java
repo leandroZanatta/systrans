@@ -13,8 +13,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -31,10 +33,14 @@ public class VinculoEntradaCusto implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamentoentradasdetalhe")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FaturamentoEntradasDetalhe faturamentoEntradasDetalhe;
 
 	@OneToOne
 	@JoinColumn(name = "cd_alocacaocusto")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private AlocacaoCusto alocacaoCusto;
 
 	@Column(name = "cd_faturamentoentradasdetalhe", insertable = false, updatable = false)

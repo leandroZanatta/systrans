@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -37,6 +38,7 @@ public class Grupo implements Serializable {
 
 	@OneToMany(mappedBy = "grupo")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<Cliente> clientes;
 
 }

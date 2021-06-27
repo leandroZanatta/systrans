@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
@@ -36,14 +37,20 @@ public class FaturamentoCabecalho implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_caixacabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private CaixaCabecalho caixaCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_historico")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Historico historico;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_cliente")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Cliente cliente;
 
 	@Column(name = "dt_movimento")
@@ -55,22 +62,27 @@ public class FaturamentoCabecalho implements Serializable {
 
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<FaturamentoDetalhe> faturamentoDetalhes;
 
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<FaturamentoPagamentos> faturamentoPagamentos;
 
 	@OneToMany(mappedBy = "faturamento")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoSaida> vinculoSaidas;
 
 	@OneToMany(mappedBy = "faturamento")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoSaidaCaixa> vinculoSaidaCaixas;
 
 	@OneToMany(mappedBy = "faturamento")
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers;
 
 	@Column(name = "cd_historico", insertable = false, updatable = false)

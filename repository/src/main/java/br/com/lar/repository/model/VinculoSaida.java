@@ -14,6 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -29,10 +31,14 @@ public class VinculoSaida implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamento")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FaturamentoCabecalho faturamento;
 
 	@OneToOne
 	@JoinColumn(name = "cd_diariocabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private DiarioCabecalho diarioCabecalho;
 
 }

@@ -19,7 +19,6 @@ import ar.com.fdvs.dj.domain.entities.conditionalStyle.ConditionalStyle;
 import br.com.lar.reports.models.condictions.FaturamentoBrutoCondiction;
 import br.com.sysdesc.pesquisa.ui.components.ReportViewer;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
-import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -68,9 +67,9 @@ public class FaturamentoBrutoReportBuilder {
 		textVeiculo.setFont(new Font(11, "Times New Roman", false));
 		textPaddingVeiculo.setBorderBottom(Border.DOTTED());
 
-		drb.setTitle(title).setTitleStyle(titleStyle).setSubtitle(subtitle.stream().collect(Collectors.joining("\\n")))
-				.setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
-				.setBottomMargin(margin).setPrintBackgroundOnOddRows(false);
+		drb.setTitle(title).setTitleStyle(titleStyle)
+				.setSubtitle(subtitle.stream().map(item -> item.toUpperCase()).collect(Collectors.joining("\\n"))).setDetailHeight(15)
+				.setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin).setBottomMargin(margin).setPrintBackgroundOnOddRows(false);
 
 		ArrayList<ConditionalStyle> listCondStyle = new ArrayList<>();
 		listCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(1), textPaddingPrincipal));
@@ -82,8 +81,8 @@ public class FaturamentoBrutoReportBuilder {
 		listValueCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(2), textHistorico));
 		listValueCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(3), textVeiculo));
 
-		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("descricao", String.class.getName()).setWidth(500)
-				.addConditionalStyles(listCondStyle).build());
+		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("descricao", String.class.getName()).setWidth(500).addConditionalStyles(listCondStyle)
+				.build());
 
 		if (tipoBalanco == 0 || tipoBalanco == 2) {
 			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("valorContabil", BigDecimal.class.getName())
@@ -91,12 +90,11 @@ public class FaturamentoBrutoReportBuilder {
 		}
 		if (tipoBalanco == 1 || tipoBalanco == 2) {
 
-			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("valorSocial", BigDecimal.class.getName())
-					.addConditionalStyles(listValueCondStyle).setPattern("#,##0.00").setWidth(75).build());
+			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("valorSocial", BigDecimal.class.getName()).addConditionalStyles(listValueCondStyle)
+					.setPattern("#,##0.00").setWidth(75).build());
 		}
 
-		drb.addColumn(
-				ColumnBuilder.getNew().setColumnProperty("agrupamento", Integer.class.getName()).setWidth(0).build());
+		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("agrupamento", Integer.class.getName()).setWidth(0).build());
 
 		drb.setUseFullPageWidth(true);
 		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X_SLASH_Y, AutoText.POSITION_FOOTER, AutoText.ALIGNMENT_RIGHT);
@@ -117,8 +115,7 @@ public class FaturamentoBrutoReportBuilder {
 
 		JRDataSource ds = new JRBeanCollectionDataSource(data);
 
-		JasperPrint jasperPrint = DynamicJasperHelper.generateJasperPrint(dynamicReport, new ClassicLayoutManager(),
-				ds);
+		JasperPrint jasperPrint = DynamicJasperHelper.generateJasperPrint(dynamicReport, new ClassicLayoutManager(), ds);
 
 		new ReportViewer(jasperPrint).setVisible(Boolean.TRUE);
 	}

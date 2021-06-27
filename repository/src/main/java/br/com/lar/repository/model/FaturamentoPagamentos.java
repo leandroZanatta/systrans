@@ -16,8 +16,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -34,10 +36,14 @@ public class FaturamentoPagamentos implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "cd_faturamentocabecalho")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FaturamentoCabecalho faturamentoCabecalho;
 
 	@ManyToOne
 	@JoinColumn(name = "cd_formapagamento")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private FormasPagamento formasPagamento;
 
 	@Column(name = "dt_lancamento")

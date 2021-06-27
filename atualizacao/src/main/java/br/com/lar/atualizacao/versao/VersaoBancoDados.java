@@ -8,6 +8,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import br.com.lar.atualizacao.changelog.core.Changelog;
 import br.com.lar.atualizacao.changelog.core.Conexao;
+import br.com.lar.atualizacao.rotinas.RotinaAtualizacaoParcelaAlocacaoCustos;
 import br.com.lar.atualizacao.ui.FrmConexao;
 import br.com.sysdesc.util.classes.LookAndFeelUtil;
 import br.com.sysdesc.util.exception.SysDescException;
@@ -62,11 +63,19 @@ public class VersaoBancoDados {
 
 			Changelog.runChangelog(connection);
 
+			this.executarRotinas(connection);
+
 			this.atualizarVersao(versao);
 
 		} catch (Exception e) {
 			log.error("Erro ao atualizar versão no banco de dados", e);
 		}
+	}
+
+	private void executarRotinas(Connection connection) {
+
+		new RotinaAtualizacaoParcelaAlocacaoCustos(connection).start();
+
 	}
 
 	private Connection criarConnection() {
