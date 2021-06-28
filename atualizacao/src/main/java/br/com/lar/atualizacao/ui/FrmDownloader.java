@@ -106,10 +106,7 @@ public class FrmDownloader extends JDialog {
 
 				Double valorProgresso = bufferTotal.doubleValue() / tamanhoArquivo.doubleValue() * 100;
 
-				log.info("progresso: " + valorProgresso);
-
 				progressBar.setValue(valorProgresso.intValue());
-
 			}
 
 			sucesso = Boolean.TRUE;
@@ -122,8 +119,7 @@ public class FrmDownloader extends JDialog {
 
 			log.error("OCORREU UM ERRO AO EFETUAR O DOWNLOAD", e);
 
-			JOptionPane.showMessageDialog(this,
-					"OCORREU UM ERRO AO EFETUAR O DOWNLOAD:\n" + e.getMessage());
+			JOptionPane.showMessageDialog(this, "OCORREU UM ERRO AO EFETUAR O DOWNLOAD:\n" + e.getMessage());
 		}
 	}
 
