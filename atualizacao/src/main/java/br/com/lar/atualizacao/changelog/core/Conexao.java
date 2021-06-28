@@ -63,7 +63,7 @@ public class Conexao {
 			return getConnection(url, usuario, senha);
 
 		} catch (SQLException | ConfigurationException e) {
-			throw new SysDescException("Não foi possive conectar ao banco de dados selecionado", e);
+			throw new SysDescException("Não foi possivel conectar ao banco de dados selecionado", e);
 		} catch (ClassNotFoundException e) {
 			throw new SysDescException("Driver do banco de dados não foi encontrado", e);
 		} catch (IOException e) {
@@ -75,8 +75,7 @@ public class Conexao {
 
 		Properties properties = new Properties();
 
-		String arquivoConfiguracao = CryptoUtil
-				.fromBlowfish(FileUtils.readFileToString(getConfiguracaoBanco(), StandardCharsets.UTF_8));
+		String arquivoConfiguracao = CryptoUtil.fromBlowfish(FileUtils.readFileToString(getConfiguracaoBanco(), StandardCharsets.UTF_8));
 
 		if (arquivoConfiguracao == null) {
 			throw new ConfigurationException(translate(MENSAGEM_CONFIGURACOES_INVALIDAS));
