@@ -1,5 +1,6 @@
 package br.com.lar.ui;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 
 import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
@@ -101,6 +103,9 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 	private FaturamentoEntradasPagamentoTableModel pagamentoTableModel = new FaturamentoEntradasPagamentoTableModel();
 	private FormasPagamentoService formasPagamentoService = new FormasPagamentoService();
 	private CaixaCabecalhoService caixaCabecalhoService = new CaixaCabecalhoService();
+	private JPanel panel_1;
+	private JScrollPane scrollPane_2;
+	private JTextPane txObservacoes;
 
 	public FrmLancamentoEntradas(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -120,8 +125,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		painelPagamentos = new JPanel();
 
 		painelContent.setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
-		panelPrincipal
-				.setLayout(new MigLayout("", "[grow][grow][120.00,grow][grow][grow]", "[][20.00][16.00,grow][][][][][][grow][][grow][]"));
+		panelPrincipal.setLayout(new MigLayout("", "[grow][grow][120.00,grow][grow][grow]", "[][20.00][16.00,grow][][][][][][grow][][grow][]"));
 
 		tabbePane.addTab("Despesas", null, panelPrincipal, null);
 		tabbePane.addTab("Pagamento", null, painelPagamentos, null);
@@ -130,6 +134,16 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 		getContentPane().add(painelContent);
 		painelContent.add(tabbePane, "cell 0 2,grow");
+
+		panel_1 = new JPanel();
+		tabbePane.addTab("Observações", null, panel_1, null);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		scrollPane_2 = new JScrollPane();
+		panel_1.add(scrollPane_2, BorderLayout.CENTER);
+
+		txObservacoes = new JTextPane();
+		scrollPane_2.setViewportView(txObservacoes);
 
 		montarPainelPrincipal();
 		montarPainelPagamentos();
@@ -187,6 +201,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 				pesquisaCentroCustos.setValue(objeto.getCentroCusto());
 
 				pagamentoTableModel.setRows(objeto.getFaturamentoEntradaPagamentos());
+				txObservacoes.setText(objeto.getObservacao());
 
 				atualizarTotais();
 			}
@@ -203,6 +218,8 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 				objetoPesquisa.setFaturamentoEntradaPagamentos(pagamentoTableModel.getRows());
 				objetoPesquisa.setCaixaCabecalho(caixaCabecalhoService.obterCaixaDoDia(FrmApplication.getUsuario()));
+				objetoPesquisa.setObservacao(txObservacoes.getText());
+
 				return true;
 			}
 
@@ -220,8 +237,7 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 	private void montarPainelPrincipal() {
 		lblCliente_1 = new JLabel("Cliente:");
-		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(),
-				getCodigoUsuario()) {
+		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -237,8 +253,8 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 		table_1 = new JTable(faturamentoEntradasTableModel);
 		scrollPane_1 = new JScrollPane(table_1);
 		txCodigo = new JTextFieldId();
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
-				getCodigoUsuario(), historicoService.getHistoricosDevedores()) {
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario(),
+				historicoService.getHistoricosDevedores()) {
 
 			private static final long serialVersionUID = 1L;
 
