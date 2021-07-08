@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -57,6 +58,9 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 	private JTable tbDetalhes;
 	private CampoPesquisa<Veiculo> pesquisaVeiculo;
 	private DetalhesEntradaTableModel detalhesEntradaTableModel = new DetalhesEntradaTableModel();
+	private JPanel panel_1;
+	private JScrollPane scrollPane_1;
+	private JTextPane txObservacao;
 
 	public FrmManutencaoDespesas(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -146,6 +150,16 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 
 		tbDetalhes.setRowHeight(24);
 
+		panel_1 = new JPanel();
+		tabbedPane.addTab("Observações", null, panel_1, null);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		scrollPane_1 = new JScrollPane();
+		panel_1.add(scrollPane_1, BorderLayout.CENTER);
+
+		txObservacao = new JTextPane();
+		scrollPane_1.setViewportView(txObservacao);
+
 		panelActions = new PanelActions<FaturamentoEntradasCabecalho>(this, manutencaoFaturamentoEntradaService,
 				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa()) {
 
@@ -182,6 +196,7 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 				detalhesEntradaTableModel.setRows(objeto.getFaturamentoEntradasDetalhes());
 				pagamentoTableModel.setRows(objeto.getFaturamentoEntradaPagamentos());
 
+				txObservacao.setText(objeto.getObservacao());
 			}
 
 			@Override
@@ -189,6 +204,8 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 
 				objetoPesquisa.setCliente(pesquisaCliente.getObjetoPesquisado());
 				objetoPesquisa.setFaturamentoEntradasDetalhes(faturamentoEntradasTableModel.getRows());
+
+				objetoPesquisa.setObservacao(txObservacao.getText());
 
 				return true;
 			}

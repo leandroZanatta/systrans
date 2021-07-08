@@ -70,6 +70,7 @@
 	<include file="0.0/changeset/20211401_142100_tb_vinculoentradacusto.xml" />
 	<include file="0.0/changeset/20210213_202400_tb_contasreceberpagamento.xml" />
 	<include file="0.0/changeset/20210609_215500_tb_vinculoentradacontaspagarveiculo.xml" />
+	<include file="0.0/changeset/20210708_193300_add_campo_tb_faturamentoentradascabecalho.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

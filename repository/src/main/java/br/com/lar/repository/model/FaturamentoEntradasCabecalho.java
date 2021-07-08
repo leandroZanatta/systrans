@@ -76,6 +76,9 @@ public class FaturamentoEntradasCabecalho implements Serializable {
 	@Column(name = "cd_centrocusto", insertable = false, updatable = false)
 	private Long codigoCentroCusto;
 
+	@Column(name = "tx_observacao")
+	private String observacao;
+
 	@OneToMany(mappedBy = "faturamentoEntradasCabecalho", cascade = CascadeType.PERSIST)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
