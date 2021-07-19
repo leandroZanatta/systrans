@@ -13,6 +13,7 @@ import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.Projections;
+import com.mysema.query.types.expr.NumberExpression;
 
 import br.com.lar.repository.model.FaturamentoCabecalho;
 import br.com.lar.repository.projection.FaturamentoBrutoReportProjection;
@@ -20,6 +21,7 @@ import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
+import br.com.systrans.util.vo.ValorBrutoMensalVO;
 
 public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabecalho> {
 
@@ -35,26 +37,9 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 				.singleResult(faturamentoCabecalho.valorBruto.sum());
 	}
 
-	public BigDecimal filtrarFaturamentoBrutoBasico(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public List<ValorBrutoMensalVO> filtrarFaturamentoBrutoBasicoMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		BooleanBuilder booleanBuilder = new BooleanBuilder();
-
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoHistoricos())) {
-			booleanBuilder
-					.and(faturamentoCabecalho.codigoHistorico.in(pesquisaFaturamentoBrutoVO.getCodigoHistoricos()));
-		}
-
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
-
-			booleanBuilder.and(faturamentoDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
-		}
-
-		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null
-				|| pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
-
-			booleanBuilder.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
-					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
-		}
+		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaFaturamentoBrutoVO);
 
 		JPASQLQuery query = sqlFrom().leftJoin(faturamentoDetalhe)
 				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho));
@@ -64,35 +49,37 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 			query.where(booleanBuilder);
 		}
 
-		return query.singleResult(faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo)
-				.subtract(faturamentoDetalhe.valorDesconto).sum());
+		NumberExpression<Integer> extractMonth = faturamentoCabecalho.dataMovimento.month();
+		query.groupBy(extractMonth);
+
+		return query.list(Projections.fields(ValorBrutoMensalVO.class,
+				faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo).subtract(faturamentoDetalhe.valorDesconto).sum().as("valor"),
+				extractMonth.as("mesReferencia")));
 	}
 
-	public List<FaturamentoBrutoReportProjection> filtrarFaturamentoBrutoDetalhado(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public BigDecimal filtrarFaturamentoBrutoBasico(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		BooleanBuilder booleanBuilder = new BooleanBuilder();
-
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoHistoricos())) {
-			booleanBuilder
-					.and(faturamentoCabecalho.codigoHistorico.in(pesquisaFaturamentoBrutoVO.getCodigoHistoricos()));
-		}
-
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
-
-			booleanBuilder.and(faturamentoDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
-		}
-
-		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null
-				|| pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
-
-			booleanBuilder.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
-					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
-		}
+		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaFaturamentoBrutoVO);
 
 		JPASQLQuery query = sqlFrom().leftJoin(faturamentoDetalhe)
-				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho))
-				.leftJoin(veiculo).on(faturamentoDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(historico)
+				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho));
+
+		if (booleanBuilder.hasValue()) {
+
+			query.where(booleanBuilder);
+		}
+
+		return query
+				.singleResult(faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo).subtract(faturamentoDetalhe.valorDesconto).sum());
+	}
+
+	public List<FaturamentoBrutoReportProjection> filtrarFaturamentoBrutoDetalhado(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaFaturamentoBrutoVO);
+
+		JPASQLQuery query = sqlFrom().leftJoin(faturamentoDetalhe)
+				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho)).leftJoin(veiculo)
+				.on(faturamentoDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(historico)
 				.on(faturamentoCabecalho.codigoHistorico.eq(historico.idHistorico));
 
 		if (booleanBuilder.hasValue()) {
@@ -102,36 +89,18 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 
 		query.groupBy(historico.descricao, veiculo.placa.coalesce("TODOS"));
 
-		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class,
-				historico.descricao.as("historico"), veiculo.placa.coalesce("TODOS").as("veiculo"),
-				faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo)
+		return query.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
+				veiculo.placa.coalesce("TODOS").as("veiculo"), faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo)
 						.subtract(faturamentoDetalhe.valorDesconto).sum().as("valorBruto")));
 	}
 
-	public List<FaturamentoBrutoReportProjection> filtrarFaturamentoBrutoHistorico(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
-		BooleanBuilder booleanBuilder = new BooleanBuilder();
+	public List<FaturamentoBrutoReportProjection> filtrarFaturamentoBrutoHistorico(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoHistoricos())) {
-			booleanBuilder
-					.and(faturamentoCabecalho.codigoHistorico.in(pesquisaFaturamentoBrutoVO.getCodigoHistoricos()));
-		}
-
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
-
-			booleanBuilder.and(faturamentoDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
-		}
-
-		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null
-				|| pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
-
-			booleanBuilder.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
-					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
-		}
+		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaFaturamentoBrutoVO);
 
 		JPASQLQuery query = sqlFrom().leftJoin(faturamentoDetalhe)
-				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho))
-				.leftJoin(veiculo).on(faturamentoDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(historico)
+				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho)).leftJoin(veiculo)
+				.on(faturamentoDetalhe.codigoVeiculo.eq(veiculo.idVeiculo)).leftJoin(historico)
 				.on(faturamentoCabecalho.codigoHistorico.eq(historico.idHistorico));
 
 		if (booleanBuilder.hasValue()) {
@@ -142,10 +111,30 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 		query.groupBy(historico.descricao);
 
 		return query
-				.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"),
-						faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo)
-								.subtract(faturamentoDetalhe.valorDesconto).sum().as("valorBruto")));
+				.list(Projections.fields(FaturamentoBrutoReportProjection.class, historico.descricao.as("historico"), faturamentoDetalhe.valorBruto
+						.add(faturamentoDetalhe.valorAcrescimo).subtract(faturamentoDetalhe.valorDesconto).sum().as("valorBruto")));
 
+	}
+
+	private BooleanBuilder executarPreFilter(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoHistoricos())) {
+			booleanBuilder.and(faturamentoCabecalho.codigoHistorico.in(pesquisaFaturamentoBrutoVO.getCodigoHistoricos()));
+		}
+
+		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
+
+			booleanBuilder.and(faturamentoDetalhe.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
+		}
+
+		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null || pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
+
+			booleanBuilder
+					.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(), pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
+		}
+		return booleanBuilder;
 	}
 
 	private Predicate getDataMovimento(Date dataMovimentoInicial, Date dataMovimentoFinal) {
@@ -165,13 +154,11 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 		return null;
 	}
 
-	public List<FaturamentoVeiculoProjection> buscarFaturamentoVeiculo(Date dataMovimentoInicial,
-			Date dataMovimentoFinal) {
+	public List<FaturamentoVeiculoProjection> buscarFaturamentoVeiculo(Date dataMovimentoInicial, Date dataMovimentoFinal) {
 
 		JPASQLQuery query = sqlFrom();
 
-		query.innerJoin(faturamentoDetalhe)
-				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho));
+		query.innerJoin(faturamentoDetalhe).on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho));
 
 		Predicate predicate = getDataMovimento(dataMovimentoInicial, dataMovimentoFinal);
 
@@ -182,8 +169,7 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 
 		query.groupBy(faturamentoDetalhe.codigoVeiculo);
 
-		return query.list(Projections.fields(FaturamentoVeiculoProjection.class,
-				faturamentoDetalhe.codigoVeiculo.as("codigoVeiculo"),
+		return query.list(Projections.fields(FaturamentoVeiculoProjection.class, faturamentoDetalhe.codigoVeiculo.as("codigoVeiculo"),
 				faturamentoDetalhe.valorBruto.sum().as("valorBruto")));
 	}
 

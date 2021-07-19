@@ -53,13 +53,11 @@ public class FaturamentoEntradasReportBuilder {
 		totalStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
 
 		AbstractColumn valorBruto = ColumnBuilder.getNew().setColumnProperty("valorTotal", BigDecimal.class.getName()).setTitle("Valor Bruto")
-				.setPattern("#,##0.00")
-				.setWidth(75).setStyle(valueStyle).build();
+				.setPattern("#,##0.00").setWidth(75).setStyle(valueStyle).build();
 
 		drb.setTitle(title).setTitleStyle(titleStyle).setSubtitle(subtitle.stream().collect(Collectors.joining("\\n"))).setDetailHeight(15)
-				.setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin)
-				.setBottomMargin(margin)
-				.setPrintBackgroundOnOddRows(false).setGrandTotalLegendStyle(totalStyle).setGrandTotalLegend("Totais");
+				.setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin).setBottomMargin(margin).setPrintBackgroundOnOddRows(false)
+				.setGrandTotalLegendStyle(totalStyle).setGrandTotalLegend("Totais");
 		drb.addColumn(ColumnBuilder.getNew().setStyle(valueStyle).setColumnProperty("codigoConta", Long.class.getName()).setTitle("Código")
 				.setWidth(50).build());
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("cliente", String.class.getName()).setTitle("Cliente")
@@ -74,13 +72,15 @@ public class FaturamentoEntradasReportBuilder {
 		}
 
 		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("dataMovimento", Date.class.getName()).setTitle("Data Movimento")
-				.setPattern("dd/MM/yyyy HH:mm:ss")
-				.setWidth(120).build());
+				.setPattern("dd/MM/yyyy HH:mm:ss").setWidth(120).build());
 
 		drb.addColumn(valorBruto);
 
 		drb.setUseFullPageWidth(true);
 		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X_SLASH_Y, AutoText.POSITION_FOOTER, AutoText.ALIGNMENT_RIGHT);
+
+		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("observacao", String.class.getName()).setTitle("Observação")
+				.setWidth(300).build());
 
 		drb.addGlobalFooterVariable(valorBruto, DJCalculation.SUM, totalStyle);
 		drb.setPageSizeAndOrientation(Page.Page_A4_Landscape());
@@ -110,15 +110,17 @@ public class FaturamentoEntradasReportBuilder {
 
 	private FaturamentoReport mapearData(FaturamentoEntradaProjection faturamentoEntradas) {
 
-		FaturamentoReport faturmaentoReport = new FaturamentoReport();
+		FaturamentoReport faturamentoReport = new FaturamentoReport();
 
-		faturmaentoReport.setCodigoConta(faturamentoEntradas.getIdFaturamentoEntradasCabecalho());
-		faturmaentoReport.setVeiculo(faturamentoEntradas.getVeiculo());
-		faturmaentoReport.setCliente(cortar(faturamentoEntradas.getCliente(), 40));
-		faturmaentoReport.setDataMovimento(faturamentoEntradas.getDataMovimento());
-		faturmaentoReport.setValorTotal(faturamentoEntradas.getValorBruto());
-		faturmaentoReport.setHistorico(cortar(faturamentoEntradas.getHistorico(), 40));
-		return faturmaentoReport;
+		faturamentoReport.setCodigoConta(faturamentoEntradas.getIdFaturamentoEntradasCabecalho());
+		faturamentoReport.setVeiculo(faturamentoEntradas.getVeiculo());
+		faturamentoReport.setCliente(cortar(faturamentoEntradas.getCliente(), 40));
+		faturamentoReport.setDataMovimento(faturamentoEntradas.getDataMovimento());
+		faturamentoReport.setValorTotal(faturamentoEntradas.getValorBruto());
+		faturamentoReport.setHistorico(cortar(faturamentoEntradas.getHistorico(), 40));
+		faturamentoReport.setObservacao(faturamentoEntradas.getObservacao());
+
+		return faturamentoReport;
 	}
 
 	private String cortar(String texto, int tamanho) {

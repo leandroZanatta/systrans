@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.lar.service.faturamento.report.consolidado.FaturamentoConsolidadoReportService;
 import br.com.lar.service.faturamento.report.contabil.FaturamentoContabilReportService;
 import br.com.lar.service.faturamento.report.social.FaturamentoSocialReportService;
+import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 
@@ -27,5 +28,20 @@ public class FaturamentoReportService {
 		}
 
 		return faturamentoConsolidadoReportService.filtrarFaturamentoConsolidado(pesquisaFaturamentoBrutoVO);
+	}
+
+	public List<FaturamentoBrutoMensalVO> filtrarFaturamentoBrutoMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		if (pesquisaFaturamentoBrutoVO.getTipoBalanco() == 0) {
+
+			return faturamentoContabilReportService.filtrarFaturamentoContabilMensal(pesquisaFaturamentoBrutoVO);
+		}
+
+		if (pesquisaFaturamentoBrutoVO.getTipoBalanco() == 1) {
+
+			return faturamentoSocialReportService.filtrarFaturamentoSocialMensal(pesquisaFaturamentoBrutoVO);
+		}
+
+		throw new RuntimeException("Faturamento Consolidado não foi implementado");
 	}
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.Projections;
+import com.mysema.query.types.expr.NumberExpression;
 
 import br.com.lar.repository.model.ContasPagarPagamento;
 import br.com.lar.repository.projection.DespesasFinanceirasProjection;
@@ -19,6 +20,7 @@ import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
+import br.com.systrans.util.vo.ValorBrutoMensalVO;
 
 public class ContasPagarPagamentoDAO extends PesquisableDAOImpl<ContasPagarPagamento> {
 
@@ -28,41 +30,50 @@ public class ContasPagarPagamentoDAO extends PesquisableDAOImpl<ContasPagarPagam
 		super(contasPagarPagamento, contasPagarPagamento.idContasPagarPagamento);
 	}
 
-	public List<DespesasFinanceirasProjection> filtrarDespesasFinanceiras(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public List<DespesasFinanceirasProjection> filtrarDespesasFinanceiras(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar))
-				.leftJoin(contasPagarVeiculo).on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
-				.leftJoin(veiculo).on(contasPagarVeiculo.codigoVeiculo.eq(veiculo.idVeiculo))
+		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar)).leftJoin(contasPagarVeiculo)
+				.on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar)).leftJoin(veiculo)
+				.on(contasPagarVeiculo.codigoVeiculo.eq(veiculo.idVeiculo))
 				.where(montarClausulasFiltroDespesasFinanceiras(pesquisaFaturamentoBrutoVO))
-				.list(Projections.fields(DespesasFinanceirasProjection.class, contasPagarPagamento.valorJuros,
-						contasPagarPagamento.valorAcrescimo, veiculo.placa.coalesce("TODOS").as("veiculo")));
+				.list(Projections.fields(DespesasFinanceirasProjection.class, contasPagarPagamento.valorJuros, contasPagarPagamento.valorAcrescimo,
+						veiculo.placa.coalesce("TODOS").as("veiculo")));
+	}
+
+	public List<ValorBrutoMensalVO> filtrarDespesasFinanceirasGeralMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		NumberExpression<Integer> agrupamentoMensal = contasPagarPagamento.dataMovimento.month();
+
+		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar)).leftJoin(contasPagarVeiculo)
+				.on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
+				.where(montarClausulasFiltroDespesasFinanceiras(pesquisaFaturamentoBrutoVO)).groupBy(agrupamentoMensal)
+				.list(Projections.fields(ValorBrutoMensalVO.class,
+						contasPagarPagamento.valorJuros.add(contasPagarPagamento.valorAcrescimo).sum().as("valor"),
+						agrupamentoMensal.as("mesReferencia")));
 	}
 
 	public BigDecimal filtrarDespesasFinanceirasGeral(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar))
-				.leftJoin(contasPagarVeiculo).on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
+		return sqlFrom().innerJoin(contasPagar).on(contasPagar.idContasPagar.eq(contasPagarPagamento.codigoContasPagar)).leftJoin(contasPagarVeiculo)
+				.on(contasPagar.idContasPagar.eq(contasPagarVeiculo.codigoContasPagar))
 				.where(montarClausulasFiltroDespesasFinanceiras(pesquisaFaturamentoBrutoVO))
 				.singleResult(contasPagarPagamento.valorJuros.add(contasPagarPagamento.valorAcrescimo).sum());
 	}
 
-	private BooleanBuilder montarClausulasFiltroDespesasFinanceiras(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	private BooleanBuilder montarClausulasFiltroDespesasFinanceiras(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
-		BooleanBuilder booleanBuilder = new BooleanBuilder(contasPagarPagamento.valorAcrescimo.ne(BigDecimal.ZERO)
-				.or(contasPagarPagamento.valorJuros.ne(BigDecimal.ZERO)));
+		BooleanBuilder booleanBuilder = new BooleanBuilder(
+				contasPagarPagamento.valorAcrescimo.ne(BigDecimal.ZERO).or(contasPagarPagamento.valorJuros.ne(BigDecimal.ZERO)));
 
 		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())) {
 
 			booleanBuilder.and(contasPagarVeiculo.codigoVeiculo.in(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()));
 		}
 
-		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null
-				|| pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
+		if (pesquisaFaturamentoBrutoVO.getDataMovimentoInicial() != null || pesquisaFaturamentoBrutoVO.getDataMovimentoFinal() != null) {
 
-			booleanBuilder.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
-					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
+			booleanBuilder
+					.and(getDataMovimento(pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(), pesquisaFaturamentoBrutoVO.getDataMovimentoFinal()));
 		}
 
 		return booleanBuilder;

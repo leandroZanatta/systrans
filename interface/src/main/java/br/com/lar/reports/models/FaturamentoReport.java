@@ -12,6 +12,7 @@ public class FaturamentoReport {
 	private String veiculo;
 	private String cliente;
 	private String historico;
+	private String observacao;
 	private Date dataMovimento;
 	private BigDecimal valorTotal;
 }
