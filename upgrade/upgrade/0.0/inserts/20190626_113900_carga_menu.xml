@@ -583,4 +583,17 @@
 		</insert>
 	</changeSet>
 
+	<changeSet id="20210717_131600" author="Leandro Zanatta">
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="55" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="46" />
+			<column name="nr_ordem" value="4" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_FATURAMENTO_BRUTO_MENSAL" />
+			<column name="tx_icone" value="relatorio-faturamento-bruto-mensal.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>

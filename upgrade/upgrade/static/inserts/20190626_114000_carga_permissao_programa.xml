@@ -2,14 +2,15 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	<changeSet id="20190626_114000_6" author="Leandro Zanatta">
+	<changeSet id="20190626_114000_7" author="Leandro Zanatta">
 
-		<sql splitStatements="true" stripComments="true">
+		<sql splitStatements="true" stripComments="true">	
 			insert into tb_permissaoprograma
 			select
 			nextval('gen_permissaoprograma'),1,null,programa.id_programa,true,true,true from tb_programa programa
+			inner join tb_usuario usuario on 1 = 1
 			where not exists (select 1 from
-			tb_permissaoprograma permissao where permissao.cd_programa=programa.id_programa);
+			tb_permissaoprograma permissao where permissao.cd_programa=programa.id_programa and usuario.id_usuario=permissao.cd_usuario);
 		</sql>
 
 	</changeSet>

@@ -2,6 +2,7 @@ package br.com.lar.service.faturamento.report.contabil;
 
 import java.util.List;
 
+import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 
@@ -20,11 +21,24 @@ public class FaturamentoContabilReportService {
 
 		if (pesquisaFaturamentoBrutoVO.getCodigoRelatorio() == 1) {
 
-			return faturamentoContabilHistoricoReportService
-					.filtrarFaturamentoContabilHistorico(pesquisaFaturamentoBrutoVO);
+			return faturamentoContabilHistoricoReportService.filtrarFaturamentoContabilHistorico(pesquisaFaturamentoBrutoVO);
 		}
 
-		return faturamentoContabilDetalhadoReportService
-				.filtrarFaturamentoContabilDetalhado(pesquisaFaturamentoBrutoVO);
+		return faturamentoContabilDetalhadoReportService.filtrarFaturamentoContabilDetalhado(pesquisaFaturamentoBrutoVO);
+	}
+
+	public List<FaturamentoBrutoMensalVO> filtrarFaturamentoContabilMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		if (pesquisaFaturamentoBrutoVO.getCodigoRelatorio() == 0) {
+
+			return faturamentoContabilBasicoReportService.filtrarFaturamentoContabilBasicoMensal(pesquisaFaturamentoBrutoVO);
+		}
+
+		if (pesquisaFaturamentoBrutoVO.getCodigoRelatorio() == 1) {
+
+			return faturamentoContabilHistoricoReportService.filtrarFaturamentoContabilHistoricoMensal(pesquisaFaturamentoBrutoVO);
+		}
+
+		return faturamentoContabilDetalhadoReportService.filtrarFaturamentoContabilDetalhadoMensal(pesquisaFaturamentoBrutoVO);
 	}
 }

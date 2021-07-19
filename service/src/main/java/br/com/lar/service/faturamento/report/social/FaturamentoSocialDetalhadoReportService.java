@@ -18,6 +18,7 @@ import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.sysdesc.util.classes.LongUtil;
+import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
 
@@ -27,41 +28,36 @@ public class FaturamentoSocialDetalhadoReportService {
 	private ContasPagarPagamentoDAO contasPagarPagamentoDAO = new ContasPagarPagamentoDAO();
 	private FaturamentoEntradaCabecalhoDAO faturamentoEntradaDAO = new FaturamentoEntradaCabecalhoDAO();
 
-	public List<FaturamentoBrutoVO> filtrarFaturamentoSocialDetalhado(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public List<FaturamentoBrutoVO> filtrarFaturamentoSocialDetalhado(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
 		List<FaturamentoBrutoVO> faturamentoBrutoReport = new ArrayList<>();
 
 		List<FaturamentoBrutoReportProjection> faturamentoBrutoReportProjections = faturamentoDAO
 				.filtrarFaturamentoBrutoDetalhado(pesquisaFaturamentoBrutoVO);
 
-		List<DespesasFinanceirasProjection> despesasFinanceiras = contasPagarPagamentoDAO
-				.filtrarDespesasFinanceiras(pesquisaFaturamentoBrutoVO);
+		List<DespesasFinanceirasProjection> despesasFinanceiras = contasPagarPagamentoDAO.filtrarDespesasFinanceiras(pesquisaFaturamentoBrutoVO);
 
 		List<FaturamentoBrutoReportProjection> despesasSociais = faturamentoEntradaDAO
 				.filtrarFaturamentoBrutoCentroCustoDetalhado(pesquisaFaturamentoBrutoVO);
 
-		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && despesasSociais.stream()
-				.anyMatch(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo()))) {
+		if (!ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
+				&& despesasSociais.stream().anyMatch(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo()))) {
 
 			List<FaturamentoVeiculoProjection> faturamentoVeiculoProjections = faturamentoDAO.buscarFaturamentoVeiculo(
-					pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(),
-					pesquisaFaturamentoBrutoVO.getDataMovimentoFinal());
+					pesquisaFaturamentoBrutoVO.getDataMovimentoInicial(), pesquisaFaturamentoBrutoVO.getDataMovimentoFinal());
 
-			BigDecimal valorTotal = faturamentoVeiculoProjections.stream()
-					.map(FaturamentoVeiculoProjection::getValorBruto).reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal valorTotal = faturamentoVeiculoProjections.stream().map(FaturamentoVeiculoProjection::getValorBruto).reduce(BigDecimal.ZERO,
+					BigDecimal::add);
 
 			despesasSociais = atualizarDespesasPorVeiculo(despesasSociais, faturamentoVeiculoProjections, valorTotal);
 		}
 
-		BigDecimal valorReceita = getValorTotal(faturamentoBrutoReportProjections,
-				FaturamentoBrutoReportProjection::getValorBruto);
+		BigDecimal valorReceita = getValorTotal(faturamentoBrutoReportProjections, FaturamentoBrutoReportProjection::getValorBruto);
 
 		BigDecimal valorDespesa = getValorTotal(despesasSociais, FaturamentoBrutoReportProjection::getValorBruto);
 		BigDecimal faturamentoBruto = valorReceita.subtract(valorDespesa);
 
-		BigDecimal valorDespesasFinanceiras = despesasFinanceiras.stream()
-				.map(despesas -> despesas.getValorAcrescimo().add(despesas.getValorJuros()))
+		BigDecimal valorDespesasFinanceiras = despesasFinanceiras.stream().map(despesas -> despesas.getValorAcrescimo().add(despesas.getValorJuros()))
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		Map<String, List<FaturamentoBrutoReportProjection>> mapaCreditos = faturamentoBrutoReportProjections.stream()
@@ -71,25 +67,22 @@ public class FaturamentoSocialDetalhadoReportService {
 				.collect(Collectors.groupingBy(FaturamentoBrutoReportProjection::getHistorico));
 
 		List<DespesasFinanceirasProjection> despesasAcrescimos = despesasFinanceiras.stream()
-				.filter(despesas -> BigDecimalUtil.diferente(despesas.getValorAcrescimo(), BigDecimal.ZERO))
-				.collect(Collectors.toList());
+				.filter(despesas -> BigDecimalUtil.diferente(despesas.getValorAcrescimo(), BigDecimal.ZERO)).collect(Collectors.toList());
 
 		List<DespesasFinanceirasProjection> despesasJuros = despesasFinanceiras.stream()
-				.filter(despesas -> BigDecimalUtil.diferente(despesas.getValorJuros(), BigDecimal.ZERO))
-				.collect(Collectors.toList());
+				.filter(despesas -> BigDecimalUtil.diferente(despesas.getValorJuros(), BigDecimal.ZERO)).collect(Collectors.toList());
 
-		BigDecimal valorAcrescimos = despesasAcrescimos.stream().map(DespesasFinanceirasProjection::getValorAcrescimo)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal valorAcrescimos = despesasAcrescimos.stream().map(DespesasFinanceirasProjection::getValorAcrescimo).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
 
-		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", BigDecimal.ZERO, valorReceita, 1));
 
 		mapaCreditos.forEach((key, value) -> {
 
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
-					getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2));
+			faturamentoBrutoReport
+					.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -110,8 +103,8 @@ public class FaturamentoSocialDetalhadoReportService {
 
 		mapaDebitos.forEach((key, value) -> {
 
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
-					getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto).negate(), 2));
+			faturamentoBrutoReport.add(
+					new FaturamentoBrutoVO(key, BigDecimal.ZERO, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto).negate(), 2));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -129,51 +122,40 @@ public class FaturamentoSocialDetalhadoReportService {
 		});
 
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", BigDecimal.ZERO, faturamentoBruto, 1));
-		faturamentoBrutoReport.add(
-				new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1));
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", BigDecimal.ZERO, valorAcrescimos.negate(), 2));
 
-		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
-				&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
+		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
-			despesasAcrescimos.stream().collect(Collectors.groupingBy(DespesasFinanceirasProjection::getVeiculo))
-					.forEach((key, value) -> {
+			despesasAcrescimos.stream().collect(Collectors.groupingBy(DespesasFinanceirasProjection::getVeiculo)).forEach((key, value) -> {
 
-						faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
-								value.stream().map(DespesasFinanceirasProjection::getValorAcrescimo)
-										.reduce(BigDecimal.ZERO, BigDecimal::add).negate(),
-								3));
-					});
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
+						value.stream().map(DespesasFinanceirasProjection::getValorAcrescimo).reduce(BigDecimal.ZERO, BigDecimal::add).negate(), 3));
+			});
 		}
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", BigDecimal.ZERO, valorJuros.negate(), 2));
 
-		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
-				&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
+		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
-			despesasJuros.stream().collect(Collectors.groupingBy(DespesasFinanceirasProjection::getVeiculo))
-					.forEach((key, value) -> {
+			despesasJuros.stream().collect(Collectors.groupingBy(DespesasFinanceirasProjection::getVeiculo)).forEach((key, value) -> {
 
-						faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
-								value.stream().map(DespesasFinanceirasProjection::getValorJuros)
-										.reduce(BigDecimal.ZERO, BigDecimal::add).negate(),
-								3));
-					});
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
+						value.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add).negate(), 3));
+			});
 		}
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO,
-				faturamentoBruto.subtract(valorDespesasFinanceiras), 1));
+		faturamentoBrutoReport
+				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO, faturamentoBruto.subtract(valorDespesasFinanceiras), 1));
 
 		return faturamentoBrutoReport;
 
 	}
 
-	private List<FaturamentoBrutoReportProjection> atualizarDespesasPorVeiculo(
-			List<FaturamentoBrutoReportProjection> despesas, List<FaturamentoVeiculoProjection> faturamentoVeiculo,
-			BigDecimal valorTotal) {
+	private List<FaturamentoBrutoReportProjection> atualizarDespesasPorVeiculo(List<FaturamentoBrutoReportProjection> despesas,
+			List<FaturamentoVeiculoProjection> faturamentoVeiculo, BigDecimal valorTotal) {
 
 		List<FaturamentoBrutoReportProjection> despesasSemVeiculo = despesas.stream()
-				.filter(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
-				.collect(Collectors.toList());
+				.filter(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo())).collect(Collectors.toList());
 
 		Map<Long, List<FaturamentoBrutoReportProjection>> mapaVeiculosIdentificados = despesas.stream()
 				.filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
@@ -183,8 +165,8 @@ public class FaturamentoSocialDetalhadoReportService {
 
 		mapaVeiculosIdentificados.forEach((key, value) -> {
 
-			Optional<FaturamentoVeiculoProjection> optional = faturamentoVeiculo.stream()
-					.filter(item -> item.getCodigoVeiculo().equals(key)).findFirst();
+			Optional<FaturamentoVeiculoProjection> optional = faturamentoVeiculo.stream().filter(item -> item.getCodigoVeiculo().equals(key))
+					.findFirst();
 
 			despesasSemVeiculo.forEach(semVeiculo -> {
 
@@ -196,9 +178,8 @@ public class FaturamentoSocialDetalhadoReportService {
 
 				if (optional.isPresent()) {
 
-					faturamentoRateado
-							.setValorBruto(semVeiculo.getValorBruto().divide(valorTotal, 8, RoundingMode.HALF_EVEN)
-									.multiply(optional.get().getValorBruto()).setScale(2, RoundingMode.HALF_EVEN));
+					faturamentoRateado.setValorBruto(semVeiculo.getValorBruto().divide(valorTotal, 8, RoundingMode.HALF_EVEN)
+							.multiply(optional.get().getValorBruto()).setScale(2, RoundingMode.HALF_EVEN));
 				} else {
 
 					faturamentoRateado.setValorBruto(BigDecimal.ZERO);
@@ -209,17 +190,20 @@ public class FaturamentoSocialDetalhadoReportService {
 
 		});
 
-		despesas = despesas.stream().filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
-				.collect(Collectors.toList());
+		despesas = despesas.stream().filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo())).collect(Collectors.toList());
 
 		despesas.addAll(faturamentoBrutoRateados);
 
 		return despesas;
 	}
 
-	private BigDecimal getValorTotal(List<FaturamentoBrutoReportProjection> lista,
-			Function<FaturamentoBrutoReportProjection, BigDecimal> funcao) {
+	private BigDecimal getValorTotal(List<FaturamentoBrutoReportProjection> lista, Function<FaturamentoBrutoReportProjection, BigDecimal> funcao) {
 
 		return lista.stream().map(funcao).reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public List<FaturamentoBrutoMensalVO> filtrarFaturamentoSocialDetalhadoMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
