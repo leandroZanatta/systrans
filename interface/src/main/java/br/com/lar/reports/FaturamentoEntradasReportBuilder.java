@@ -79,9 +79,6 @@ public class FaturamentoEntradasReportBuilder {
 		drb.setUseFullPageWidth(true);
 		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X_SLASH_Y, AutoText.POSITION_FOOTER, AutoText.ALIGNMENT_RIGHT);
 
-		drb.addColumn(ColumnBuilder.getNew().setStyle(textStyle).setColumnProperty("observacao", String.class.getName()).setTitle("Observação")
-				.setWidth(300).build());
-
 		drb.addGlobalFooterVariable(valorBruto, DJCalculation.SUM, totalStyle);
 		drb.setPageSizeAndOrientation(Page.Page_A4_Landscape());
 

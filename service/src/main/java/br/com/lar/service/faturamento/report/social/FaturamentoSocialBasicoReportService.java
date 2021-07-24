@@ -3,6 +3,7 @@ package br.com.lar.service.faturamento.report.social;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import br.com.lar.repository.dao.ContasPagarPagamentoDAO;
 import br.com.lar.repository.dao.FaturamentoCabecalhoDAO;
@@ -11,6 +12,7 @@ import br.com.sysdesc.util.classes.IfNull;
 import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
+import br.com.systrans.util.vo.ValorBrutoMensalVO;
 
 public class FaturamentoSocialBasicoReportService {
 
@@ -47,7 +49,60 @@ public class FaturamentoSocialBasicoReportService {
 	}
 
 	public List<FaturamentoBrutoMensalVO> filtrarFaturamentoSocialGeralMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<FaturamentoBrutoMensalVO> faturamentoBrutoMensalReport = new ArrayList<>();
+
+		List<ValorBrutoMensalVO> valorBrutoMensals = faturamentoDAO.filtrarFaturamentoBrutoBasicoMensal(pesquisaFaturamentoBrutoVO);
+
+		valorBrutoMensals.forEach(valorMensal -> faturamentoBrutoMensalReport
+				.add(new FaturamentoBrutoMensalVO(valorMensal.getMesReferencia(), 1, "RECEITA BRUTA", valorMensal.getValor(), 1)));
+
+		List<ValorBrutoMensalVO> despesasFinanceiras = contasPagarPagamentoDAO.filtrarDespesasFinanceirasGeralMensal(pesquisaFaturamentoBrutoVO);
+		List<ValorBrutoMensalVO> despesasContabeis = faturamentoEntradaDAO.filtrarFaturamentoBrutoCentroCustoGeralMensal(pesquisaFaturamentoBrutoVO);
+
+		despesasContabeis.forEach(despesaMensal -> faturamentoBrutoMensalReport
+				.add(new FaturamentoBrutoMensalVO(despesaMensal.getMesReferencia(), 2, "DESPESAS", despesaMensal.getValor().negate(), 1)));
+
+		despesasFinanceiras.forEach(valorMensal -> faturamentoBrutoMensalReport
+				.add(new FaturamentoBrutoMensalVO(valorMensal.getMesReferencia(), 4, "DESPESAS FINANCEIRAS", valorMensal.getValor(), 1)));
+
+		for (int mes = 1; mes <= 12; mes++) {
+
+			criarTotalizadores(valorBrutoMensals, despesasContabeis, despesasFinanceiras, mes, faturamentoBrutoMensalReport);
+		}
+
+		return faturamentoBrutoMensalReport;
+	}
+
+	private void criarTotalizadores(List<ValorBrutoMensalVO> bruto, List<ValorBrutoMensalVO> despesas, List<ValorBrutoMensalVO> financeiras, int mes,
+			List<FaturamentoBrutoMensalVO> report) {
+
+		Optional<ValorBrutoMensalVO> faturamentoMes = bruto.stream().filter(item -> item.getMesReferencia() == mes).findFirst();
+		Optional<ValorBrutoMensalVO> despesasMes = despesas.stream().filter(item -> item.getMesReferencia() == mes).findFirst();
+		Optional<ValorBrutoMensalVO> financeirasMes = financeiras.stream().filter(item -> item.getMesReferencia() == mes).findFirst();
+
+		if (faturamentoMes.isPresent() || despesasMes.isPresent()) {
+
+			BigDecimal valor = getValorMes(faturamentoMes).subtract(getValorMes(despesasMes));
+
+			report.add(new FaturamentoBrutoMensalVO(mes, 3, "FATURAMENTO BRUTO", valor, 1));
+		}
+
+		if (faturamentoMes.isPresent() || despesasMes.isPresent() || financeirasMes.isPresent()) {
+
+			BigDecimal valor = getValorMes(faturamentoMes).subtract(getValorMes(despesasMes)).subtract(getValorMes(financeirasMes));
+
+			report.add(new FaturamentoBrutoMensalVO(mes, 5, "FATURAMENTO LIQUIDO", valor, 1));
+		}
+	}
+
+	private BigDecimal getValorMes(Optional<ValorBrutoMensalVO> optional) {
+
+		if (!optional.isPresent()) {
+
+			return BigDecimal.ZERO;
+		}
+
+		return optional.get().getValor();
 	}
 }
