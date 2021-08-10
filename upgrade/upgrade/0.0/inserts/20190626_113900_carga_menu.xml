@@ -595,5 +595,38 @@
 			<column name="fl_acessorapido" valueBoolean="false" />
 		</insert>
 	</changeSet>
+	<changeSet id="20210724_162700" author="Leandro Zanatta">
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="56" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="43" />
+			<column name="nr_ordem" value="2" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_CUSTOS" />
+			<column name="tx_icone" value="relatorio-custos.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<insert tableName="tb_programa">
+			<column name="id_programa" value="57" />
+			<column name="cd_aplicativo" value="1" />
+			<column name="cd_programa" value="56" />
+			<column name="nr_ordem" value="1" />
+			<column name="tx_descricao" value="FRMAPPLICATION_MI_RELATORIO_RAREIO_CUSTOS" />
+			<column name="tx_icone" value="relatorio-rateio-custos.png" />
+			<column name="fl_acessorapido" valueBoolean="false" />
+		</insert>
+
+		<update tableName="tb_programa">
+			<column name="nr_ordem" value="3" />
+			<where>id_programa='48'</where>
+		</update>
+
+		<update tableName="tb_programa">
+			<column name="nr_ordem" value="4" />
+			<where>id_programa='44'</where>
+		</update>
+
+	</changeSet>
 
 </databaseChangeLog>

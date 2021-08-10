@@ -35,6 +35,7 @@ import br.com.lar.ui.relatorios.FrmRelatorioDespesas;
 import br.com.lar.ui.relatorios.FrmRelatorioDiario;
 import br.com.lar.ui.relatorios.FrmRelatorioFaturamento;
 import br.com.lar.ui.relatorios.FrmRelatorioFaturamentoMensal;
+import br.com.lar.ui.relatorios.FrmRelatorioRateioCustos;
 import br.com.sysdesc.components.AbstractInternalFrame;
 
 public enum ProgramasEnum {
@@ -103,7 +104,9 @@ public enum ProgramasEnum {
 
 	MANUTENCAO_DESPESAS(54L, FrmManutencaoDespesas.class),
 
-	RELATORIO_FATURAMENTO_BRUTO_MENSAL(55L, FrmRelatorioFaturamentoMensal.class);
+	RELATORIO_FATURAMENTO_BRUTO_MENSAL(55L, FrmRelatorioFaturamentoMensal.class),
+
+	RELATORIO_RATEIO_CUSTOS(57L, FrmRelatorioRateioCustos.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 
