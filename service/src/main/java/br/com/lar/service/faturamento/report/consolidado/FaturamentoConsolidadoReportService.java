@@ -11,13 +11,11 @@ public class FaturamentoConsolidadoReportService {
 	private FaturamentoConsolidadoHistoricoReportService faturamentoConsolidadoHistoricoReportService = new FaturamentoConsolidadoHistoricoReportService();
 	private FaturamentoConsolidadoDetalhadoReportService faturamentoConsolidadoDetalhadoReportService = new FaturamentoConsolidadoDetalhadoReportService();
 
-	public List<FaturamentoBrutoVO> filtrarFaturamentoConsolidado(
-			PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+	public List<FaturamentoBrutoVO> filtrarFaturamentoConsolidado(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
 		if (pesquisaFaturamentoBrutoVO.getCodigoRelatorio() == 0) {
 
-			return faturamentoConsolidadoBasicoReportService
-					.filtrarFaturamentoContabilBasico(pesquisaFaturamentoBrutoVO);
+			return faturamentoConsolidadoBasicoReportService.filtrarFaturamentoContabilBasico(pesquisaFaturamentoBrutoVO);
 		}
 
 		if (pesquisaFaturamentoBrutoVO.getCodigoRelatorio() == 1) {
