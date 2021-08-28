@@ -55,68 +55,48 @@ public class FaturamentoContabilBasicoReportService {
 		List<FaturamentoBrutoReportProjection> despesasContabeis = faturamentoEntradaDAO
 				.filtrarFaturamentoBrutoEntradasHistorico(pesquisaFaturamentoBrutoVO);
 
-		BigDecimal valorContabil = atualizarDespesasPorVeiculo(despesasContabeis, faturamentoVeiculoProjections, valorTotal);
+		BigDecimal valorContabil = atualizarDespesasPorVeiculo(despesasContabeis, faturamentoVeiculoProjections, valorTotal,
+				pesquisaFaturamentoBrutoVO.getCodigoVeiculos());
 
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(valorContabil);
+		BigDecimal percentualDespesa = valorContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
+				RoundingMode.HALF_EVEN);
+		BigDecimal percentualFaturamentoBruto = faturamentoBrutoContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal percentualDespesasFinanceiras = despesasFinanceiras.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal percentualFaturamentoLiquido = faturamentoBrutoContabil.subtract(despesasFinanceiras).divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, BigDecimal.valueOf(100d)));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), BigDecimal.ZERO, 1));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), BigDecimal.ZERO, 1, percentualDespesa.negate()));
 
 		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras), BigDecimal.ZERO, 1));
+				.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, percentualFaturamentoBruto));
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
+				percentualDespesasFinanceiras.negate()));
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				BigDecimal.ZERO, 1, percentualFaturamentoLiquido));
 
 		return faturamentoBrutoReport;
 	}
 
 	private BigDecimal atualizarDespesasPorVeiculo(List<FaturamentoBrutoReportProjection> despesas,
-			List<FaturamentoVeiculoProjection> faturamentoVeiculo, BigDecimal valorTotal) {
+			List<FaturamentoVeiculoProjection> faturamentoVeiculo, BigDecimal valorTotal, List<Long> veiculosIdentificados) {
 
-		List<FaturamentoBrutoReportProjection> despesasSemVeiculo = despesas.stream()
-				.filter(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo())).collect(Collectors.toList());
+		BigDecimal valorTotalSemPlaca = despesas.stream().filter(projection -> LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
+				.map(FaturamentoBrutoReportProjection::getValorBruto).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		Map<Long, List<FaturamentoBrutoReportProjection>> mapaVeiculosIdentificados = despesas.stream()
-				.filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
-				.collect(Collectors.groupingBy(FaturamentoBrutoReportProjection::getCodigoVeiculo));
+		BigDecimal valorPlacas = faturamentoVeiculo.stream().filter(item -> veiculosIdentificados.contains(item.getCodigoVeiculo()))
+				.map(item -> item.getValorBruto()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		List<FaturamentoBrutoReportProjection> faturamentoBrutoRateados = new ArrayList<>();
+		BigDecimal valorTotalComPlaca = despesas.stream().filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo()))
+				.map(FaturamentoBrutoReportProjection::getValorBruto).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		mapaVeiculosIdentificados.forEach((key, value) -> {
-
-			Optional<FaturamentoVeiculoProjection> optional = faturamentoVeiculo.stream().filter(item -> item.getCodigoVeiculo().equals(key))
-					.findFirst();
-
-			despesasSemVeiculo.forEach(semVeiculo -> {
-
-				FaturamentoBrutoReportProjection faturamentoRateado = new FaturamentoBrutoReportProjection();
-				faturamentoRateado.setCentroCusto(semVeiculo.getCentroCusto());
-				faturamentoRateado.setHistorico(semVeiculo.getHistorico());
-				faturamentoRateado.setCodigoVeiculo(value.get(0).getCodigoVeiculo());
-				faturamentoRateado.setVeiculo(value.get(0).getVeiculo());
-
-				if (optional.isPresent()) {
-
-					faturamentoRateado.setValorBruto(semVeiculo.getValorBruto().divide(valorTotal, 8, RoundingMode.HALF_EVEN)
-							.multiply(optional.get().getValorBruto()).setScale(2, RoundingMode.HALF_EVEN));
-				} else {
-
-					faturamentoRateado.setValorBruto(BigDecimal.ZERO);
-				}
-
-				faturamentoBrutoRateados.add(faturamentoRateado);
-			});
-
-		});
-
-		despesas = despesas.stream().filter(projection -> !LongUtil.isNullOrZero(projection.getCodigoVeiculo())).collect(Collectors.toList());
-
-		despesas.addAll(faturamentoBrutoRateados);
-
-		return despesas.stream().map(FaturamentoBrutoReportProjection::getValorBruto).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return valorPlacas.multiply(valorTotalSemPlaca).divide(valorTotal, 2, RoundingMode.HALF_EVEN).add(valorTotalComPlaca);
 	}
 
 	private List<FaturamentoBrutoVO> filtrarFaturamentoContabilBasicoGeral(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
@@ -131,17 +111,27 @@ public class FaturamentoContabilBasicoReportService {
 				BigDecimal.ZERO);
 
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(despesasContabeis);
+		BigDecimal percentualDespesa = despesasContabeis.divide(valorBruto, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
+				RoundingMode.HALF_EVEN);
+		BigDecimal percentualFaturamentoBruto = faturamentoBrutoContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal percentualDespesasFinanceiras = despesasFinanceiras.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal percentualFaturamentoLiquido = faturamentoBrutoContabil.subtract(despesasFinanceiras).divide(valorBruto, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, BigDecimal.valueOf(100d)));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), BigDecimal.ZERO, 1));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), BigDecimal.ZERO, 1, percentualDespesa.negate()));
 
 		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras), BigDecimal.ZERO, 1));
+				.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, percentualFaturamentoBruto));
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
+				percentualDespesasFinanceiras.negate()));
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				BigDecimal.ZERO, 1, percentualFaturamentoLiquido));
 
 		return faturamentoBrutoReport;
 	}
@@ -156,7 +146,54 @@ public class FaturamentoContabilBasicoReportService {
 				.add(new FaturamentoBrutoMensalVO(valorMensal.getMesReferencia(), 1, "RECEITA BRUTA", valorMensal.getValor(), 1)));
 
 		List<ValorBrutoMensalVO> despesasFinanceiras = contasPagarPagamentoDAO.filtrarDespesasFinanceirasGeralMensal(pesquisaFaturamentoBrutoVO);
-		List<ValorBrutoMensalVO> despesasContabeis = faturamentoEntradaDAO.filtrarFaturamentoBrutoEntradasBasicoMensal(pesquisaFaturamentoBrutoVO);
+		List<ValorBrutoMensalVO> despesasContabeis;
+
+		if (!pesquisaFaturamentoBrutoVO.getCodigoVeiculos().isEmpty()) {
+
+			despesasContabeis = new ArrayList<>();
+
+			Map<Integer, List<ValorBrutoMensalVO>> despesasContabeisGeralMensal = faturamentoEntradaDAO
+					.filtrarFaturamentoBrutoEntradasBasicoMensalVeiculo(pesquisaFaturamentoBrutoVO).stream()
+					.collect(Collectors.groupingBy(ValorBrutoMensalVO::getMesReferencia));
+
+			despesasContabeisGeralMensal.forEach((mes, valorDespesas) -> {
+
+				List<ValorBrutoMensalVO> valoresComPlaca = valorDespesas.stream().filter(item -> !item.getCodigoVeiculo().equals(0L))
+						.collect(Collectors.toList());
+
+				List<ValorBrutoMensalVO> valoresSemPlaca = valorDespesas.stream().filter(item -> item.getCodigoVeiculo().equals(0L))
+						.collect(Collectors.toList());
+
+				if (!valoresSemPlaca.isEmpty()) {
+
+					BigDecimal valorFaturamentoMensal = faturamentoDAO.obterFaturamentoBrutoMensal(mes);
+
+					pesquisaFaturamentoBrutoVO.getCodigoVeiculos().forEach(veiculo -> {
+
+						BigDecimal valorFaturamentoveiculo = faturamentoDAO.buscarFaturamentoVeiculoMensal(mes, veiculo);
+
+						valoresSemPlaca.forEach(faturamentoSemPlaca -> {
+
+							BigDecimal valorPlaca = valorFaturamentoveiculo.multiply(faturamentoSemPlaca.getValor()).divide(valorFaturamentoMensal, 8,
+									RoundingMode.HALF_EVEN);
+
+							valoresComPlaca.add(new ValorBrutoMensalVO(mes, valorPlaca, veiculo));
+						});
+					});
+				}
+
+				valoresComPlaca.stream().collect(Collectors.groupingBy(ValorBrutoMensalVO::getMesReferencia)).forEach((mesReferencia, valores) -> {
+
+					despesasContabeis.add(new ValorBrutoMensalVO(mes, valores.stream().map(ValorBrutoMensalVO::getValor)
+							.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_EVEN), 0L));
+
+				});
+			});
+
+		} else {
+
+			despesasContabeis = faturamentoEntradaDAO.filtrarFaturamentoBrutoEntradasBasicoMensal(pesquisaFaturamentoBrutoVO);
+		}
 
 		despesasContabeis.forEach(despesaMensal -> faturamentoBrutoMensalReport
 				.add(new FaturamentoBrutoMensalVO(despesaMensal.getMesReferencia(), 2, "DESPESAS", despesaMensal.getValor().negate(), 1)));

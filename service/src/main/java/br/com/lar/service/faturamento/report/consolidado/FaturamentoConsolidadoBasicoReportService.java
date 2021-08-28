@@ -61,16 +61,17 @@ public class FaturamentoConsolidadoBasicoReportService {
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(valorContabil);
 		BigDecimal faturamentoBrutoSocial = valorBruto.subtract(valorSocial);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), valorSocial.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), valorSocial.negate(), 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1));
+		faturamentoBrutoReport
+				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1, null));
 
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1));
+				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, null));
 
 		return faturamentoBrutoReport;
 	}
@@ -138,16 +139,17 @@ public class FaturamentoConsolidadoBasicoReportService {
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(despesasContabeis);
 		BigDecimal faturamentoBrutoSocial = valorBruto.subtract(despesasSociais);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), despesasSociais.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), despesasSociais.negate(), 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, null));
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1));
+		faturamentoBrutoReport
+				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1, null));
 
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1));
+				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, null));
 
 		return faturamentoBrutoReport;
 	}

@@ -80,12 +80,12 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 				BigDecimal::add);
 		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorReceita, valorReceita, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorReceita, valorReceita, 1, null));
 
 		mapaCreditos.forEach((key, value) -> {
 
 			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto),
-					getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2));
+					getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2, null));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -96,13 +96,13 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 				mapaCreditosVeiculo.forEach((placa, credito) -> {
 
 					BigDecimal valorTotalVeiculo = getValorTotal(credito, FaturamentoBrutoReportProjection::getValorBruto);
-					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, valorTotalVeiculo, valorTotalVeiculo, 3));
+					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, valorTotalVeiculo, valorTotalVeiculo, 3, null));
 
 				});
 			}
 		});
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorDespesaContabil, valorDespesaSocial.negate(), 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorDespesaContabil, valorDespesaSocial.negate(), 1, null));
 
 		Set<String> listaHistoricos = despesasSociais.stream().map(FaturamentoBrutoReportProjection::getHistorico).collect(Collectors.toSet());
 
@@ -120,7 +120,7 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 
 			BigDecimal valorHistoricoSocial = getValorTotal(despesasSociaisHistorico, FaturamentoBrutoReportProjection::getValorBruto).negate();
 
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(historico, valorHistoricoContabil, valorHistoricoSocial, 2));
+			faturamentoBrutoReport.add(new FaturamentoBrutoVO(historico, valorHistoricoContabil, valorHistoricoSocial, 2, null));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -142,15 +142,15 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 
 					BigDecimal valorPlacaSocial = getValorTotal(despesasSociaisPlaca, FaturamentoBrutoReportProjection::getValorBruto).negate();
 
-					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, valorPlacaContabil, valorPlacaSocial, 3));
+					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, valorPlacaContabil, valorPlacaSocial, 3, null));
 				}
 			}
 		}
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, null));
 		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", valorDespesasFinanceiras.negate(), valorDespesasFinanceiras.negate(), 1));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", valorAcrescimos.negate(), valorAcrescimos.negate(), 2));
+				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", valorDespesasFinanceiras.negate(), valorDespesasFinanceiras.negate(), 1, null));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", valorAcrescimos.negate(), valorAcrescimos.negate(), 2, null));
 
 		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
@@ -159,11 +159,11 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 				BigDecimal valorAcrescimoPlaca = value.stream().map(DespesasFinanceirasProjection::getValorAcrescimo)
 						.reduce(BigDecimal.ZERO, BigDecimal::add).negate();
 
-				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorAcrescimoPlaca, valorAcrescimoPlaca, 3));
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorAcrescimoPlaca, valorAcrescimoPlaca, 3, null));
 			});
 		}
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", valorJuros.negate(), valorJuros.negate(), 2));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", valorJuros.negate(), valorJuros.negate(), 2, null));
 
 		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
@@ -172,12 +172,12 @@ public class FaturamentoConsolidadoDetalhadoReportService {
 				BigDecimal valorJurosPlaca = value.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add)
 						.negate();
 
-				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorJurosPlaca, valorJurosPlaca, 3));
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorJurosPlaca, valorJurosPlaca, 3, null));
 			});
 		}
 
 		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(valorDespesasFinanceiras),
-				faturamentoBrutoSocial.subtract(valorDespesasFinanceiras), 1));
+				faturamentoBrutoSocial.subtract(valorDespesasFinanceiras), 1, null));
 
 		return faturamentoBrutoReport;
 	}

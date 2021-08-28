@@ -152,6 +152,28 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 
 	}
 
+	public List<ValorBrutoMensalVO> filtrarFaturamentoBrutoEntradasBasicoMensalVeiculo(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+
+		BooleanBuilder booleanBuilder = gerarClausulaFaturamentoBruto(pesquisaFaturamentoBrutoVO);
+		NumberExpression<Integer> agrupamentoMensal = faturamentoEntradasCabecalho.dataMovimento.month();
+
+		JPASQLQuery query = sqlFrom().leftJoin(faturamentoEntradasDetalhe)
+				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho));
+
+		if (booleanBuilder.hasValue()) {
+
+			query.where(booleanBuilder);
+		}
+
+		query.groupBy(agrupamentoMensal, faturamentoEntradasDetalhe.codigoVeiculo.coalesce(0L));
+
+		return query.list(Projections.fields(ValorBrutoMensalVO.class,
+				faturamentoEntradasDetalhe.valorBruto.add(faturamentoEntradasDetalhe.valorAcrescimo)
+						.subtract(faturamentoEntradasDetalhe.valorDesconto).sum().as("valor"),
+				agrupamentoMensal.as("mesReferencia"), faturamentoEntradasDetalhe.codigoVeiculo.coalesce(0L).as("codigoVeiculo")));
+
+	}
+
 	public BigDecimal filtrarFaturamentoBrutoEntradasBasico(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
 
 		BooleanBuilder booleanBuilder = gerarClausulaFaturamentoBruto(pesquisaFaturamentoBrutoVO);

@@ -50,6 +50,7 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 		}
 
 		NumberExpression<Integer> extractMonth = faturamentoCabecalho.dataMovimento.month();
+
 		query.groupBy(extractMonth);
 
 		return query.list(Projections.fields(ValorBrutoMensalVO.class,
@@ -171,6 +172,19 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 
 		return query.list(Projections.fields(FaturamentoVeiculoProjection.class, faturamentoDetalhe.codigoVeiculo.as("codigoVeiculo"),
 				faturamentoDetalhe.valorBruto.sum().as("valorBruto")));
+	}
+
+	public BigDecimal obterFaturamentoBrutoMensal(Integer mes) {
+
+		return from().where(faturamentoCabecalho.dataMovimento.month().eq(mes)).singleResult(faturamentoCabecalho.valorBruto.sum());
+	}
+
+	public BigDecimal buscarFaturamentoVeiculoMensal(Integer mes, Long veiculo) {
+		JPASQLQuery query = sqlFrom();
+
+		return query.innerJoin(faturamentoDetalhe).on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho))
+				.where(faturamentoCabecalho.dataMovimento.month().eq(mes).and(faturamentoDetalhe.codigoVeiculo.eq(veiculo)))
+				.singleResult(faturamentoDetalhe.valorBruto.sum());
 	}
 
 }

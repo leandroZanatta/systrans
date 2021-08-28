@@ -13,4 +13,5 @@ public class FaturamentoBrutoVO {
 	private BigDecimal valorContabil;
 	private BigDecimal valorSocial;
 	private Integer agrupamento;
+	private BigDecimal percentual;
 }

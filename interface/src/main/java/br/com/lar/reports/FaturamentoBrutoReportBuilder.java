@@ -86,16 +86,20 @@ public class FaturamentoBrutoReportBuilder {
 
 		if (tipoBalanco == 0 || tipoBalanco == 2) {
 			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("valorContabil", BigDecimal.class.getName())
-					.addConditionalStyles(listValueCondStyle).setPattern("#,##0.00").setWidth(75).build());
+					.addConditionalStyles(listValueCondStyle).setPattern("#,##0.00").setWidth(100).build());
 		}
 		if (tipoBalanco == 1 || tipoBalanco == 2) {
 
 			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("valorSocial", BigDecimal.class.getName()).addConditionalStyles(listValueCondStyle)
-					.setPattern("#,##0.00").setWidth(75).build());
+					.setPattern("#,##0.00").setWidth(100).build());
 		}
 
 		drb.addColumn(ColumnBuilder.getNew().setColumnProperty("agrupamento", Integer.class.getName()).setWidth(0).build());
+		if (tipoBalanco == 0 || tipoBalanco == 1) {
 
+			drb.addColumn(ColumnBuilder.getNew().setColumnProperty("percentual", BigDecimal.class.getName()).addConditionalStyles(listValueCondStyle)
+					.setPattern("#,##0.00").setWidth(100).build());
+		}
 		drb.setUseFullPageWidth(true);
 		drb.addAutoText(AutoText.AUTOTEXT_PAGE_X_SLASH_Y, AutoText.POSITION_FOOTER, AutoText.ALIGNMENT_RIGHT);
 
