@@ -61,17 +61,19 @@ public class FaturamentoConsolidadoBasicoReportService {
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(valorContabil);
 		BigDecimal faturamentoBrutoSocial = valorBruto.subtract(valorSocial);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null));
+		FaturamentoBrutoVO receitas = new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null);
+		FaturamentoBrutoVO despesas = new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), valorSocial.negate(), 1, receitas);
+		FaturamentoBrutoVO bruto = new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, receitas);
+		FaturamentoBrutoVO financeiras = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
+		FaturamentoBrutoVO liquido = new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), valorSocial.negate(), 1, null));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, null));
-
-		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1, null));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, null));
+		faturamentoBrutoReport.add(receitas);
+		faturamentoBrutoReport.add(despesas);
+		faturamentoBrutoReport.add(bruto);
+		faturamentoBrutoReport.add(financeiras);
+		faturamentoBrutoReport.add(liquido);
 
 		return faturamentoBrutoReport;
 	}
@@ -139,17 +141,19 @@ public class FaturamentoConsolidadoBasicoReportService {
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(despesasContabeis);
 		BigDecimal faturamentoBrutoSocial = valorBruto.subtract(despesasSociais);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null));
+		FaturamentoBrutoVO receitas = new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null);
+		FaturamentoBrutoVO despesas = new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), despesasSociais.negate(), 1, receitas);
+		FaturamentoBrutoVO bruto = new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, receitas);
+		FaturamentoBrutoVO financeiras = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
+		FaturamentoBrutoVO liquido = new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), despesasSociais.negate(), 1, null));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, faturamentoBrutoSocial, 1, null));
-
-		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1, null));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				faturamentoBrutoSocial.subtract(despesasFinanceiras), 1, null));
+		faturamentoBrutoReport.add(receitas);
+		faturamentoBrutoReport.add(despesas);
+		faturamentoBrutoReport.add(bruto);
+		faturamentoBrutoReport.add(financeiras);
+		faturamentoBrutoReport.add(liquido);
 
 		return faturamentoBrutoReport;
 	}

@@ -59,27 +59,20 @@ public class FaturamentoContabilBasicoReportService {
 				pesquisaFaturamentoBrutoVO.getCodigoVeiculos());
 
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(valorContabil);
-		BigDecimal percentualDespesa = valorContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
-				RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoBruto = faturamentoBrutoContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualDespesasFinanceiras = despesasFinanceiras.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoLiquido = faturamentoBrutoContabil.subtract(despesasFinanceiras).divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, BigDecimal.valueOf(100d)));
+		FaturamentoBrutoVO receitas = new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null);
+		FaturamentoBrutoVO despesas = new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), BigDecimal.ZERO, 1, receitas);
+		FaturamentoBrutoVO bruto = new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, receitas);
+		FaturamentoBrutoVO financeiras = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), BigDecimal.ZERO, 1,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
+		FaturamentoBrutoVO liquido = new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				BigDecimal.ZERO, 1, pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? bruto : receitas);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorContabil.negate(), BigDecimal.ZERO, 1, percentualDespesa.negate()));
-
-		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, percentualFaturamentoBruto));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
-				percentualDespesasFinanceiras.negate()));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				BigDecimal.ZERO, 1, percentualFaturamentoLiquido));
+		faturamentoBrutoReport.add(receitas);
+		faturamentoBrutoReport.add(despesas);
+		faturamentoBrutoReport.add(bruto);
+		faturamentoBrutoReport.add(financeiras);
+		faturamentoBrutoReport.add(liquido);
 
 		return faturamentoBrutoReport;
 	}
@@ -111,27 +104,19 @@ public class FaturamentoContabilBasicoReportService {
 				BigDecimal.ZERO);
 
 		BigDecimal faturamentoBrutoContabil = valorBruto.subtract(despesasContabeis);
-		BigDecimal percentualDespesa = despesasContabeis.divide(valorBruto, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
-				RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoBruto = faturamentoBrutoContabil.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualDespesasFinanceiras = despesasFinanceiras.divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoLiquido = faturamentoBrutoContabil.subtract(despesasFinanceiras).divide(valorBruto, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, BigDecimal.valueOf(100d)));
+		FaturamentoBrutoVO receitas = new FaturamentoBrutoVO("RECEITA BRUTA", valorBruto, valorBruto, 1, null);
+		FaturamentoBrutoVO despesas = new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), BigDecimal.ZERO, 1, receitas);
+		FaturamentoBrutoVO bruto = new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, receitas);
+		FaturamentoBrutoVO financeiras = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), BigDecimal.ZERO, 1, receitas);
+		FaturamentoBrutoVO liquido = new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
+				BigDecimal.ZERO, 1, receitas);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", despesasContabeis.negate(), BigDecimal.ZERO, 1, percentualDespesa.negate()));
-
-		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBrutoContabil, BigDecimal.ZERO, 1, percentualFaturamentoBruto));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", despesasFinanceiras.negate(), despesasFinanceiras.negate(), 1,
-				percentualDespesasFinanceiras.negate()));
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBrutoContabil.subtract(despesasFinanceiras),
-				BigDecimal.ZERO, 1, percentualFaturamentoLiquido));
+		faturamentoBrutoReport.add(receitas);
+		faturamentoBrutoReport.add(despesas);
+		faturamentoBrutoReport.add(bruto);
+		faturamentoBrutoReport.add(financeiras);
+		faturamentoBrutoReport.add(liquido);
 
 		return faturamentoBrutoReport;
 	}

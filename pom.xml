@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.systrans</groupId>
 	<artifactId>systrans</artifactId>
-	<version>0.0.39</version>
+	<version>0.0.40</version>
 	<packaging>pom</packaging>
 
 	<properties>

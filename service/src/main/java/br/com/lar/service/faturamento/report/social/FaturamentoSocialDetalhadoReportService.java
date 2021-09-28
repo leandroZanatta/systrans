@@ -77,25 +77,13 @@ public class FaturamentoSocialDetalhadoReportService {
 
 		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		BigDecimal percentualDespesa = valorDespesa.divide(valorReceita, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
-				RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoBruto = faturamentoBruto.divide(valorReceita, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d))
-				.setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualDespesasFinanceiras = valorDespesasFinanceiras.divide(valorReceita, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoLiquido = faturamentoBruto.subtract(valorDespesasFinanceiras).divide(valorReceita, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", BigDecimal.ZERO, valorReceita, 1, BigDecimal.valueOf(100d)));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", BigDecimal.ZERO, valorReceita, 1, null));
 
 		mapaCreditos.forEach((key, value) -> {
 
 			BigDecimal valorReceitaHistorico = getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto);
 
-			BigDecimal percentualReceitaHistorico = valorReceitaHistorico.divide(valorReceita, 4, RoundingMode.HALF_EVEN)
-					.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorReceitaHistorico, 2, percentualReceitaHistorico));
+			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorReceitaHistorico, 2, null));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -107,26 +95,19 @@ public class FaturamentoSocialDetalhadoReportService {
 
 					BigDecimal valorReceitaPlaca = getValorTotal(credito, FaturamentoBrutoReportProjection::getValorBruto);
 
-					BigDecimal percentualReceitaPlaca = valorReceitaPlaca.divide(valorReceitaHistorico, 4, RoundingMode.HALF_EVEN)
-							.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, BigDecimal.ZERO, valorReceitaPlaca, 3, percentualReceitaPlaca));
+					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, BigDecimal.ZERO, valorReceitaPlaca, 3, null));
 
 				});
 			}
 		});
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", BigDecimal.ZERO, valorDespesa.negate(), 1, percentualDespesa.negate()));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", BigDecimal.ZERO, valorDespesa.negate(), 1, null));
 
 		mapaDebitos.forEach((key, value) -> {
 
 			BigDecimal valorDespesaHistorico = getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto);
 
-			BigDecimal percentualDespesaHistorico = valorDespesaHistorico.divide(valorDespesa, 4, RoundingMode.HALF_EVEN)
-					.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-			faturamentoBrutoReport
-					.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorDespesaHistorico.negate(), 2, percentualDespesaHistorico.negate()));
+			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorDespesaHistorico.negate(), 2, null));
 
 			if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos())
 					&& pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
@@ -138,22 +119,15 @@ public class FaturamentoSocialDetalhadoReportService {
 
 					BigDecimal valorDespesaPlaca = getValorTotal(debito, FaturamentoBrutoReportProjection::getValorBruto);
 
-					BigDecimal percentualDespesaPlaca = valorDespesaPlaca.divide(valorDespesaHistorico, 4, RoundingMode.HALF_EVEN)
-							.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, BigDecimal.ZERO, valorDespesaPlaca, 3, percentualDespesaPlaca));
+					faturamentoBrutoReport.add(new FaturamentoBrutoVO(placa, BigDecimal.ZERO, valorDespesaPlaca, 3, null));
 				});
 			}
 		});
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", BigDecimal.ZERO, faturamentoBruto, 1, percentualFaturamentoBruto));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1,
-				percentualDespesasFinanceiras.negate()));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", BigDecimal.ZERO, faturamentoBruto, 1, null));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1, null));
 
-		BigDecimal percentualAcrescimos = valorAcrescimos.divide(valorDespesasFinanceiras, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", BigDecimal.ZERO, valorAcrescimos.negate(), 2, percentualAcrescimos.negate()));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", BigDecimal.ZERO, valorAcrescimos.negate(), 2, null));
 
 		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
@@ -162,17 +136,11 @@ public class FaturamentoSocialDetalhadoReportService {
 				BigDecimal valorAcrescimoPlaca = value.stream().map(DespesasFinanceirasProjection::getValorAcrescimo).reduce(BigDecimal.ZERO,
 						BigDecimal::add);
 
-				BigDecimal percentualAcrescimoPlaca = valorAcrescimoPlaca.divide(valorAcrescimos, 4, RoundingMode.HALF_EVEN)
-						.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorAcrescimoPlaca.negate(), 3, percentualAcrescimoPlaca));
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorAcrescimoPlaca.negate(), 3, null));
 			});
 		}
 
-		BigDecimal percentualJuros = valorJuros.divide(valorDespesasFinanceiras, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d))
-				.setScale(2, RoundingMode.HALF_EVEN);
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", BigDecimal.ZERO, valorJuros.negate(), 2, percentualJuros.negate()));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", BigDecimal.ZERO, valorJuros.negate(), 2, null));
 
 		if (ListUtil.isNullOrEmpty(pesquisaFaturamentoBrutoVO.getCodigoVeiculos()) && pesquisaFaturamentoBrutoVO.getCodigoVeiculos().size() != 1) {
 
@@ -181,15 +149,12 @@ public class FaturamentoSocialDetalhadoReportService {
 				BigDecimal valorJurosPlaca = value.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO,
 						BigDecimal::add);
 
-				BigDecimal percentualJurosPlaca = valorJurosPlaca.divide(valorAcrescimos, 4, RoundingMode.HALF_EVEN)
-						.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorJurosPlaca.negate(), 3, percentualJurosPlaca));
+				faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, valorJurosPlaca.negate(), 3, null));
 			});
 		}
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO, faturamentoBruto.subtract(valorDespesasFinanceiras),
-				1, percentualFaturamentoLiquido));
+		faturamentoBrutoReport
+				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO, faturamentoBruto.subtract(valorDespesasFinanceiras), 1, null));
 
 		return faturamentoBrutoReport;
 

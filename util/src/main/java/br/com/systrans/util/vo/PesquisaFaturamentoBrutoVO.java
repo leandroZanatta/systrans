@@ -22,4 +22,5 @@ public class PesquisaFaturamentoBrutoVO {
 
 	private int codigoRelatorio;
 
+	private int tipoPercentual;
 }

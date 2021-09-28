@@ -1,6 +1,7 @@
 package br.com.lar.reports;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,8 +30,10 @@ public class FaturamentoBrutoReportBuilder {
 	private Integer margin = 20;
 	private List<FaturamentoBrutoVO> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
+	private Integer tipoBalanco;
 
 	public FaturamentoBrutoReportBuilder build(String title, List<String> subtitle, Integer tipoBalanco) {
+		this.tipoBalanco = tipoBalanco;
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
@@ -111,6 +114,25 @@ public class FaturamentoBrutoReportBuilder {
 	public FaturamentoBrutoReportBuilder setData(List<FaturamentoBrutoVO> data) {
 
 		this.data = data;
+
+		for (FaturamentoBrutoVO faturamentoItem : this.data) {
+
+			switch (tipoBalanco) {
+			case 0:
+				faturamentoItem.setPercentual(faturamentoItem.getParent() == null ? BigDecimal.valueOf(100d)
+						: faturamentoItem.getValorContabil().divide(faturamentoItem.getParent().getValorContabil(), 4, RoundingMode.HALF_EVEN)
+								.multiply(BigDecimal.valueOf(100d)));
+				break;
+			case 1:
+				faturamentoItem.setPercentual(faturamentoItem.getParent() == null ? BigDecimal.valueOf(100d)
+						: faturamentoItem.getValorSocial().divide(faturamentoItem.getParent().getValorSocial(), 4, RoundingMode.HALF_EVEN)
+								.multiply(BigDecimal.valueOf(100d)));
+				break;
+
+			default:
+				break;
+			}
+		}
 
 		return this;
 	}

@@ -76,51 +76,40 @@ public class FaturamentoContabilHistoricoReportService {
 				BigDecimal::add);
 		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		BigDecimal percentualDespesa = valorDespesa.divide(valorReceita, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d)).setScale(2,
-				RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoBruto = faturamentoBruto.divide(valorReceita, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d))
-				.setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualDespesasFinanceiras = valorDespesasFinanceiras.divide(valorReceita, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualFaturamentoLiquido = faturamentoBruto.divide(valorReceita, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d))
-				.setScale(2, RoundingMode.HALF_EVEN);
+		FaturamentoBrutoVO receitas = new FaturamentoBrutoVO("RECEITA BRUTA", valorReceita, BigDecimal.ZERO, 1, null);
 
-		BigDecimal percentualAcrescimo = valorAcrescimos.divide(valorDespesasFinanceiras, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-		BigDecimal percentualDesconto = valorJuros.divide(valorDespesasFinanceiras, 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100d))
-				.setScale(2, RoundingMode.HALF_EVEN);
-
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", valorReceita, BigDecimal.ZERO, 1, BigDecimal.valueOf(100d)));
+		faturamentoBrutoReport.add(receitas);
 
 		mapaCreditos.forEach((key, value) -> {
 
 			BigDecimal valorReceitaHistorico = getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto);
 
-			BigDecimal percentualReceitaHistorico = valorReceitaHistorico.divide(valorReceita, 4, RoundingMode.HALF_EVEN)
-					.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorReceitaHistorico, BigDecimal.ZERO, 2, percentualReceitaHistorico));
+			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorReceitaHistorico, BigDecimal.ZERO, 2, receitas));
 		});
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", valorDespesa.negate(), BigDecimal.ZERO, 1, percentualDespesa.negate()));
+		FaturamentoBrutoVO despesas = new FaturamentoBrutoVO("DESPESAS", valorDespesa.negate(), BigDecimal.ZERO, 1, receitas);
+
+		faturamentoBrutoReport.add(despesas);
 
 		mapaDebitos.forEach((key, value) -> {
 
 			BigDecimal valorDespesaHistorico = getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto);
 
-			BigDecimal percentualDespesaHistorico = valorDespesaHistorico.divide(valorDespesa, 4, RoundingMode.HALF_EVEN)
-					.multiply(BigDecimal.valueOf(100d)).setScale(2, RoundingMode.HALF_EVEN);
-
-			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorDespesaHistorico.negate(), BigDecimal.ZERO, 2, percentualDespesaHistorico));
+			faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, valorDespesaHistorico.negate(), BigDecimal.ZERO, 2,
+					pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? despesas : receitas));
 		});
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBruto, BigDecimal.ZERO, 1, percentualFaturamentoBruto));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", valorDespesasFinanceiras.negate(), BigDecimal.ZERO, 1,
-				percentualDespesasFinanceiras.negate()));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", valorAcrescimos.negate(), BigDecimal.ZERO, 2, percentualAcrescimo));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", valorJuros.negate(), BigDecimal.ZERO, 2, percentualDesconto));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBruto.subtract(valorDespesasFinanceiras), BigDecimal.ZERO,
-				1, percentualFaturamentoLiquido));
+		FaturamentoBrutoVO financeiro = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", valorDespesasFinanceiras.negate(), BigDecimal.ZERO, 1,
+				receitas);
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", faturamentoBruto, BigDecimal.ZERO, 1, receitas));
+		faturamentoBrutoReport.add(financeiro);
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", valorAcrescimos.negate(), BigDecimal.ZERO, 2,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? financeiro : receitas));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", valorJuros.negate(), BigDecimal.ZERO, 2,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? financeiro : receitas));
+		faturamentoBrutoReport.add(
+				new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", faturamentoBruto.subtract(valorDespesasFinanceiras), BigDecimal.ZERO, 1, receitas));
 
 		return faturamentoBrutoReport;
 

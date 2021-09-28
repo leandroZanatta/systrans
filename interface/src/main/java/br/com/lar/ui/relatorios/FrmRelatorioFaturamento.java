@@ -54,6 +54,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 	private JRadioButton rdbtnNewRadioButton;
 	private JRadioButton rdbtnBsico;
 	private JComboBox<String> cbTipoBalanco;
+	private JComboBox<String> cbAplicarPercentual;
 
 	public FrmRelatorioFaturamento(Long permissaoPrograma, Long codigoUsuario) {
 		super(permissaoPrograma, codigoUsuario);
@@ -64,7 +65,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 
 	private void initComponents() {
 
-		setSize(435, 311);
+		setSize(435, 380);
 		setClosable(Boolean.TRUE);
 		setTitle("Relatório de Faturamento Bruto");
 
@@ -143,7 +144,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pnlVencimento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER,
 				TitledBorder.TOP, null, new Color(0, 0, 0)));
 
-		pnlActions.setBounds(7, 238, 402, 32);
+		pnlActions.setBounds(7, 307, 402, 32);
 		pnlVencimento.setBounds(7, 147, 402, 52);
 		lbDe.setBounds(10, 24, 23, 14);
 		lbAte.setBounds(215, 24, 25, 14);
@@ -155,10 +156,10 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		pesquisaCentroCusto.setBounds(10, 115, 399, 22);
 		dtMovimentoInicial.setBounds(30, 20, 150, 20);
 		dtMovimentoFinal.setBounds(240, 20, 150, 20);
-		rdbtnDetalhado.setBounds(6, 208, 96, 23);
-		rdbtnBsico.setBounds(187, 208, 70, 23);
-		rdbtnNewRadioButton.setBounds(100, 208, 79, 23);
-		cbTipoBalanco.setBounds(259, 210, 150, 20);
+		rdbtnDetalhado.setBounds(7, 277, 96, 23);
+		rdbtnBsico.setBounds(186, 277, 70, 23);
+		rdbtnNewRadioButton.setBounds(105, 277, 79, 23);
+		cbTipoBalanco.setBounds(259, 276, 150, 20);
 
 		Calendar calendar = Calendar.getInstance();
 		dtMovimentoFinal.setDate(calendar.getTime());
@@ -192,6 +193,19 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 		group.add(rdbtnDetalhado);
 		group.add(rdbtnNewRadioButton);
 		group.add(rdbtnBsico);
+
+		JPanel pnlVencimento_1 = new JPanel();
+		pnlVencimento_1.setLayout(null);
+		pnlVencimento_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Pecentual", TitledBorder.CENTER,
+				TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlVencimento_1.setBounds(7, 210, 402, 52);
+		container.add(pnlVencimento_1);
+
+		cbAplicarPercentual = new JComboBox<>();
+		cbAplicarPercentual.setModel(new DefaultComboBoxModel<>(new String[] { "Padrão", "Sobre o Faturamento" }));
+		cbAplicarPercentual.setSelectedIndex(1);
+		cbAplicarPercentual.setBounds(10, 21, 382, 20);
+		pnlVencimento_1.add(cbAplicarPercentual);
 	}
 
 	private void gerarRelatorio() {
@@ -210,6 +224,7 @@ public class FrmRelatorioFaturamento extends AbstractInternalFrame {
 			pesquisaFaturamentoBrutoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
 			pesquisaFaturamentoBrutoVO.setTipoBalanco(cbTipoBalanco.getSelectedIndex());
 			pesquisaFaturamentoBrutoVO.setCodigoRelatorio(getCodigoRelatorio());
+			pesquisaFaturamentoBrutoVO.setTipoPercentual(cbAplicarPercentual.getSelectedIndex());
 
 			List<FaturamentoBrutoVO> faturamentoBrutoVOs = faturamentoService.filtrarFaturamentoBruto(pesquisaFaturamentoBrutoVO);
 
