@@ -162,4 +162,11 @@ public class FaturamentoPagamentoTableModel extends AbstractInternalFrameTable {
 		return this.rows.stream().map(FaturamentoPagamentos::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
+	public void deleteRow(int selectedRow) {
+
+		this.rows.remove(selectedRow);
+
+		fireTableDataChanged();
+	}
+
 }

@@ -160,4 +160,19 @@ public class FaturamentoEntradasPagamentoTableModel extends AbstractInternalFram
 		return this.rows.stream().map(FaturamentoEntradaPagamentos::getValorParcela).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
+	public void deleteRow(int selectedRow) {
+		this.rows.remove(selectedRow);
+
+		Long parcela = 1L;
+
+		for (FaturamentoEntradaPagamentos row : rows) {
+			row.setNumeroParcela(parcela);
+
+			parcela++;
+		}
+
+		fireTableDataChanged();
+
+	}
+
 }

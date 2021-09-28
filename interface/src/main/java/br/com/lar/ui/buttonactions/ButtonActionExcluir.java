@@ -10,7 +10,7 @@ public class ButtonActionExcluir extends ButtonAction {
 
 	public ButtonActionExcluir() {
 
-		super("mapExcluir", KeyEvent.VK_X, KeyEvent.VK_CONTROL, "lixeira.png", "Excluir");
+		super("mapExcluir", KeyEvent.VK_X, KeyEvent.VK_CONTROL, "delete.png", "Excluir");
 	}
 
 	@Override

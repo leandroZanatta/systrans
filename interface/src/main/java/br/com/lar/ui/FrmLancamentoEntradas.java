@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 
 import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
@@ -430,6 +434,21 @@ public class FrmLancamentoEntradas extends AbstractInternalFrame {
 
 		JButton btnGerar = new JButton("Gerar");
 		table = new JTable(pagamentoTableModel);
+
+		InputMap inputMap = table.getInputMap(WHEN_FOCUSED);
+		ActionMap actionMap = table.getActionMap();
+
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+		actionMap.put("delete", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent evt) {
+				if (table.getSelectedRowCount() == 1) {
+					pagamentoTableModel.deleteRow(table.getSelectedRow());
+				}
+			}
+		});
+
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		new JmoneyFieldColumn(table, 4);

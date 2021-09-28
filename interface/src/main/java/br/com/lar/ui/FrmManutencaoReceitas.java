@@ -1,8 +1,11 @@
 package br.com.lar.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -143,7 +146,17 @@ public class FrmManutencaoReceitas extends AbstractInternalFrame {
 		scrollPane_1.setViewportView(txObservacao);
 
 		ButtonActionExcluir buttonAction = new ButtonActionExcluir();
-		buttonAction.addActionListener(e -> excluirEntrada());
+
+		Action actionExcluir = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				excluirEntrada();
+			}
+		};
+
 		panelActions = new PanelActions<FaturamentoCabecalho>(this, manutencaoFaturamentoSaidasService,
 				PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa(), buttonAction) {
 
@@ -167,6 +180,12 @@ public class FrmManutencaoReceitas extends AbstractInternalFrame {
 				posicionarBotao(contadorUtil, btAvancar, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btUltimo, Boolean.TRUE);
 
+			}
+
+			@Override
+			protected void registrarEventosBotoesPagina() {
+
+				registrarEvento(buttonAction, actionExcluir);
 			}
 
 			@Override

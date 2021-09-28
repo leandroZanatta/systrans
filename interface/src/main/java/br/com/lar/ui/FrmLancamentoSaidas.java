@@ -1,11 +1,16 @@
 package br.com.lar.ui;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -13,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 import com.mysema.query.BooleanBuilder;
 import com.toedter.calendar.JDateChooser;
@@ -108,8 +114,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		painelPagamentos = new JPanel();
 
 		painelContent.setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
-		panelPrincipal
-				.setLayout(new MigLayout("", "[grow][grow][120.00,grow][grow][grow]", "[][20.00][16.00,grow][][][][][][grow][][grow][]"));
+		panelPrincipal.setLayout(new MigLayout("", "[grow][grow][120.00,grow][grow][grow]", "[][20.00][16.00,grow][][][][][][grow][][grow][]"));
 
 		tabbePane.addTab("Receitas", null, panelPrincipal, null);
 		tabbePane.addTab("Recebimentos", null, painelPagamentos, null);
@@ -122,8 +127,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		montarPainelPrincipal();
 		montarPainelPagamentos();
 
-		panelActions = new PanelActions<FaturamentoCabecalho>(this, faturamentoEntradaService,
-				PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
+		panelActions = new PanelActions<FaturamentoCabecalho>(this, faturamentoEntradaService, PesquisaEnum.PES_FATURAMENTO.getCodigoPesquisa()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -166,8 +170,7 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 
 	private void montarPainelPrincipal() {
 		lblCliente_1 = new JLabel("Cliente:");
-		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(),
-				getCodigoUsuario()) {
+		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -183,8 +186,8 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		table_1 = new JTable(faturamentoTableModel);
 		scrollPane_1 = new JScrollPane(table_1);
 		txCodigo = new JTextFieldId();
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
-				getCodigoUsuario(), historicoService.getHistoricosCredores()) {
+		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario(),
+				historicoService.getHistoricosCredores()) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -346,6 +349,20 @@ public class FrmLancamentoSaidas extends AbstractInternalFrame {
 		JButton btnGerar = new JButton("Gerar");
 		table = new JTable(pagamentoTableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
+
+		InputMap inputMap = table.getInputMap(WHEN_FOCUSED);
+		ActionMap actionMap = table.getActionMap();
+
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+		actionMap.put("delete", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent evt) {
+				if (table.getSelectedRowCount() == 1) {
+					pagamentoTableModel.deleteRow(table.getSelectedRow());
+				}
+			}
+		});
 
 		new JmoneyFieldColumn(table, 4);
 		new JDateFieldColumn(table, 2);
