@@ -54,4 +54,5 @@ public class CaixaService extends AbstractPesquisableServiceImpl<Caixa> {
 			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_FECHADO);
 		}
 	}
+
 }

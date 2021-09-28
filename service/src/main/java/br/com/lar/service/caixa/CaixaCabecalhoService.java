@@ -146,12 +146,10 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 			DetalheFechamentoVO detalheFechamentoVO = new DetalheFechamentoVO();
 			detalheFechamentoVO.setNomeConta(key.getDescricao());
 
-			BigDecimal saldoCredito = value.stream()
-					.filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.CREDOR.getCodigo()))
+			BigDecimal saldoCredito = value.stream().filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.CREDOR.getCodigo()))
 					.map(CaixaDetalhe::getValorDetalhe).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-			BigDecimal saldoDebito = value.stream()
-					.filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo()))
+			BigDecimal saldoDebito = value.stream().filter(detalhe -> detalhe.getTipoSaldo().equals(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo()))
 					.map(CaixaDetalhe::getValorDetalhe).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 			detalheFechamentoVO.setValorConta(saldoCredito.subtract(saldoDebito));
@@ -160,11 +158,9 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 		});
 
-		BigDecimal valorPagamentos = detalheFechamentoVOs.stream().map(DetalheFechamentoVO::getValorConta)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal valorPagamentos = detalheFechamentoVOs.stream().map(DetalheFechamentoVO::getValorConta).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		Map<Long, List<CaixaDetalhe>> saldoDinheiro = caixaDetalhes.stream()
-				.filter(detalhe -> detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
+		Map<Long, List<CaixaDetalhe>> saldoDinheiro = caixaDetalhes.stream().filter(detalhe -> detalhe.getPlanoContas().getIdPlanoContas().equals(4L))
 				.collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
 
 		BigDecimal resumoCreditosDinheiro = getValorSaldo(saldoDinheiro, TipoHistoricoOperacaoEnum.CREDOR);
@@ -172,7 +168,8 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 		FechamentoCaixaVO fechamentoCaixaVO = new FechamentoCaixaVO();
 		fechamentoCaixaVO.setDetalheFechamentoVOs(detalheFechamentoVOs);
-		fechamentoCaixaVO.setSaldoAtual(IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixaCabecalho.getCaixa().getIdCaixa()), BigDecimal.ZERO));
+		fechamentoCaixaVO.setSaldoAtual(IfNull.get(
+				caixaSaldoDAO.buscarUltimoSaldoCaixa(caixaCabecalho.getCaixa().getIdCaixa(), caixaCabecalho.getDataAbertura()), BigDecimal.ZERO));
 		fechamentoCaixaVO.setValorDinheiro(resumoCreditosDinheiro.subtract(resumoDebitosDinheiro));
 		fechamentoCaixaVO.setValorMovimentado(resumoCreditos.subtract(resumoDebitos));
 		fechamentoCaixaVO.setValorPagamentos(valorPagamentos);
@@ -182,8 +179,7 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 	private void validarConsistenciaCaixa(BigDecimal resumoMovimento, List<CaixaDetalhe> caixaDetalhes) {
 
-		Map<Long, List<CaixaDetalhe>> saldo = caixaDetalhes.stream()
-				.collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
+		Map<Long, List<CaixaDetalhe>> saldo = caixaDetalhes.stream().collect(Collectors.groupingBy(CaixaDetalhe::getTipoSaldo));
 
 		BigDecimal saldoCredor = getValorSaldo(saldo, TipoHistoricoOperacaoEnum.CREDOR);
 		BigDecimal saldoDevedor = getValorSaldo(saldo, TipoHistoricoOperacaoEnum.DEVEDOR);
@@ -205,9 +201,9 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 		if (saldo.containsKey(tipoOperacao.getCodigo())) {
 
-			return IfNull
-					.get(saldo.get(tipoOperacao.getCodigo()).stream().map(CaixaDetalhe::getValorDetalhe)
-							.reduce(BigDecimal.ZERO, BigDecimal::add), BigDecimal.ZERO);
+			return IfNull.get(
+					saldo.get(tipoOperacao.getCodigo()).stream().map(CaixaDetalhe::getValorDetalhe).reduce(BigDecimal.ZERO, BigDecimal::add),
+					BigDecimal.ZERO);
 		}
 
 		return BigDecimal.ZERO;
@@ -217,9 +213,8 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 
 		if (resumoMovimentos.containsKey(tipoSaldo.getCodigo())) {
 
-			return IfNull
-					.get(resumoMovimentos.get(tipoSaldo.getCodigo()).stream().map(ResumoCaixaMovimentoProjection::getValorSaldo)
-							.reduce(BigDecimal.ZERO, BigDecimal::add), BigDecimal.ZERO);
+			return IfNull.get(resumoMovimentos.get(tipoSaldo.getCodigo()).stream().map(ResumoCaixaMovimentoProjection::getValorSaldo)
+					.reduce(BigDecimal.ZERO, BigDecimal::add), BigDecimal.ZERO);
 		}
 
 		return BigDecimal.ZERO;
@@ -247,6 +242,11 @@ public class CaixaCabecalhoService extends AbstractPesquisableServiceImpl<CaixaC
 		}
 
 		return IfNull.get(caixaSaldoDAO.buscarUltimoSaldoCaixa(caixa.getIdCaixa()), BigDecimal.ZERO);
+	}
+
+	public CaixaCabecalho obterProximoCaixa(CaixaCabecalho caixaCabecalho) {
+
+		return caixaCabecalhoDAO.obterProximoCaixa(caixaCabecalho.getIdCaixaCabecalho(), caixaCabecalho.getCodigoCaixa());
 	}
 
 }

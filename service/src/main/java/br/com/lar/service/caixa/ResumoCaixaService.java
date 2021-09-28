@@ -34,6 +34,11 @@ public class ResumoCaixaService {
 			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_NAO_ENCONTRADO);
 		}
 
+		return obterResumoCaixa(cabecalho);
+	}
+
+	public ResumoCaixaVO obterResumoCaixa(CaixaCabecalho cabecalho) {
+
 		Map<Long, BigDecimal> mapaSaldo = caixaDetalheDAO.buscarResumoCaixa(cabecalho.getIdCaixaCabecalho()).stream()
 				.collect(Collectors.toMap(ResumoCaixaDetalheProjection::getTipoSaldo, ResumoCaixaDetalheProjection::getValorSaldo));
 
@@ -62,8 +67,8 @@ public class ResumoCaixaService {
 		BigDecimal valorSaldoCaixaCredor = IfNull.get(mapaSaldo.get(TipoHistoricoOperacaoEnum.CREDOR.getCodigo()), BigDecimal.ZERO);
 		BigDecimal valorSaldoCaixaDevedor = IfNull.get(mapaSaldo.get(TipoHistoricoOperacaoEnum.DEVEDOR.getCodigo()), BigDecimal.ZERO);
 
-		return new ResumoCaixaVO(cabecalho.getCaixa().getDescricao(), cabecalho.getDataMovimento(),
-				valorFaturamentoCredor, valorFaturamentoDevedor, valorSaldoCaixaCredor, valorSaldoCaixaDevedor);
+		return new ResumoCaixaVO(cabecalho.getCaixa().getDescricao(), cabecalho.getDataMovimento(), valorFaturamentoCredor, valorFaturamentoDevedor,
+				valorSaldoCaixaCredor, valorSaldoCaixaDevedor);
 	}
 
 }

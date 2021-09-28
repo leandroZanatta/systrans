@@ -113,12 +113,12 @@ public class ContasReceber implements Serializable {
 	@Column(name = "cd_status")
 	private Long codigoStatus;
 
-	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private List<ContasReceberPagamento> contasReceberPagamentos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "contasReceber", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private List<ContasReceberVeiculo> contasReceberVeiculos = new ArrayList<>();

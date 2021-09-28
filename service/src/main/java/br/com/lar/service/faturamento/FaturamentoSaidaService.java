@@ -76,16 +76,14 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 		}
 
 		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoPagamentos().stream().map(FaturamentoPagamentos::getValorParcela)
-				.reduce(BigDecimal.ZERO,
-						BigDecimal::add);
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		if (valorPagamentos.compareTo(objetoPersistir.getValorBruto()) != 0) {
 
 			DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
 			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO,
-					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()),
-					decimalFormat.format(valorPagamentos.doubleValue()),
+					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()), decimalFormat.format(valorPagamentos.doubleValue()),
 					decimalFormat.format(objetoPersistir.getValorBruto().subtract(valorPagamentos).doubleValue()));
 		}
 	}
@@ -163,8 +161,7 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 					contasReceberVeiculo.setMotorista(detalhe.getMotorista());
 					contasReceberVeiculo.setVeiculo(detalhe.getVeiculo());
 					contasReceberVeiculo.setValorParcela(
-							valorDetalhe.multiply(recebimento.getValorParcela()).divide(objetoPersistir.getValorBruto(), 2,
-									RoundingMode.HALF_EVEN));
+							valorDetalhe.multiply(recebimento.getValorParcela()).divide(objetoPersistir.getValorBruto(), 2, RoundingMode.HALF_EVEN));
 
 					return contasReceberVeiculo;
 				}).collect(Collectors.toList());
@@ -178,6 +175,31 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 			}
 		});
 
+		VinculoSaida vinculoSaida = new VinculoSaida();
+		vinculoSaida.setDiarioCabecalho(diarioCabecalho);
+		vinculoSaida.setFaturamento(objetoPersistir);
+
+		objetoPersistir.getVinculoSaidas().add(vinculoSaida);
+
+		caixaDetalhes.forEach(detalhe -> {
+			VinculoSaidaCaixa vinculoSaidaCaixa = new VinculoSaidaCaixa();
+			vinculoSaidaCaixa.setCaixaDetalhe(detalhe);
+			vinculoSaidaCaixa.setFaturamento(objetoPersistir);
+
+			objetoPersistir.getVinculoSaidaCaixas().add(vinculoSaidaCaixa);
+		});
+
+		if (!ListUtil.isNullOrEmpty(contasRecebers)) {
+
+			contasRecebers.forEach(detalhe -> {
+				VinculoSaidaContasReceber vinculoSaidaContasReceber = new VinculoSaidaContasReceber();
+				vinculoSaidaContasReceber.setContasReceber(detalhe);
+				vinculoSaidaContasReceber.setFaturamento(objetoPersistir);
+
+				objetoPersistir.getVinculoSaidaContasRecebers().add(vinculoSaidaContasReceber);
+			});
+		}
+
 		EntityManager entityManager = faturamentoDAO.getEntityManager();
 
 		try {
@@ -186,40 +208,8 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 
 			entityManager.persist(objetoPersistir);
 
-			entityManager.persist(diarioCabecalho);
-
-			if (!ListUtil.isNullOrEmpty(contasRecebers)) {
-
-				contasRecebers.forEach(entityManager::persist);
-			}
-
-			caixaDetalhes.forEach(entityManager::persist);
-
-			VinculoSaida vinculoSaida = new VinculoSaida();
-			vinculoSaida.setDiarioCabecalho(diarioCabecalho);
-			vinculoSaida.setFaturamento(objetoPersistir);
-			entityManager.persist(vinculoSaida);
-
-			caixaDetalhes.stream().map(detalhe -> {
-				VinculoSaidaCaixa vinculoSaidaCaixa = new VinculoSaidaCaixa();
-				vinculoSaidaCaixa.setCaixaDetalhe(detalhe);
-				vinculoSaidaCaixa.setFaturamento(objetoPersistir);
-
-				return vinculoSaidaCaixa;
-			}).forEach(entityManager::persist);
-
-			if (!ListUtil.isNullOrEmpty(contasRecebers)) {
-
-				contasRecebers.stream().map(detalhe -> {
-					VinculoSaidaContasReceber vinculoSaidaContasReceber = new VinculoSaidaContasReceber();
-					vinculoSaidaContasReceber.setContasReceber(detalhe);
-					vinculoSaidaContasReceber.setFaturamento(objetoPersistir);
-					return vinculoSaidaContasReceber;
-				}).forEach(entityManager::persist);
-			}
 		} finally {
 			entityManager.getTransaction().commit();
 		}
-
 	}
 }

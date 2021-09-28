@@ -2,6 +2,7 @@ package br.com.lar.repository.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class VinculoSaida implements Serializable {
 	@EqualsAndHashCode.Exclude
 	private FaturamentoCabecalho faturamento;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cd_diariocabecalho")
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude

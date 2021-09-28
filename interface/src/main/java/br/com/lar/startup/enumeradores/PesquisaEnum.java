@@ -72,7 +72,7 @@ public enum PesquisaEnum {
 
 	PES_FATURAMENTO_ENTRADA(22L, "Faturamento - Entradas", QFaturamentoEntradasCabecalho.class),
 
-	PES_PARAMETRO_OPERACAO_FINANCEIRA(22L, "Parâmetro de operação Financeira", QParametroOperacaoFinanceira.class);
+	PES_PARAMETRO_OPERACAO_FINANCEIRA(23L, "Parâmetro de operação Financeira", QParametroOperacaoFinanceira.class);
 
 	private static Map<Long, PesquisaEnum> map = new HashMap<>();
 

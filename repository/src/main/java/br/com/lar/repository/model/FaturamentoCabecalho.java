@@ -2,6 +2,7 @@ package br.com.lar.repository.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,27 +64,27 @@ public class FaturamentoCabecalho implements Serializable {
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private List<FaturamentoDetalhe> faturamentoDetalhes;
+	private List<FaturamentoDetalhe> faturamentoDetalhes = new ArrayList<>();
 
 	@OneToMany(mappedBy = "faturamentoCabecalho", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private List<FaturamentoPagamentos> faturamentoPagamentos;
+	private List<FaturamentoPagamentos> faturamentoPagamentos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "faturamento")
+	@OneToMany(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private List<VinculoSaida> vinculoSaidas;
+	private List<VinculoSaida> vinculoSaidas = new ArrayList<>();
 
-	@OneToMany(mappedBy = "faturamento")
+	@OneToMany(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private List<VinculoSaidaCaixa> vinculoSaidaCaixas;
+	private List<VinculoSaidaCaixa> vinculoSaidaCaixas = new ArrayList<>();
 
-	@OneToMany(mappedBy = "faturamento")
+	@OneToMany(mappedBy = "faturamento", cascade = CascadeType.ALL, orphanRemoval = true)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
-	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers;
+	private List<VinculoSaidaContasReceber> vinculoSaidaContasRecebers = new ArrayList<>();
 
 	@Column(name = "cd_historico", insertable = false, updatable = false)
 	private Long codigoHistorico;
