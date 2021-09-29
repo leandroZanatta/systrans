@@ -210,7 +210,7 @@ public class FrmRelatorioRateioCustos extends AbstractInternalFrame {
 		cbTipoBalanco = new JComboBox<>();
 		panel.add(cbTipoBalanco, "cell 0 0,growx,aligny top");
 
-		cbTipoBalanco.setModel(new DefaultComboBoxModel(new String[] { "Sem Agrupamento", "Histórico", "Veículo" }));
+		cbTipoBalanco.setModel(new DefaultComboBoxModel(new String[] { "Sem Agrupamento", "Histórico", "Veículo", "Despesa" }));
 
 	}
 

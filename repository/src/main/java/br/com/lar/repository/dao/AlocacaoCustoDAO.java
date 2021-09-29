@@ -3,16 +3,21 @@ package br.com.lar.repository.dao;
 import static br.com.lar.repository.model.QAlocacaoCusto.alocacaoCusto;
 import static br.com.lar.repository.model.QFaturamentoEntradasCabecalho.faturamentoEntradasCabecalho;
 import static br.com.lar.repository.model.QFaturamentoEntradasDetalhe.faturamentoEntradasDetalhe;
+import static br.com.lar.repository.model.QHistorico.historico;
+import static br.com.lar.repository.model.QHistoricoCusto.historicoCusto;
+import static br.com.lar.repository.model.QVeiculo.veiculo;
 import static br.com.lar.repository.model.QVinculoEntradaCusto.vinculoEntradaCusto;
 
 import java.util.Date;
 import java.util.List;
 
 import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.Projections;
 
 import br.com.lar.repository.model.AlocacaoCusto;
+import br.com.lar.repository.projection.AlocacaoCustoProjection;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
 import br.com.sysdesc.util.classes.ListUtil;
 import br.com.systrans.util.vo.PesquisaCentroCustoVO;
@@ -25,10 +30,10 @@ public class AlocacaoCustoDAO extends PesquisableDAOImpl<AlocacaoCusto> {
 		super(alocacaoCusto, alocacaoCusto.idAlocacaoCusto);
 	}
 
-	public List<AlocacaoCusto> filtrarAlocacaoCusto(PesquisaCentroCustoVO pesquisaCentroCustoVO) {
+	public List<AlocacaoCustoProjection> filtrarAlocacaoCusto(PesquisaCentroCustoVO pesquisaCentroCustoVO) {
 		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaCentroCustoVO);
 
-		JPAQuery query = new JPAQuery(getEntityManager()).from(faturamentoEntradasCabecalho);
+		JPASQLQuery query = sqlQuery().from(faturamentoEntradasCabecalho);
 
 		query.innerJoin(faturamentoEntradasDetalhe)
 				.on(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.eq(faturamentoEntradasDetalhe.codigoFaturamentoEntradasCabecalho));
@@ -38,11 +43,19 @@ public class AlocacaoCustoDAO extends PesquisableDAOImpl<AlocacaoCusto> {
 
 		query.innerJoin(alocacaoCusto).on(vinculoEntradaCusto.codigoAlocacaoCusto.eq(alocacaoCusto.idAlocacaoCusto));
 
+		query.leftJoin(veiculo).on(alocacaoCusto.codigoVeiculo.eq(veiculo.idVeiculo));
+
+		query.leftJoin(historicoCusto).on(alocacaoCusto.codigohistoricoCusto.eq(historicoCusto.idHistoricoCusto));
+
+		query.leftJoin(historico).on(historicoCusto.codigoHistorico.eq(historico.idHistorico));
+
 		if (booleanBuilder.hasValue()) {
 			query.where(booleanBuilder);
 		}
 
-		return query.list(alocacaoCusto);
+		return query.list(Projections.fields(AlocacaoCustoProjection.class, alocacaoCusto.valorParcela.as("valorParcela"),
+				historico.descricao.as("historico"), veiculo.placa.coalesce("TODOS").as("placa"),
+				faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.as("codigo"), alocacaoCusto.periodo.month().as("periodo")));
 	}
 
 	private BooleanBuilder executarPreFilter(PesquisaCentroCustoVO pesquisaCentroCustoVO) {
@@ -50,7 +63,7 @@ public class AlocacaoCustoDAO extends PesquisableDAOImpl<AlocacaoCusto> {
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
 
 		if (!ListUtil.isNullOrEmpty(pesquisaCentroCustoVO.getCodigoHistoricos())) {
-			booleanBuilder.and(faturamentoEntradasCabecalho.codigoHistorico.in(pesquisaCentroCustoVO.getCodigoHistoricos()));
+			booleanBuilder.and(historicoCusto.codigoHistorico.in(pesquisaCentroCustoVO.getCodigoHistoricos()));
 		}
 
 		if (!ListUtil.isNullOrEmpty(pesquisaCentroCustoVO.getCodigoVeiculos())) {

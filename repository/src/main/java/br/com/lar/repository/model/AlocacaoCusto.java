@@ -72,4 +72,7 @@ public class AlocacaoCusto implements Serializable {
 	@Column(name = "cd_veiculo", insertable = false, updatable = false)
 	private Long codigoVeiculo;
 
+	@Column(name = "cd_historicocusto", insertable = false, updatable = false)
+	private Long codigohistoricoCusto;
+
 }
