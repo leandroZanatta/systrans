@@ -14,5 +14,6 @@ public class ValorBrutoMensalVO {
 	private int mesReferencia;
 	private BigDecimal valor;
 	private Long codigoVeiculo;
+	private String historico;
 
 }

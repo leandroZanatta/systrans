@@ -58,6 +58,16 @@ public class AlocacaoCustoDAO extends PesquisableDAOImpl<AlocacaoCusto> {
 			booleanBuilder.and(alocacaoCusto.codigoVeiculo.in(pesquisaCentroCustoVO.getCodigoVeiculos()));
 		}
 
+		if (!ListUtil.isNullOrEmpty(pesquisaCentroCustoVO.getCodigoCentroCustos())) {
+
+			booleanBuilder.and(alocacaoCusto.codigoCentroCusto.in(pesquisaCentroCustoVO.getCodigoCentroCustos()));
+		}
+
+		if (!ListUtil.isNullOrEmpty(pesquisaCentroCustoVO.getDespesas())) {
+
+			booleanBuilder.and(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.in(pesquisaCentroCustoVO.getDespesas()));
+		}
+
 		if (pesquisaCentroCustoVO.getDataMovimentoInicial() != null || pesquisaCentroCustoVO.getDataMovimentoFinal() != null) {
 
 			booleanBuilder.and(getDataMovimento(pesquisaCentroCustoVO.getDataMovimentoInicial(), pesquisaCentroCustoVO.getDataMovimentoFinal()));

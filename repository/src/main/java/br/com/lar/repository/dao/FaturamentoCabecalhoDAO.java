@@ -1,5 +1,6 @@
 package br.com.lar.repository.dao;
 
+import static br.com.lar.repository.model.QCliente.cliente;
 import static br.com.lar.repository.model.QFaturamentoCabecalho.faturamentoCabecalho;
 import static br.com.lar.repository.model.QFaturamentoDetalhe.faturamentoDetalhe;
 import static br.com.lar.repository.model.QHistorico.historico;
@@ -14,13 +15,19 @@ import com.mysema.query.jpa.sql.JPASQLQuery;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.Projections;
 import com.mysema.query.types.expr.NumberExpression;
+import com.mysema.query.types.expr.TemporalExpression;
 
 import br.com.lar.repository.model.FaturamentoCabecalho;
 import br.com.lar.repository.projection.FaturamentoBrutoReportProjection;
+import br.com.lar.repository.projection.FaturamentoProjection;
 import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.sysdesc.pesquisa.repository.dao.impl.PesquisableDAOImpl;
+import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.ListUtil;
+import br.com.sysdesc.util.classes.LongUtil;
+import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
+import br.com.systrans.util.vo.PesquisaFaturamentoVO;
 import br.com.systrans.util.vo.ValorBrutoMensalVO;
 
 public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabecalho> {
@@ -54,6 +61,27 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 		query.groupBy(extractMonth);
 
 		return query.list(Projections.fields(ValorBrutoMensalVO.class,
+				faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo).subtract(faturamentoDetalhe.valorDesconto).sum().as("valor"),
+				extractMonth.as("mesReferencia")));
+	}
+
+	public List<ValorBrutoMensalVO> filtrarFaturamentoBrutoHistoricoMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
+		BooleanBuilder booleanBuilder = executarPreFilter(pesquisaFaturamentoBrutoVO);
+
+		JPASQLQuery query = sqlFrom().leftJoin(faturamentoDetalhe)
+				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho)).innerJoin(historico)
+				.on(faturamentoCabecalho.codigoHistorico.eq(historico.idHistorico));
+
+		if (booleanBuilder.hasValue()) {
+
+			query.where(booleanBuilder);
+		}
+
+		NumberExpression<Integer> extractMonth = faturamentoCabecalho.dataMovimento.month();
+
+		query.groupBy(extractMonth, historico.descricao);
+
+		return query.list(Projections.fields(ValorBrutoMensalVO.class, historico.descricao.as("historico"),
 				faturamentoDetalhe.valorBruto.add(faturamentoDetalhe.valorAcrescimo).subtract(faturamentoDetalhe.valorDesconto).sum().as("valor"),
 				extractMonth.as("mesReferencia")));
 	}
@@ -185,6 +213,93 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 		return query.innerJoin(faturamentoDetalhe).on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho))
 				.where(faturamentoCabecalho.dataMovimento.month().eq(mes).and(faturamentoDetalhe.codigoVeiculo.eq(veiculo)))
 				.singleResult(faturamentoDetalhe.valorBruto.sum());
+	}
+
+	public List<FaturamentoProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaVO) {
+		BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoConta())) {
+
+			booleanBuilder.and(faturamentoCabecalho.idFaturamentoCabecalho.eq(pesquisaVO.getCodigoConta()));
+		}
+
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoFornecedor())) {
+
+			booleanBuilder.and(faturamentoCabecalho.codigoCliente.eq(pesquisaVO.getCodigoFornecedor()));
+		}
+
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoHistorico())) {
+
+			booleanBuilder.and(faturamentoCabecalho.codigoHistorico.eq(pesquisaVO.getCodigoHistorico()));
+		}
+
+		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoVeiculo())) {
+
+			booleanBuilder.and(faturamentoDetalhe.codigoVeiculo.eq(pesquisaVO.getCodigoVeiculo()).or(faturamentoDetalhe.codigoVeiculo.isNull()));
+		}
+
+		if (pesquisaVO.getDataMovimentoInicial() != null || pesquisaVO.getDataMovimentoFinal() != null) {
+
+			booleanBuilder.and(
+					getDataMovimento(faturamentoCabecalho.dataMovimento, pesquisaVO.getDataMovimentoInicial(), pesquisaVO.getDataMovimentoFinal()));
+		}
+
+		if (!BigDecimalUtil.isNullOrZero(pesquisaVO.getValorInicial()) || !BigDecimalUtil.isNullOrZero(pesquisaVO.getValorFinal())) {
+
+			booleanBuilder.and(getValorFaturamento(pesquisaVO.getValorInicial(), pesquisaVO.getValorFinal()));
+		}
+
+		JPASQLQuery query = sqlFrom().innerJoin(faturamentoDetalhe)
+				.on(faturamentoCabecalho.idFaturamentoCabecalho.eq(faturamentoDetalhe.codigoFaturamentoCabecalho)).innerJoin(cliente)
+				.on(faturamentoCabecalho.codigoCliente.eq(cliente.idCliente)).innerJoin(historico)
+				.on(faturamentoCabecalho.codigoHistorico.eq(historico.idHistorico)).leftJoin(veiculo)
+				.on(faturamentoDetalhe.codigoVeiculo.eq(veiculo.idVeiculo));
+
+		query.groupBy(faturamentoCabecalho.idFaturamentoCabecalho, cliente.nome, faturamentoCabecalho.dataMovimento, historico.descricao,
+				veiculo.placa.coalesce("TODOS"));
+
+		if (booleanBuilder.hasValue()) {
+
+			query.where(booleanBuilder);
+		}
+
+		return query.list(Projections.fields(FaturamentoProjection.class, faturamentoCabecalho.idFaturamentoCabecalho.as("id"),
+				cliente.nome.as("cliente"), faturamentoCabecalho.dataMovimento, veiculo.placa.coalesce("TODOS").as("veiculo"),
+				historico.descricao.as("historico"), faturamentoDetalhe.valorBruto.sum().as("valorBruto")));
+	}
+
+	private Predicate getDataMovimento(TemporalExpression<Date> expression, Date dataMovimentoInicial, Date dataMovimentoFinal) {
+
+		if (dataMovimentoInicial != null && dataMovimentoFinal != null) {
+			return expression.between(dataMovimentoInicial, dataMovimentoFinal);
+		}
+
+		if (dataMovimentoInicial != null) {
+			return expression.goe(dataMovimentoInicial);
+		}
+
+		if (dataMovimentoFinal != null) {
+			return expression.loe(dataMovimentoFinal);
+		}
+
+		throw new SysDescException("Pelo menos uma data deve ser informada");
+	}
+
+	private Predicate getValorFaturamento(BigDecimal valorInicial, BigDecimal valorFinal) {
+
+		if (!BigDecimalUtil.isNullOrZero(valorInicial) && !BigDecimalUtil.isNullOrZero(valorFinal)) {
+			return faturamentoCabecalho.valorBruto.between(valorInicial, valorFinal);
+		}
+
+		if (!BigDecimalUtil.isNullOrZero(valorInicial)) {
+			return faturamentoCabecalho.valorBruto.goe(valorInicial);
+		}
+
+		if (!BigDecimalUtil.isNullOrZero(valorFinal)) {
+			return faturamentoCabecalho.valorBruto.loe(valorFinal);
+		}
+
+		throw new SysDescException("Pelo menos um valor de parcela deve ser informada");
 	}
 
 }

@@ -23,6 +23,7 @@ import br.com.lar.repository.model.Operacao;
 import br.com.lar.repository.model.VinculoSaida;
 import br.com.lar.repository.model.VinculoSaidaCaixa;
 import br.com.lar.repository.model.VinculoSaidaContasReceber;
+import br.com.lar.repository.projection.FaturamentoProjection;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
 import br.com.sysdesc.util.classes.ListUtil;
@@ -31,6 +32,7 @@ import br.com.sysdesc.util.exception.SysDescException;
 import br.com.systrans.util.RateioUtil;
 import br.com.systrans.util.constants.MensagemConstants;
 import br.com.systrans.util.enumeradores.TipoHistoricoOperacaoEnum;
+import br.com.systrans.util.vo.PesquisaFaturamentoVO;
 
 public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<FaturamentoCabecalho> {
 
@@ -211,5 +213,11 @@ public class FaturamentoSaidaService extends AbstractPesquisableServiceImpl<Fatu
 		} finally {
 			entityManager.getTransaction().commit();
 		}
+	}
+
+	public List<FaturamentoProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
+
+		return faturamentoDAO.filtrarFaturamento(pesquisaFaturamentoVO);
+
 	}
 }

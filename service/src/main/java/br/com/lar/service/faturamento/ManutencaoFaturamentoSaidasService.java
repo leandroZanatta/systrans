@@ -34,8 +34,9 @@ public class ManutencaoFaturamentoSaidasService extends AbstractPesquisableServi
 
 	public void excluirFaturamento(FaturamentoCabecalho faturamentoCabecalho) {
 
-		if (faturamentoCabecalho.getCaixaCabecalho().getDataFechamento() == null || JOptionPane.showConfirmDialog(null,
-				"O CAIXA DA EXCLUSÃO JÁ FOI FECHADO.\nDESEJA RECALCULAR OS SALDOS DE CAIXA?") == JOptionPane.YES_OPTION) {
+		if (faturamentoCabecalho.getCaixaCabecalho().getDataFechamento() == null
+				|| JOptionPane.showConfirmDialog(null, "O CAIXA DA EXCLUSÃO JÁ FOI FECHADO.\nDESEJA RECALCULAR OS SALDOS DE CAIXA?",
+						"VERIFICAÇÃO DE CAIXA", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
 			EntityManager entityManager = faturamentoCabecalhoDAO.getEntityManager();
 

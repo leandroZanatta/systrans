@@ -17,13 +17,13 @@ import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
-import br.com.lar.reports.FaturamentoEntradasReportBuilder;
+import br.com.lar.reports.FaturamentoReportBuilder;
 import br.com.lar.repository.model.CentroCusto;
 import br.com.lar.repository.model.Cliente;
 import br.com.lar.repository.model.FormasPagamento;
 import br.com.lar.repository.model.Historico;
 import br.com.lar.repository.model.Veiculo;
-import br.com.lar.repository.projection.FaturamentoEntradaProjection;
+import br.com.lar.repository.projection.FaturamentoProjection;
 import br.com.lar.service.centrocusto.CentroCustoService;
 import br.com.lar.service.cliente.ClienteService;
 import br.com.lar.service.faturamento.FaturamentoEntradaService;
@@ -255,9 +255,9 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 			pesquisaFaturamentoVO.setValorFinal(txValorFinal.getValue());
 			pesquisaFaturamentoVO.setCodigoDocumento(txDocumento.getText());
 
-			List<FaturamentoEntradaProjection> faturamentoEntradasCabecalhos = faturamentoEntradaService.filtrarFaturamento(pesquisaFaturamentoVO);
+			List<FaturamentoProjection> faturamentoEntradasCabecalhos = faturamentoEntradaService.filtrarFaturamento(pesquisaFaturamentoVO);
 
-			new FaturamentoEntradasReportBuilder()
+			new FaturamentoReportBuilder()
 					.build("Relatório de Despesas", montarSubTitulo(), !LongUtil.isNullOrZero(pesquisaFaturamentoVO.getCodigoVeiculo()))
 					.setData(faturamentoEntradasCabecalhos).view();
 

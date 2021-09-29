@@ -89,4 +89,7 @@ public class FaturamentoCabecalho implements Serializable {
 	@Column(name = "cd_historico", insertable = false, updatable = false)
 	private Long codigoHistorico;
 
+	@Column(name = "cd_cliente", insertable = false, updatable = false)
+	private Long codigoCliente;
+
 }

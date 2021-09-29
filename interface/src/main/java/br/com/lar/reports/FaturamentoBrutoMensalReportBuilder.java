@@ -35,12 +35,12 @@ public class FaturamentoBrutoMensalReportBuilder {
 	private List<FaturamentoMensalReport> data = new ArrayList<>();
 	private DynamicReport dynamicReport;
 
-	public FaturamentoBrutoMensalReportBuilder build(String title, List<String> subtitle, Integer tipoBalanco) {
+	public FaturamentoBrutoMensalReportBuilder build(String title, List<String> subtitle) {
 
 		DynamicReportBuilder drb = new DynamicReportBuilder();
 
 		Style titleStyle = new Style("titleStyle");
-		titleStyle.setFont(new Font(12, Font._FONT_VERDANA, true));
+		titleStyle.setFont(new Font(15, Font._FONT_VERDANA, true));
 		titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 
 		Style textPrincipal = new Style("principalStyle");
@@ -49,14 +49,9 @@ public class FaturamentoBrutoMensalReportBuilder {
 		textPrincipal.setBorderBottom(Border.THIN());
 
 		Style textHistorico = new Style("historicoStyle");
-		textHistorico.setFont(new Font(8, "Times New Roman", false));
+		textHistorico.setFont(new Font(6, "Times New Roman", false));
 		textHistorico.setHorizontalAlign(HorizontalAlign.RIGHT);
-		textHistorico.setBorderBottom(Border.DOTTED());
-
-		Style textVeiculo = new Style("veiculoStyle");
-		textVeiculo.setFont(new Font(8, "Times New Roman", false));
-		textVeiculo.setHorizontalAlign(HorizontalAlign.RIGHT);
-		textVeiculo.setBorderBottom(Border.DOTTED());
+		textHistorico.setBorderBottom(Border.NO_BORDER());
 
 		Style textPaddingPrincipal = new Style("principalStyle");
 		textPaddingPrincipal.setFont(new Font(8, "Times New Roman", true));
@@ -70,28 +65,21 @@ public class FaturamentoBrutoMensalReportBuilder {
 		headerTextSyle.setFont(new Font(8, "Times New Roman", false));
 
 		Style textPaddingHistorico = new Style("historicopaddingStyle", "textHistorico");
+		textPaddingHistorico.setFont(new Font(6, "Times New Roman", true));
 		textPaddingHistorico.setPaddingLeft(15);
-		textHistorico.setFont(new Font(8, "Times New Roman", false));
-		textPaddingHistorico.setBorderBottom(Border.DOTTED());
+		textPaddingHistorico.setBorderBottom(Border.NO_BORDER());
 
-		Style textPaddingVeiculo = new Style("veiculopaddingStyle", "textVeiculo");
-		textPaddingVeiculo.setPaddingLeft(30);
-		textVeiculo.setFont(new Font(8, "Times New Roman", false));
-		textPaddingVeiculo.setBorderBottom(Border.DOTTED());
-
-		drb.setTitle(title).setTitleStyle(titleStyle)
-				.setSubtitle(subtitle.stream().map(item -> item.toUpperCase()).collect(Collectors.joining("\\n"))).setDetailHeight(15)
-				.setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin).setBottomMargin(margin).setPrintBackgroundOnOddRows(false);
+		drb.setTitle(title).setTitleStyle(titleStyle).setSubtitle(subtitle.stream().map(String::toUpperCase).collect(Collectors.joining("\\n")))
+				.setDetailHeight(15).setLeftMargin(margin).setRightMargin(margin).setTopMargin(margin).setBottomMargin(margin)
+				.setPrintBackgroundOnOddRows(false);
 
 		ArrayList<ConditionalStyle> listCondStyle = new ArrayList<>();
 		listCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(1), textPaddingPrincipal));
 		listCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(2), textPaddingHistorico));
-		listCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(3), textPaddingVeiculo));
 
 		ArrayList<ConditionalStyle> listValueCondStyle = new ArrayList<>();
 		listValueCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(1), textPrincipal));
 		listValueCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(2), textHistorico));
-		listValueCondStyle.add(new ConditionalStyle(new FaturamentoBrutoCondiction(3), textVeiculo));
 
 		drb.addColumn(ColumnBuilder.getNew().setTitle("DESCRIÇÃO").setHeaderStyle(headerTextSyle)
 				.setColumnProperty("descricao", String.class.getName()).setWidth(200).addConditionalStyles(listCondStyle).build());
@@ -137,8 +125,9 @@ public class FaturamentoBrutoMensalReportBuilder {
 	public FaturamentoBrutoMensalReportBuilder setData(List<FaturamentoBrutoMensalVO> data) {
 
 		List<FaturamentoMensalReport> retorno = new ArrayList<>();
+		Integer maiorOrdem = data.stream().mapToInt(FaturamentoBrutoMensalVO::getOrdem).max().getAsInt();
 
-		for (int ordem = 1; ordem <= 5; ordem++) {
+		for (int ordem = 1; ordem <= maiorOrdem; ordem++) {
 
 			montarReportOrdenado(data, retorno, ordem);
 		}

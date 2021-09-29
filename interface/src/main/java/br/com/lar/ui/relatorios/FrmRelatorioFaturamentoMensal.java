@@ -213,8 +213,7 @@ public class FrmRelatorioFaturamentoMensal extends AbstractInternalFrame {
 
 			List<FaturamentoBrutoMensalVO> faturamentoBrutoMensalVOs = faturamentoService.filtrarFaturamentoBrutoMensal(pesquisaFaturamentoBrutoVO);
 
-			new FaturamentoBrutoMensalReportBuilder().build(montarTitulo(), montarSubTitulo(), pesquisaFaturamentoBrutoVO.getTipoBalanco())
-					.setData(faturamentoBrutoMensalVOs).view();
+			new FaturamentoBrutoMensalReportBuilder().build(montarTitulo(), montarSubTitulo()).setData(faturamentoBrutoMensalVOs).view();
 
 		} catch (JRException e) {
 			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar Faturamento bruto mensal");

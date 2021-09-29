@@ -76,18 +76,31 @@ public class FaturamentoSocialHistoricoReportService {
 				BigDecimal::add);
 		BigDecimal valorJuros = despesasJuros.stream().map(DespesasFinanceirasProjection::getValorJuros).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("RECEITA BRUTA", BigDecimal.ZERO, valorReceita, 1, null));
-		mapaCreditos.forEach((key, value) -> faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2, null)));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS", BigDecimal.ZERO, valorDespesa.negate(), 1, null));
-		mapaDebitos.forEach((key, value) -> faturamentoBrutoReport.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO,
-				getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto).negate(), 2, null)));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", BigDecimal.ZERO, faturamentoBruto, 1, null));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1, null));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", BigDecimal.ZERO, valorAcrescimos.negate(), 2, null));
-		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", BigDecimal.ZERO, valorJuros.negate(), 2, null));
+		FaturamentoBrutoVO receita = new FaturamentoBrutoVO("RECEITA BRUTA", BigDecimal.ZERO, valorReceita, 1, null);
+		FaturamentoBrutoVO despesa = new FaturamentoBrutoVO("DESPESAS", BigDecimal.ZERO, valorDespesa.negate(), 1, receita);
+		FaturamentoBrutoVO financeira = new FaturamentoBrutoVO("DESPESAS FINANCEIRAS", BigDecimal.ZERO, valorDespesasFinanceiras.negate(), 1,
+				receita);
+		faturamentoBrutoReport.add(receita);
+
+		mapaCreditos.forEach((key, value) -> faturamentoBrutoReport.add(
+				new FaturamentoBrutoVO(key, BigDecimal.ZERO, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto), 2, receita)));
+
+		faturamentoBrutoReport.add(despesa);
+
+		mapaDebitos.forEach((key, value) -> faturamentoBrutoReport
+				.add(new FaturamentoBrutoVO(key, BigDecimal.ZERO, getValorTotal(value, FaturamentoBrutoReportProjection::getValorBruto).negate(), 2,
+						pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? despesa : receita)));
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("FATURAMENTO BRUTO", BigDecimal.ZERO, faturamentoBruto, 1, receita));
+
+		faturamentoBrutoReport.add(financeira);
+
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("ACRÉSCIMOS", BigDecimal.ZERO, valorAcrescimos.negate(), 2,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? financeira : receita));
+		faturamentoBrutoReport.add(new FaturamentoBrutoVO("JUROS", BigDecimal.ZERO, valorJuros.negate(), 2,
+				pesquisaFaturamentoBrutoVO.getTipoPercentual() == 0 ? financeira : receita));
 		faturamentoBrutoReport
-				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO, faturamentoBruto.subtract(valorDespesasFinanceiras), 1, null));
+				.add(new FaturamentoBrutoVO("FATURAMENTO LIQUIDO", BigDecimal.ZERO, faturamentoBruto.subtract(valorDespesasFinanceiras), 1, receita));
 
 		return faturamentoBrutoReport;
 

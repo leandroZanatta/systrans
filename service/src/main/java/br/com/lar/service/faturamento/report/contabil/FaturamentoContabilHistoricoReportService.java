@@ -21,6 +21,7 @@ import br.com.sysdesc.util.classes.LongUtil;
 import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.FaturamentoBrutoVO;
 import br.com.systrans.util.vo.PesquisaFaturamentoBrutoVO;
+import br.com.systrans.util.vo.ValorBrutoMensalVO;
 
 public class FaturamentoContabilHistoricoReportService {
 
@@ -167,7 +168,55 @@ public class FaturamentoContabilHistoricoReportService {
 	}
 
 	public List<FaturamentoBrutoMensalVO> filtrarFaturamentoContabilHistoricoMensal(PesquisaFaturamentoBrutoVO pesquisaFaturamentoBrutoVO) {
-		// TODO Auto-generated method stub
-		return null;
+		List<FaturamentoBrutoMensalVO> faturamentoBrutoMensalReport = new ArrayList<>();
+
+		this.montarBanda(faturamentoBrutoMensalReport, faturamentoDAO.filtrarFaturamentoBrutoHistoricoMensal(pesquisaFaturamentoBrutoVO), 1,
+				"RECEITA BRUTA");
+
+		this.montarBanda(faturamentoBrutoMensalReport,
+				faturamentoEntradaDAO.filtrarFaturamentoBrutoEntradasHistoricoMensalVeiculo(pesquisaFaturamentoBrutoVO), 2, "DESPESAS");
+
+		return faturamentoBrutoMensalReport;
 	}
+
+	private void montarBanda(List<FaturamentoBrutoMensalVO> faturamentoBrutoMensalReport, List<ValorBrutoMensalVO> valorBrutoMensals, int ordem,
+			String descricao) {
+
+		Map<Integer, List<ValorBrutoMensalVO>> valoresMes = valorBrutoMensals.stream()
+				.collect(Collectors.groupingBy(ValorBrutoMensalVO::getMesReferencia));
+
+		List<String> historicos = valorBrutoMensals.stream().map(ValorBrutoMensalVO::getHistorico).distinct().collect(Collectors.toList());
+
+		for (int i = 1; i <= 12; i++) {
+
+			BigDecimal valorMes = valoresMes.containsKey(i)
+					? valoresMes.get(i).stream().map(ValorBrutoMensalVO::getValor).reduce(BigDecimal.ZERO, BigDecimal::add)
+					: BigDecimal.ZERO;
+
+			faturamentoBrutoMensalReport.add(new FaturamentoBrutoMensalVO(i, ordem, descricao, valorMes, 1));
+
+			for (String historico : historicos) {
+
+				BigDecimal valorHistorico = getValorHistorico(i, valoresMes, historico);
+
+				faturamentoBrutoMensalReport.add(new FaturamentoBrutoMensalVO(i, ordem, historico, valorHistorico, 2));
+			}
+		}
+	}
+
+	private BigDecimal getValorHistorico(int mes, Map<Integer, List<ValorBrutoMensalVO>> valoresMes, String historico) {
+
+		if (!valoresMes.containsKey(mes)) {
+			return BigDecimal.ZERO;
+		}
+
+		Optional<ValorBrutoMensalVO> optional = valoresMes.get(mes).stream().filter(item -> item.getHistorico().equals(historico)).findFirst();
+
+		if (!optional.isPresent()) {
+			return BigDecimal.ZERO;
+		}
+
+		return optional.get().getValor();
+	}
+
 }

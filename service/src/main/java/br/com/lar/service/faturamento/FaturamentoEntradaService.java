@@ -32,7 +32,7 @@ import br.com.lar.repository.model.VinculoEntradaCaixa;
 import br.com.lar.repository.model.VinculoEntradaContasPagar;
 import br.com.lar.repository.model.VinculoEntradaContasPagarVeiculo;
 import br.com.lar.repository.model.VinculoEntradaCusto;
-import br.com.lar.repository.projection.FaturamentoEntradaProjection;
+import br.com.lar.repository.projection.FaturamentoProjection;
 import br.com.lar.repository.projection.FaturamentoVeiculoProjection;
 import br.com.lar.service.caixa.CaixaService;
 import br.com.sysdesc.pesquisa.service.impl.AbstractPesquisableServiceImpl;
@@ -284,9 +284,9 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 		}
 	}
 
-	public List<FaturamentoEntradaProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
+	public List<FaturamentoProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
 
-		List<FaturamentoEntradaProjection> projections = faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
+		List<FaturamentoProjection> projections = faturamentoEntradaDAO.filtrarFaturamento(pesquisaFaturamentoVO);
 
 		if (pesquisaFaturamentoVO.getCodigoVeiculo() != null && projections.stream().anyMatch(entrada -> entrada.getVeiculo().contains("TODOS"))) {
 

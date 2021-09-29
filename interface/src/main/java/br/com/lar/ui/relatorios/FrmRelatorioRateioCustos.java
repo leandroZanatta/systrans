@@ -12,12 +12,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
+import br.com.lar.reports.FaturamentoBrutoMensalReportBuilder;
 import br.com.lar.repository.model.CentroCusto;
 import br.com.lar.repository.model.FaturamentoEntradasCabecalho;
 import br.com.lar.repository.model.Historico;
@@ -25,7 +27,6 @@ import br.com.lar.repository.model.Veiculo;
 import br.com.lar.service.alocacaocusto.AlocacaoCustoService;
 import br.com.lar.service.centrocusto.CentroCustoService;
 import br.com.lar.service.faturamento.FaturamentoEntradaService;
-import br.com.lar.service.faturamento.report.FaturamentoReportService;
 import br.com.lar.service.historico.HistoricoService;
 import br.com.lar.service.veiculo.VeiculoService;
 import br.com.lar.startup.enumeradores.PesquisaEnum;
@@ -33,15 +34,15 @@ import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisaMultiSelect;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.classes.StringUtil;
-import br.com.systrans.util.vo.AlocacaoCustoVO;
+import br.com.systrans.util.vo.FaturamentoBrutoMensalVO;
 import br.com.systrans.util.vo.PesquisaCentroCustoVO;
 import net.miginfocom.swing.MigLayout;
+import net.sf.jasperreports.engine.JRException;
 
 public class FrmRelatorioRateioCustos extends AbstractInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private FaturamentoReportService faturamentoService = new FaturamentoReportService();
 	private HistoricoService historicoService = new HistoricoService();
 	private VeiculoService veiculoService = new VeiculoService();
 	private CentroCustoService centroCustoService = new CentroCustoService();
@@ -215,25 +216,34 @@ public class FrmRelatorioRateioCustos extends AbstractInternalFrame {
 
 	private void gerarRelatorio() {
 
-		PesquisaCentroCustoVO pesquisaCentroCustoVO = new PesquisaCentroCustoVO();
+		try {
 
-		pesquisaCentroCustoVO.setCodigoCentroCustos(
-				pesquisaCentroCusto.getObjetosPesquisado().stream().mapToLong(CentroCusto::getIdCentroCusto).boxed().collect(Collectors.toList()));
-		pesquisaCentroCustoVO.setCodigoHistoricos(
-				pesquisaHistorico.getObjetosPesquisado().stream().mapToLong(Historico::getIdHistorico).boxed().collect(Collectors.toList()));
-		pesquisaCentroCustoVO.setCodigoVeiculos(
-				pesquisaVeiculo.getObjetosPesquisado().stream().mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
-		pesquisaCentroCustoVO.setDespesas(pesquisaFaturamentoEntrada.getObjetosPesquisado().stream()
-				.mapToLong(FaturamentoEntradasCabecalho::getIdFaturamentoEntradasCabecalho).boxed().collect(Collectors.toList()));
-		pesquisaCentroCustoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
-		pesquisaCentroCustoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
+			PesquisaCentroCustoVO pesquisaCentroCustoVO = new PesquisaCentroCustoVO();
 
-		List<AlocacaoCustoVO> faturamentoBrutoMensalVOs = alocacaoCustoService.filtrarAlocacaoCusto(pesquisaCentroCustoVO);
+			pesquisaCentroCustoVO.setCodigoCentroCustos(pesquisaCentroCusto.getObjetosPesquisado().stream().mapToLong(CentroCusto::getIdCentroCusto)
+					.boxed().collect(Collectors.toList()));
+			pesquisaCentroCustoVO.setCodigoHistoricos(
+					pesquisaHistorico.getObjetosPesquisado().stream().mapToLong(Historico::getIdHistorico).boxed().collect(Collectors.toList()));
+			pesquisaCentroCustoVO.setCodigoVeiculos(
+					pesquisaVeiculo.getObjetosPesquisado().stream().mapToLong(Veiculo::getIdVeiculo).boxed().collect(Collectors.toList()));
+			pesquisaCentroCustoVO.setDespesas(pesquisaFaturamentoEntrada.getObjetosPesquisado().stream()
+					.mapToLong(FaturamentoEntradasCabecalho::getIdFaturamentoEntradasCabecalho).boxed().collect(Collectors.toList()));
+			pesquisaCentroCustoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
+			pesquisaCentroCustoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
+
+			List<FaturamentoBrutoMensalVO> faturamentoBrutoMensalVOs = alocacaoCustoService.filtrarAlocacaoCusto(pesquisaCentroCustoVO,
+					cbTipoBalanco.getSelectedIndex());
+
+			new FaturamentoBrutoMensalReportBuilder().build(montarTitulo(), montarSubTitulo()).setData(faturamentoBrutoMensalVOs).view();
+
+		} catch (JRException e) {
+			JOptionPane.showMessageDialog(this, "Ocorreu um erro ao Gerar Faturamento bruto mensal");
+		}
 	}
 
 	private String montarTitulo() {
 
-		return "RELATÓRIO DE FATURAMENTO MENSAL HISTÓRICO";
+		return "RELATÓRIO DE RATEIO DE CUSTOS";
 	}
 
 	private List<String> montarSubTitulo() {

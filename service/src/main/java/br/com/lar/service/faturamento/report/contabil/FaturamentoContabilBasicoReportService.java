@@ -162,7 +162,7 @@ public class FaturamentoContabilBasicoReportService {
 							BigDecimal valorPlaca = valorFaturamentoveiculo.multiply(faturamentoSemPlaca.getValor()).divide(valorFaturamentoMensal, 8,
 									RoundingMode.HALF_EVEN);
 
-							valoresComPlaca.add(new ValorBrutoMensalVO(mes, valorPlaca, veiculo));
+							valoresComPlaca.add(new ValorBrutoMensalVO(mes, valorPlaca, veiculo, null));
 						});
 					});
 				}
@@ -170,7 +170,7 @@ public class FaturamentoContabilBasicoReportService {
 				valoresComPlaca.stream().collect(Collectors.groupingBy(ValorBrutoMensalVO::getMesReferencia)).forEach((mesReferencia, valores) -> {
 
 					despesasContabeis.add(new ValorBrutoMensalVO(mes, valores.stream().map(ValorBrutoMensalVO::getValor)
-							.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_EVEN), 0L));
+							.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_EVEN), 0L, null));
 
 				});
 			});
