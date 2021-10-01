@@ -94,7 +94,7 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 				.on(faturamentoEntradasCabecalho.codigoHistorico.eq(historico.idHistorico)).leftJoin(veiculo)
 				.on(faturamentoEntradasDetalhe.codigoVeiculo.eq(veiculo.idVeiculo));
 
-		query.groupBy(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.as("id"), cliente.nome, faturamentoEntradasCabecalho.dataMovimento,
+		query.groupBy(faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho, cliente.nome, faturamentoEntradasCabecalho.dataMovimento,
 				faturamentoEntradasCabecalho.observacao, historico.descricao, veiculo.placa.coalesce("TODOS"));
 
 		if (booleanBuilder.hasValue()) {
@@ -103,8 +103,8 @@ public class FaturamentoEntradaCabecalhoDAO extends PesquisableDAOImpl<Faturamen
 		}
 
 		return query.list(Projections.fields(FaturamentoProjection.class, faturamentoEntradasCabecalho.observacao.as("observacao"),
-				faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho, cliente.nome.as("cliente"), faturamentoEntradasCabecalho.dataMovimento,
-				veiculo.placa.coalesce("TODOS").as("veiculo"), historico.descricao.as("historico"),
+				faturamentoEntradasCabecalho.idFaturamentoEntradasCabecalho.as("id"), cliente.nome.as("cliente"),
+				faturamentoEntradasCabecalho.dataMovimento, veiculo.placa.coalesce("TODOS").as("veiculo"), historico.descricao.as("historico"),
 				faturamentoEntradasDetalhe.valorBruto.sum().as("valorBruto")));
 	}
 
