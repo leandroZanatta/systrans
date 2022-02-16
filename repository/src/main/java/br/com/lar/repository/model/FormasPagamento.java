@@ -53,6 +53,9 @@ public class FormasPagamento implements Serializable {
 	@Column(name = "nr_diasparapagamento")
 	private Long numeroDiasPagamento;
 
+	@Column(name = "nr_sincronizacaoversao")
+	private Long sincronizacaoVersao;
+
 	@OneToMany(mappedBy = "formasPagamento")
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude

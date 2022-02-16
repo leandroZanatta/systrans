@@ -110,4 +110,7 @@ public class Cliente implements Serializable {
 	@Column(name = "nr_situacao")
 	private Long situacao;
 
+	@Column(name = "nr_sincronizacaoversao")
+	private Long sincronizacaoVersao;
+
 }

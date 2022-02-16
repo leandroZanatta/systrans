@@ -223,14 +223,14 @@ public class FaturamentoCabecalhoDAO extends PesquisableDAOImpl<FaturamentoCabec
 			booleanBuilder.and(faturamentoCabecalho.idFaturamentoCabecalho.eq(pesquisaVO.getCodigoConta()));
 		}
 
-		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoFornecedor())) {
+		if (!pesquisaVO.getCodigoFornecedores().isEmpty()) {
 
-			booleanBuilder.and(faturamentoCabecalho.codigoCliente.eq(pesquisaVO.getCodigoFornecedor()));
+			booleanBuilder.and(faturamentoCabecalho.codigoCliente.in(pesquisaVO.getCodigoFornecedores()));
 		}
 
-		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoHistorico())) {
+		if (pesquisaVO.getCodigoHistoricos() != null && !pesquisaVO.getCodigoHistoricos().isEmpty()) {
 
-			booleanBuilder.and(faturamentoCabecalho.codigoHistorico.eq(pesquisaVO.getCodigoHistorico()));
+			booleanBuilder.and(faturamentoCabecalho.codigoHistorico.in(pesquisaVO.getCodigoHistoricos()));
 		}
 
 		if (!LongUtil.isNullOrZero(pesquisaVO.getCodigoVeiculo())) {

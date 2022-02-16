@@ -49,4 +49,62 @@
 
 		<createSequence sequenceName="gen_formapagamento" />
 	</changeSet>
+
+	<changeSet id="20220210_2307000" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_formapagamento" columnName="nr_sincronizacaoversao" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_formapagamento">
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}" remarks="VERSÃO DE SINCRONIZAÇÃO" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="20220210_2307000_1" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<sequenceExists sequenceName="gen_sinc_formapagamento" />
+			</not>
+		</preConditions>
+
+		<createSequence sequenceName="gen_sinc_formapagamento" />
+	</changeSet>
+
+	<changeSet id="20220210_2307000_2" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<sqlCheck expectedResult="0">select count(*) from tb_formapagamento</sqlCheck>
+			</not>
+		</preConditions>
+
+		<sql splitStatements="true" stripComments="true">
+
+			<![CDATA[
+			
+			UPDATE TB_FORMAPAGAMENTO SET NR_SINCRONIZACAOVERSAO=NEXTVAL('gen_sinc_formapagamento');
+			
+			INSERT INTO TB_SINCRONIZACAOITEM
+			SELECT NEXTVAL('gen_sincronizacaoitem'),3,max(NR_SINCRONIZACAOVERSAO) FROM TB_FORMAPAGAMENTO;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20220210_2307000_3" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR REPLACE TRIGGER trg_formapagamento_befinsert BEFORE INSERT ON tb_formapagamento FOR EACH
+			ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoFormaPagamento";
+
+			CREATE OR REPLACE TRIGGER trg_formapagamento_befupdate BEFORE UPDATE ON
+			tb_formapagamento FOR EACH
+			ROW
+			CALL "br.com.sysdesc.h2.trigger.TriggerSincronizacaoFormaPagamento";
+		</sql>
+	</changeSet>
 </databaseChangeLog>

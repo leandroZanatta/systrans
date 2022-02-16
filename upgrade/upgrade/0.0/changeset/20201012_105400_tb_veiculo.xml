@@ -31,4 +31,63 @@
 		<createSequence sequenceName="gen_veiculo" />
 
 	</changeSet>
+
+	<changeSet id="20220210_2308000" author="leandro">
+
+		<preConditions onFail="CONTINUE">
+			<not>
+				<columnExists tableName="tb_veiculo" columnName="nr_sincronizacaoversao" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_veiculo">
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}" remarks="VERSÃO DE SINCRONIZAÇÃO" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="20220210_2308000_1" author="leandro">
+
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="gen_sinc_veiculo" />
+			</not>
+		</preConditions>
+
+		<createSequence sequenceName="gen_sinc_veiculo" />
+	</changeSet>
+
+	<changeSet id="20220210_2308000_2" author="leandro">
+
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sqlCheck expectedResult="0">select count(*) from tb_veiculo</sqlCheck>
+			</not>
+		</preConditions>
+
+		<sql splitStatements="true" stripComments="true">
+
+			<![CDATA[
+			
+			UPDATE TB_VEICULO SET NR_SINCRONIZACAOVERSAO=NEXTVAL('gen_sinc_veiculo');
+			
+			INSERT INTO TB_SINCRONIZACAOITEM
+			SELECT NEXTVAL('gen_sincronizacaoitem'),4,max(NR_SINCRONIZACAOVERSAO) FROM TB_VEICULO;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20220210_2308000_3" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR REPLACE TRIGGER trg_veiculo_befinsert BEFORE INSERT ON tb_veiculo FOR EACH
+			ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoVeiculo";
+
+			CREATE OR REPLACE TRIGGER trg_veiculo_befupdate BEFORE UPDATE ON
+			tb_veiculo FOR EACH
+			ROW
+			CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoVeiculo";
+		</sql>
+	</changeSet>
 </databaseChangeLog>

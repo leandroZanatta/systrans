@@ -3,6 +3,7 @@ package br.com.lar.startup.enumeradores;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.lar.ui.FrmAbastecimento;
 import br.com.lar.ui.FrmAberturaCaixa;
 import br.com.lar.ui.FrmCadastroOperacoes;
 import br.com.lar.ui.FrmCadastroPesquisa;
@@ -104,13 +105,15 @@ public enum ProgramasEnum {
 
 	RELATORIO_CONTAS_RECEBER(50L, FrmRelatorioContasReceber.class),
 
-	MANUTENCAO_DESPESAS(54L, FrmManutencaoDespesas.class),
+	MANUTENCAO_DESPESAS(58L, FrmManutencaoDespesas.class),
 
 	RELATORIO_FATURAMENTO_BRUTO_MENSAL(55L, FrmRelatorioFaturamentoMensal.class),
 
 	RELATORIO_RATEIO_CUSTOS(57L, FrmRelatorioRateioCustos.class),
 
-	MANUTENCAO_SAIDAS(58L, FrmManutencaoReceitas.class);
+	MANUTENCAO_RECEITAS(54L, FrmManutencaoReceitas.class),
+
+	ABASTECIMENTOS(59L, FrmAbastecimento.class);
 
 	private static Map<Long, ProgramasEnum> mapa = new HashMap<>();
 

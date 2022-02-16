@@ -24,16 +24,61 @@
 			<column name="tx_senha" type="${varchar.40}" remarks="SENHA DO USUÁRIO">
 				<constraints nullable="false" />
 			</column>
-			
+
 			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
 				<constraints nullable="false" foreignKeyName="usuario_cliente_fk" references="tb_cliente(id_cliente)" />
 			</column>
-		
+
 		</createTable>
-		
-		<createSequence sequenceName="gen_usuario" startValue="2"/>
+
+		<createSequence sequenceName="gen_usuario" startValue="2" />
 	</changeSet>
 
 
+	<changeSet id="20220210_2306000" author="leandro">
 
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="tb_usuario" columnName="nr_sincronizacaoversao" />
+			</not>
+		</preConditions>
+
+		<addColumn tableName="tb_usuario">
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}" remarks="VERSÃO DE SINCRONIZAÇÃO" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="20220210_2306000_1" author="leandro">
+
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="gen_sinc_usuario" />
+			</not>
+		</preConditions>
+
+		<createSequence sequenceName="gen_sinc_usuario" />
+
+		<sql splitStatements="true" stripComments="true">
+
+			<![CDATA[
+			
+			UPDATE TB_USUARIO SET NR_SINCRONIZACAOVERSAO=NEXTVAL('gen_sinc_usuario');
+			
+			INSERT INTO TB_SINCRONIZACAOITEM
+			SELECT NEXTVAL('gen_sincronizacaoitem'),1,max(NR_SINCRONIZACAOVERSAO) FROM TB_USUARIO;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20220210_2306000_2" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR REPLACE TRIGGER trg_usuario_befinsert BEFORE INSERT ON tb_usuario FOR EACH ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoUsuario";
+
+			CREATE OR REPLACE TRIGGER trg_usuario_befupdate BEFORE UPDATE ON tb_usuario FOR EACH
+			ROW
+			CALL "br.com.sysdesc.h2.trigger.TriggerSincronizacaoUsuario";
+		</sql>
+	</changeSet>
 </databaseChangeLog>

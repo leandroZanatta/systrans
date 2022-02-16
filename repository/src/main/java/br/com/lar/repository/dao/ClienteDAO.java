@@ -2,6 +2,8 @@ package br.com.lar.repository.dao;
 
 import static br.com.lar.repository.model.QCliente.cliente;
 
+import java.util.List;
+
 import com.mysema.query.BooleanBuilder;
 
 import br.com.lar.repository.model.Cliente;
@@ -25,6 +27,12 @@ public class ClienteDAO extends PesquisableDAOImpl<Cliente> {
 		}
 
 		return from().where(booleanBuilder).singleResult(cliente);
+	}
+
+	public List<Cliente> obterPorVersao(Long versaoRemota, Long versaoLocal, long quantidade) {
+
+		return from().where(cliente.sincronizacaoVersao.between(versaoRemota, versaoLocal)).orderBy(cliente.sincronizacaoVersao.asc())
+				.limit(quantidade).list(cliente);
 	}
 
 }

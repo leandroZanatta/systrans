@@ -2,6 +2,7 @@ package br.com.systrans.util.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -10,13 +11,13 @@ public class PesquisaFaturamentoVO {
 
 	private Long codigoConta;
 
-	private Long codigoFornecedor;
+	private List<Long> codigoFornecedores;
 
 	private String codigoDocumento;
 
 	private Long codigoFormaPagamento;
 
-	private Long codigoHistorico;
+	private List<Long> codigoHistoricos;
 
 	private Long codigoVeiculo;
 

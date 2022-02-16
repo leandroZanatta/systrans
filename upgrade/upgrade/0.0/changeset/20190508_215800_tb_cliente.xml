@@ -93,6 +93,50 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="20220210_2305000" author="leandro">
 
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="tb_cliente" columnName="nr_sincronizacaoversao" />
+			</not>
+		</preConditions>
 
+		<addColumn tableName="tb_cliente">
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}" remarks="VERSÃO DE SINCRONIZAÇÃO" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="20220210_2305000_1" author="leandro">
+
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="gen_sinc_cliente" />
+			</not>
+		</preConditions>
+
+		<createSequence sequenceName="gen_sinc_cliente" />
+
+		<sql splitStatements="true" stripComments="true">
+
+			<![CDATA[
+			
+			UPDATE TB_CLIENTE SET NR_SINCRONIZACAOVERSAO=NEXTVAL('gen_sinc_cliente');
+			
+			INSERT INTO TB_SINCRONIZACAOITEM
+			SELECT NEXTVAL('gen_sincronizacaoitem'),2,max(NR_SINCRONIZACAOVERSAO) FROM TB_CLIENTE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20220210_2305000_2" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR REPLACE TRIGGER trg_cliente_befinsert BEFORE INSERT ON tb_cliente FOR EACH ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoCliente";
+
+			CREATE OR REPLACE TRIGGER trg_cliente_befupdate BEFORE UPDATE ON tb_cliente FOR EACH
+			ROW
+			CALL "br.com.sysdesc.h2.trigger.TriggerSincronizacaoCliente";
+		</sql>
+	</changeSet>
 </databaseChangeLog>

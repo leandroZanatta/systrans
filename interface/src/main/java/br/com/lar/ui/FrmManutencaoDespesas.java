@@ -1,9 +1,13 @@
 package br.com.lar.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -24,6 +28,7 @@ import br.com.lar.startup.enumeradores.PesquisaEnum;
 import br.com.lar.tablemodels.DetalhesEntradaTableModel;
 import br.com.lar.tablemodels.FaturamentoEntradasPagamentoTableModel;
 import br.com.lar.tablemodels.FaturamentoEntradasTableModel;
+import br.com.lar.ui.buttonactions.ButtonActionExcluir;
 import br.com.sysdesc.components.AbstractInternalFrame;
 import br.com.sysdesc.components.JTextFieldId;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
@@ -37,27 +42,28 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private ManutencaoFaturamentoEntradaService manutencaoFaturamentoEntradaService = new ManutencaoFaturamentoEntradaService();
+	private FaturamentoEntradasPagamentoTableModel pagamentoTableModel = new FaturamentoEntradasPagamentoTableModel();
+	private FaturamentoEntradasTableModel faturamentoEntradasTableModel = new FaturamentoEntradasTableModel();
+	private DetalhesEntradaTableModel detalhesEntradaTableModel = new DetalhesEntradaTableModel();
+	private CentroCustoService centroCustoService = new CentroCustoService();
+	private ClienteService clienteService = new ClienteService();
+	private VeiculoService veiculoService = new VeiculoService();
+
 	private JPanel painelContent;
 	private JTextFieldId txCodigo;
 	private CampoPesquisa<Cliente> pesquisaCliente;
 	private JDateChooser dtMovimento;
 	private PanelActions<FaturamentoEntradasCabecalho> panelActions;
-	private ManutencaoFaturamentoEntradaService manutencaoFaturamentoEntradaService = new ManutencaoFaturamentoEntradaService();
-	private CentroCustoService centroCustoService = new CentroCustoService();
-	private FaturamentoEntradasTableModel faturamentoEntradasTableModel = new FaturamentoEntradasTableModel();
-	private ClienteService clienteService = new ClienteService();
-	private VeiculoService veiculoService = new VeiculoService();
 	private JLabel lblCliente_1;
 	private JLabel lblCentroDeCustos;
 	private CampoPesquisa<CentroCusto> pesquisaCentroCustos;
-	private FaturamentoEntradasPagamentoTableModel pagamentoTableModel = new FaturamentoEntradasPagamentoTableModel();
 	private JTabbedPane tabbedPane;
 	private JPanel panel;
 	private JPanel pnlDetalhes;
 	private JScrollPane scrollPane;
 	private JTable tbDetalhes;
 	private CampoPesquisa<Veiculo> pesquisaVeiculo;
-	private DetalhesEntradaTableModel detalhesEntradaTableModel = new DetalhesEntradaTableModel();
 	private JPanel panel_1;
 	private JScrollPane scrollPane_1;
 	private JTextPane txObservacao;
@@ -160,8 +166,21 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 		txObservacao = new JTextPane();
 		scrollPane_1.setViewportView(txObservacao);
 
+		ButtonActionExcluir buttonAction = new ButtonActionExcluir();
+
+		Action actionExcluir = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				excluirDespesa();
+			}
+
+		};
+
 		panelActions = new PanelActions<FaturamentoEntradasCabecalho>(this, manutencaoFaturamentoEntradaService,
-				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa()) {
+				PesquisaEnum.PES_FATURAMENTO_ENTRADA.getCodigoPesquisa(), buttonAction) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -173,6 +192,7 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 				posicionarBotao(contadorUtil, btPrimeiro, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btRetroceder, Boolean.TRUE);
 
+				posicionarBotao(contadorUtil, buttonAction, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btSalvar, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btEditar, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btNovo, Boolean.FALSE);
@@ -182,6 +202,12 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 				posicionarBotao(contadorUtil, btAvancar, Boolean.TRUE);
 				posicionarBotao(contadorUtil, btUltimo, Boolean.TRUE);
 
+			}
+
+			@Override
+			protected void registrarEventosBotoesPagina() {
+
+				registrarEvento(buttonAction, actionExcluir);
 			}
 
 			@Override
@@ -223,6 +249,17 @@ public class FrmManutencaoDespesas extends AbstractInternalFrame {
 		panelActions.addNewListener(faturamento -> dtMovimento.setDate(new Date()));
 		painelContent.add(panelActions, "cell 0 4 4 1,grow");
 
+	}
+
+	private void excluirDespesa() {
+
+		if (JOptionPane.showConfirmDialog(this, "Deseja realmente excluir este registro?", "Verificação",
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+			manutencaoFaturamentoEntradaService.excluirFaturamento(panelActions.getObjetoPesquisa());
+
+			panelActions.deleteEvent();
+		}
 	}
 
 }

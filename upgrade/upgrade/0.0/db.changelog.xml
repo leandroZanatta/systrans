@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+	<include file="0.0/changeset/20190508_215000_tb_sincronizacaoitem.xml" />
 	<include file="0.0/changeset/20190508_215100_tb_estado.xml" />
 	<include file="0.0/changeset/20190508_215600_tb_cidade.xml" />
 	<include file="0.0/changeset/20190508_215700_tb_grupo.xml" />

@@ -33,12 +33,12 @@ public class VeiculoService extends AbstractPesquisableServiceImpl<Veiculo> {
 
 		if (StringUtil.isNullOrEmpty(objetoPersistir.getPlaca())) {
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_PLACA);
 		}
 
 		if (BigDecimalUtil.isNullOrZero(objetoPersistir.getCapacidade())) {
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_DESCRICAO_VALIDA);
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_CAPACIDADE);
 		}
 	}
 

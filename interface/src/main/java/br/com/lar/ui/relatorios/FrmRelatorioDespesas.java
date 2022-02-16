@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -36,6 +37,7 @@ import br.com.sysdesc.components.JMoneyField;
 import br.com.sysdesc.components.JNumericField;
 import br.com.sysdesc.components.JTextFieldMaiusculo;
 import br.com.sysdesc.pesquisa.ui.components.CampoPesquisa;
+import br.com.sysdesc.pesquisa.ui.components.CampoPesquisaMultiSelect;
 import br.com.sysdesc.util.classes.BigDecimalUtil;
 import br.com.sysdesc.util.classes.DateUtil;
 import br.com.sysdesc.util.classes.LongUtil;
@@ -54,9 +56,9 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 	private CentroCustoService centroCustoService = new CentroCustoService();
 	private ClienteService clienteService = new ClienteService();
 	private JNumericField txCodigo;
-	private CampoPesquisa<Cliente> pesquisaCliente;
+	private CampoPesquisaMultiSelect<Cliente> pesquisaCliente;
 	private CampoPesquisa<FormasPagamento> pesquisaPagamento;
-	private CampoPesquisa<Historico> pesquisaHistorico;
+	private CampoPesquisaMultiSelect<Historico> pesquisaHistorico;
 	private CampoPesquisa<Veiculo> pesquisaVeiculo;
 	private CampoPesquisa<CentroCusto> pesquisaCentroCusto;
 	private JDateChooser dtMovimentoInicial;
@@ -116,14 +118,20 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 
 		JButton btnGerar = new JButton("Gerar");
 
-		pesquisaCliente = new CampoPesquisa<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaCliente = new CampoPesquisaMultiSelect<Cliente>(clienteService, PesquisaEnum.PES_CLIENTES.getCodigoPesquisa(), getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public String formatarValorCampo(Cliente objeto) {
+			protected String formatarValorCampoMultiple(List<Cliente> objetosPesquisados) {
+				return objetosPesquisados.stream().map(cliente -> cliente.getIdCliente().toString()).collect(Collectors.joining(",", "<", ">"));
+			}
+
+			@Override
+			protected String formatarValorCampoSingle(Cliente objeto) {
 				return String.format("%d - %s", objeto.getIdCliente(), objeto.getNome());
 			}
+
 		};
 
 		pesquisaPagamento = new CampoPesquisa<FormasPagamento>(formasPagamentoService, PesquisaEnum.PES_FORMAS_PAGAMENTO.getCodigoPesquisa(),
@@ -137,12 +145,19 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 			}
 		};
 
-		pesquisaHistorico = new CampoPesquisa<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(), getCodigoUsuario()) {
+		pesquisaHistorico = new CampoPesquisaMultiSelect<Historico>(historicoService, PesquisaEnum.PES_OPERACOES.getCodigoPesquisa(),
+				getCodigoUsuario()) {
 
 			private static final long serialVersionUID = 1L;
 
-			public String formatarValorCampo(Historico objeto) {
+			@Override
+			protected String formatarValorCampoMultiple(List<Historico> objetosPesquisados) {
 
+				return objetosPesquisados.stream().map(historico -> historico.getIdHistorico().toString()).collect(Collectors.joining(",", "<", ">"));
+			}
+
+			@Override
+			protected String formatarValorCampoSingle(Historico objeto) {
 				return String.format("%d - %s", objeto.getIdHistorico(), objeto.getDescricao());
 			}
 		};
@@ -169,12 +184,10 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 		container.setLayout(null);
 		pnlVencimento.setLayout(null);
 		pnlPagamento.setLayout(null);
-		pnlVencimento
-				.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER, TitledBorder.TOP,
-						null, new Color(0, 0, 0)));
-		pnlPagamento
-				.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Valor Despesa", TitledBorder.CENTER,
-						TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlVencimento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Movimento", TitledBorder.CENTER,
+				TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlPagamento.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Valor Despesa", TitledBorder.CENTER,
+				TitledBorder.TOP, null, new Color(0, 0, 0)));
 
 		pnlActions.setBounds(7, 258, 536, 32);
 		pnlVencimento.setBounds(7, 195, 280, 52);
@@ -240,15 +253,14 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 
 			PesquisaFaturamentoVO pesquisaFaturamentoVO = new PesquisaFaturamentoVO();
 			pesquisaFaturamentoVO.setCodigoConta(txCodigo.getValue());
-			pesquisaFaturamentoVO.setCodigoFornecedor(getValueObject(pesquisaCliente.getObjetoPesquisado(), Cliente::getIdCliente));
+			pesquisaFaturamentoVO.setCodigoFornecedores(
+					pesquisaCliente.getObjetosPesquisado().stream().mapToLong(Cliente::getIdCliente).boxed().collect(Collectors.toList()));
+			pesquisaFaturamentoVO.setCodigoHistoricos(
+					pesquisaHistorico.getObjetosPesquisado().stream().mapToLong(Historico::getIdHistorico).boxed().collect(Collectors.toList()));
 			pesquisaFaturamentoVO
 					.setCodigoFormaPagamento(getValueObject(pesquisaPagamento.getObjetoPesquisado(), FormasPagamento::getIdFormaPagamento));
-			pesquisaFaturamentoVO
-					.setCodigoCentroCusto(getValueObject(pesquisaCentroCusto.getObjetoPesquisado(), CentroCusto::getIdCentroCusto));
-			pesquisaFaturamentoVO
-					.setCodigoHistorico(getValueObject(pesquisaHistorico.getObjetoPesquisado(), Historico::getIdHistorico));
-			pesquisaFaturamentoVO
-					.setCodigoVeiculo(getValueObject(pesquisaVeiculo.getObjetoPesquisado(), Veiculo::getIdVeiculo));
+			pesquisaFaturamentoVO.setCodigoCentroCusto(getValueObject(pesquisaCentroCusto.getObjetoPesquisado(), CentroCusto::getIdCentroCusto));
+			pesquisaFaturamentoVO.setCodigoVeiculo(getValueObject(pesquisaVeiculo.getObjetoPesquisado(), Veiculo::getIdVeiculo));
 			pesquisaFaturamentoVO.setDataMovimentoInicial(dtMovimentoInicial.getDate());
 			pesquisaFaturamentoVO.setDataMovimentoFinal(dtMovimentoFinal.getDate());
 			pesquisaFaturamentoVO.setValorInicial(txValorInicial.getValue());
@@ -270,9 +282,9 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 
 		List<String> subtitulo = new ArrayList<>();
 
-		Cliente cliente = pesquisaCliente.getObjetoPesquisado();
+		List<Cliente> clientes = pesquisaCliente.getObjetosPesquisado();
+		List<Historico> historicos = pesquisaHistorico.getObjetosPesquisado();
 		FormasPagamento formasPagamento = pesquisaPagamento.getObjetoPesquisado();
-		Historico historico = pesquisaHistorico.getObjetoPesquisado();
 		Veiculo veiculo = pesquisaVeiculo.getObjetoPesquisado();
 		CentroCusto centroCusto = pesquisaCentroCusto.getObjetoPesquisado();
 
@@ -284,16 +296,34 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 			subtitulo.add("Documento: " + txDocumento.getText());
 		}
 
-		if (cliente != null) {
-			subtitulo.add("Fornecedor: " + cliente.getNome());
+		if (clientes != null && !clientes.isEmpty()) {
+
+			if (clientes.size() == 1) {
+
+				subtitulo.add("Fornecedor: " + clientes.get(0).getNome());
+			} else {
+
+				subtitulo.add("Fornecedores:");
+
+				clientes.forEach(cliente -> subtitulo.add("\t " + cliente.getNome()));
+			}
 		}
 
 		if (formasPagamento != null) {
 			subtitulo.add("Forma de Pagamento: " + formasPagamento.getDescricao());
 		}
 
-		if (historico != null) {
-			subtitulo.add("Histórico: " + historico.getDescricao());
+		if (historicos != null && !historicos.isEmpty()) {
+
+			if (historicos.size() == 1) {
+
+				subtitulo.add("Histórico: " + historicos.get(0).getDescricao());
+			} else {
+
+				subtitulo.add("Históricos:");
+
+				historicos.forEach(historico -> subtitulo.add("\t " + historico.getDescricao()));
+			}
 		}
 
 		if (veiculo != null) {
@@ -310,16 +340,14 @@ public class FrmRelatorioDespesas extends AbstractInternalFrame {
 
 			if (dtMovimentoFinal.getDate() != null && dtMovimentoInicial.getDate() != null) {
 
-				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()))
-						.append(" Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+				stringBuilder.append("De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate())).append(" Até: ")
+						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
 			} else if (dtMovimentoInicial.getDate() != null) {
 
-				stringBuilder.append("A partir De: ")
-						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
+				stringBuilder.append("A partir De: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoInicial.getDate()));
 
 			} else {
-				stringBuilder.append("Até: ")
-						.append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
+				stringBuilder.append("Até: ").append(DateUtil.format(DateUtil.FORMATO_DD_MM_YYY, dtMovimentoFinal.getDate()));
 
 			}
 

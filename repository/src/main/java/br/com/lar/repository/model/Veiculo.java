@@ -55,6 +55,9 @@ public class Veiculo implements Serializable {
 	@Column(name = "tx_capacidade")
 	private BigDecimal capacidade;
 
+	@Column(name = "nr_sincronizacaoversao")
+	private Long sincronizacaoVersao;
+
 	@OneToMany(mappedBy = "veiculo")
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude

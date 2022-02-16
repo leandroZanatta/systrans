@@ -29,6 +29,7 @@ import br.com.lar.repository.model.Programa;
 import br.com.lar.repository.projection.CaixaAbertoProjection;
 import br.com.lar.service.main.MainService;
 import br.com.lar.startup.enumeradores.ProgramasEnum;
+import br.com.lar.thread.AbastecimentosThread;
 import br.com.lar.thread.AtualizacaoThread;
 import br.com.lar.thread.TimerThread;
 import br.com.sysdesc.components.AbstractInternalFrame;
@@ -74,12 +75,13 @@ public class FrmApplication extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 		contentPane.add(desktopPane, BorderLayout.CENTER);
 		contentPane.add(toolBar, BorderLayout.NORTH);
-		panel.setLayout(new MigLayout("", "[][grow][][]", "[20px]"));
+		panel.setLayout(new MigLayout("", "[][grow][][][]", "[20px,grow]"));
 
 		JPanel panel_1 = new JPanel();
 		JPanel panel_3 = new JPanel();
 		JPanel panel_2 = new JPanel();
 		JPanel panel_4 = new JPanel();
+		JPanel panel_5 = new JPanel();
 
 		lbUsuario = new JLabel();
 		lbCaixa = new JLabel("");
@@ -89,10 +91,13 @@ public class FrmApplication extends JFrame {
 		configurarBorda(panel_2);
 		configurarBorda(panel_3);
 		configurarBorda(panel_4);
+		configurarBorda(panel_5);
 
 		panel.add(panel_1, "flowx,cell 0 0,grow");
-		panel.add(panel_2, "cell 2 0,alignx center,growy");
-		panel.add(panel_4, "cell 3 0,alignx right,growy");
+
+		panel.add(panel_5, "cell 2 0,grow");
+		panel.add(panel_2, "cell 3 0,alignx center,growy");
+		panel.add(panel_4, "cell 4 0,alignx right,growy");
 		panel.add(panel_3, "cell 1 0,grow");
 
 		panel_3.add(lbCaixa);
@@ -101,17 +106,19 @@ public class FrmApplication extends JFrame {
 
 		TimerThread timerThread = new TimerThread(lbHorario);
 		AtualizacaoThread atualizacaoThread = new AtualizacaoThread(panel_2);
+		AbastecimentosThread abastecimentosThread = new AbastecimentosThread(panel_5);
 
 		timerThread.start();
 		atualizacaoThread.start();
+		abastecimentosThread.start();
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 
-				int option = JOptionPane.showConfirmDialog(null, "Deseja realmente fechar a aplicação?",
-						"Fechar Aplicação", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int option = JOptionPane.showConfirmDialog(null, "Deseja realmente fechar a aplicação?", "Fechar Aplicação",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
 				if (option == JOptionPane.YES_OPTION) {
 
@@ -142,15 +149,13 @@ public class FrmApplication extends JFrame {
 
 			Constructor<? extends AbstractInternalFrame> constructor = frame.getConstructor(Long.class, Long.class);
 
-			AbstractInternalFrame internalFrame = constructor.newInstance(permissaoPrograma.getCodigoPrograma(),
-					usuario.getIdUsuario());
+			AbstractInternalFrame internalFrame = constructor.newInstance(permissaoPrograma.getCodigoPrograma(), usuario.getIdUsuario());
 
 			this.posicionarFrame(internalFrame, permissaoPrograma.getPrograma().getIcone());
 
 		} catch (Exception e) {
 
-			String erroMsg = String.format("Erro ao abrir programa %s",
-					Resources.translate(permissaoPrograma.getPrograma().getDescricao()));
+			String erroMsg = String.format("Erro ao abrir programa %s", Resources.translate(permissaoPrograma.getPrograma().getDescricao()));
 
 			if (e.getCause() instanceof SysDescException) {
 
@@ -176,8 +181,7 @@ public class FrmApplication extends JFrame {
 		Dimension desktopSize = desktopPane.getSize();
 		Dimension jInternalFrameSize = internalFrame.getSize();
 
-		internalFrame.setLocation((desktopSize.width - jInternalFrameSize.width) / 2,
-				(desktopSize.height - jInternalFrameSize.height) / 2);
+		internalFrame.setLocation((desktopSize.width - jInternalFrameSize.width) / 2, (desktopSize.height - jInternalFrameSize.height) / 2);
 
 		internalFrame.setVisible(Boolean.TRUE);
 	}
@@ -198,11 +202,17 @@ public class FrmApplication extends JFrame {
 
 			frmApplication.createMenus();
 
+			frmApplication.iniciarIntegracaoAbastecimentos();
+
 			frmApplication.setarLabels();
 
 		}
 
 		return frmApplication;
+	}
+
+	private void iniciarIntegracaoAbastecimentos() {
+
 	}
 
 	private void setarLabels() {
@@ -222,8 +232,7 @@ public class FrmApplication extends JFrame {
 
 		if (caixaProjection != null) {
 
-			descricaoCaixa = String.format("%s - %s", caixaProjection.getDescricao(),
-					caixaProjection.isCaixaAberto() ? "ABERTO" : "FECHADO");
+			descricaoCaixa = String.format("%s - %s", caixaProjection.getDescricao(), caixaProjection.isCaixaAberto() ? "ABERTO" : "FECHADO");
 		}
 
 		lbCaixa.setText(descricaoCaixa);
@@ -282,8 +291,7 @@ public class FrmApplication extends JFrame {
 			ProgramasEnum programa = ProgramasEnum.findByCodigo(menu.getIdPrograma());
 
 			if (programa != null) {
-				menuitem.addActionListener(
-						e -> getSingleInstance(programa.getInternalFrame(), menu.getPermissaoProgramas().get(0)));
+				menuitem.addActionListener(e -> getSingleInstance(programa.getInternalFrame(), menu.getPermissaoProgramas().get(0)));
 			}
 
 			if (!StringUtil.isNullOrEmpty(menu.getIcone())) {
@@ -296,8 +304,7 @@ public class FrmApplication extends JFrame {
 
 					botao.setToolTipText(translate(menu.getDescricao()));
 
-					botao.addActionListener(
-							e -> getSingleInstance(programa.getInternalFrame(), menu.getPermissaoProgramas().get(0)));
+					botao.addActionListener(e -> getSingleInstance(programa.getInternalFrame(), menu.getPermissaoProgramas().get(0)));
 
 					toolBar.add(botao);
 				}
