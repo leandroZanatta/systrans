@@ -13,7 +13,9 @@ public class ServerEndpoints {
 	public Invocation.Builder servidorAtivo;
 	public Invocation.Builder obterVersoes;
 	public Invocation.Builder usuarios;
+	public Invocation.Builder configuracaoAbastecimento;
 	public Invocation.Builder clientes;
+	public Invocation.Builder abastecimentoMediaVeiculo;
 	public Invocation.Builder formasPagamento;
 	public Invocation.Builder veiculos;
 
@@ -25,6 +27,8 @@ public class ServerEndpoints {
 		this.clientes = webTarget.path("api/v1/clientes").request(MediaType.APPLICATION_JSON);
 		this.formasPagamento = webTarget.path("api/v1/formas-pagamento").request(MediaType.APPLICATION_JSON);
 		this.veiculos = webTarget.path("api/v1/veiculos").request(MediaType.APPLICATION_JSON);
+		this.configuracaoAbastecimento = webTarget.path("api/v1/configuracao-abastecimento").request(MediaType.APPLICATION_JSON);
+		this.abastecimentoMediaVeiculo = webTarget.path("api/v1/abastecimento-media-veiculo").request(MediaType.APPLICATION_JSON);
 	}
 
 	public static void createInstance(String url) {

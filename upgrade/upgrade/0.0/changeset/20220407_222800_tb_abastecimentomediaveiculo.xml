@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20220407_222800" author="Leandro Zanatta"
+		logicalFilePath="20220407_222800_tb_abastecimentomediaveiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_abastecimentomediaveiculo" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_abastecimentomediaveiculo">
+
+			<column name="id_abastecimentomediaveiculo"
+				type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true"
+					primaryKeyName="abastecimentomediaveiculo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}"
+				remarks="CÓDIGO DO VEÍCULO">
+				<constraints nullable="false"
+					foreignKeyName="abastecimentomediaveiculo_veiculo_fk"
+					references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="dt_calculo" type="${date}"
+				remarks="DATA DO CÁLCULO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_quantidadekm" type="${numeric.18x0}"
+				remarks="KILOMETRAGEM PERCORIDA">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_litros" type="${numeric.18x3}"
+				remarks="LITROS ABASTECIDOS">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_abastecimento" type="${numeric.18x2}"
+				remarks="VALOR TOTAL DO ABASTECIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_kmporlitro" type="${numeric.18x8}"
+				remarks="KM/L">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_rsporkm" type="${numeric.18x8}"
+				remarks="R$/KM">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}"
+				remarks="VERSÃO DE SINCRONIZAÇÃO" />
+
+		</createTable>
+
+		<createSequence
+			sequenceName="gen_abastecimentomediaveiculo" />
+
+		<createSequence
+			sequenceName="gen_sinc_abastecimentomediaveiculo" />
+
+	</changeSet>
+
+	<changeSet id="20220407_222800_2" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR REPLACE
+			TRIGGER trg_abastecimentomediaveiculo_befinsert BEFORE INSERT ON
+			tb_abastecimentomediaveiculo FOR EACH ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoAbastecimentoMediaVeiculo";
+
+			CREATE OR REPLACE TRIGGER
+			trg_abastecimentomediaveiculo_befupdate
+			BEFORE UPDATE ON tb_abastecimentomediaveiculo FOR EACH
+			ROW
+			CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoAbastecimentoMediaVeiculo";
+		</sql>
+	</changeSet>
+</databaseChangeLog>

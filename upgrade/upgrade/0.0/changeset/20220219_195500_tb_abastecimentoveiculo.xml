@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20220219_195500" author="Leandro Zanatta" logicalFilePath="20220219_195500_tb_abastecimentoveiculo.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_abastecimentoveiculo" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_abastecimentoveiculo">
+
+			<column name="id_abastecimentoveiculo" type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true" primaryKeyName="abastecimentoveiculo_pk" nullable="false" />
+			</column>
+
+			<column name="cd_configuracaoabastecimento" type="${numeric.18x0}" remarks="CÓDIGO DA CONFIGURAÇÃO DE ABASTECIMENTO DO VEÍCULO">
+				<constraints nullable="false" foreignKeyName="abastecimentoveiculo_configuracaoabastecimento_fk"
+					references="tb_configuracaoabastecimento(id_configuracaoabastecimento)" />
+			</column>
+
+			<column name="cd_cliente" type="${numeric.18x0}" remarks="CÓDIGO DO CLIENTE">
+				<constraints nullable="false" foreignKeyName="abastecimentoveiculo_cliente_fk" references="tb_cliente(id_cliente)" />
+			</column>
+
+			<column name="cd_usuario" type="${numeric.18x0}" remarks="CÓDIGO DO USUÁRIO">
+				<constraints nullable="false" foreignKeyName="abastecimentoveiculo_usuario_fk" references="tb_usuario(id_usuario)" />
+			</column>
+
+			<column name="tx_documento" type="${varchar.100}" remarks="DOCUMENTO/CUPOM">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_kminicial" type="${numeric.18x0}" remarks="KILOMETRAGEM INICIAL">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_kmfinal" type="${numeric.18x0}" remarks="KILOMETRAGEM FINAL">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_abastecimento" type="${numeric.18x2}" remarks="VALOR TOTAL DO ABASTECIMENTO">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="vl_litros" type="${numeric.18x3}" remarks="TOTAL DE LITROS ABASTECIDOS">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="fl_abastecimentoparcial" type="${boolean}" remarks="ABASTECIMENTO PARCIAL">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+
+		<createSequence sequenceName="gen_abastecimentoveiculo" />
+	</changeSet>
+</databaseChangeLog>

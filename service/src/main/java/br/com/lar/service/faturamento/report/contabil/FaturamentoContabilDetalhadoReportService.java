@@ -106,7 +106,8 @@ public class FaturamentoContabilDetalhadoReportService {
 		});
 
 		FaturamentoBrutoVO despesa = new FaturamentoBrutoVO("DESPESAS", valorDespesa.negate(), BigDecimal.ZERO, 1, receita);
-
+		despesa.setPercentual(BigDecimal.valueOf(100d));
+		;
 		faturamentoBrutoReport.add(despesa);
 
 		mapaDebitos.forEach((key, value) -> {

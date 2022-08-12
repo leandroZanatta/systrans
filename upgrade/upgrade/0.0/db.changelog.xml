@@ -73,6 +73,11 @@
 	<include file="0.0/changeset/20210609_215500_tb_vinculoentradacontaspagarveiculo.xml" />
 	<include file="0.0/changeset/20210708_193300_add_campo_tb_faturamentoentradascabecalho.xml" />
 	<include file="0.0/changeset/20210927_211800_alterar_tamanho_documento.xml" />
+	<include file="0.0/changeset/20220219_195000_tb_configuracaoabastecimento.xml" />
+	<include file="0.0/changeset/20220219_195500_tb_abastecimentoveiculo.xml" />
+	<include file="0.0/changeset/20220221_202300_tb_vinculoabastecimento.xml" />
+	<include file="0.0/changeset/20220326_210200_tb_abastecimentopagamento.xml" />
+	<include file="0.0/changeset/20220407_222800_tb_abastecimentomediaveiculo.xml" />
 
 	<!-- INSERTS PROGRAMAS E PESQUISAS -->
 	<include file="0.0/inserts/20190626_113800_carga_usuario.xml" />

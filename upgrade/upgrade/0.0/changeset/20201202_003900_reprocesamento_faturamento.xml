@@ -63,8 +63,8 @@
 
 	</changeSet>
 
-	<changeSet id="20201202_013300" author="Leandro Zanatta" logicalFilePath="20201202_003900_reprocesamento_faturamento.xml">
-		<dropTable tableName="TB_FATURAMENTOTRANSPORTE" />
+<!-- 	<changeSet id="20201202_013300" author="Leandro Zanatta" logicalFilePath="20201202_003900_reprocesamento_faturamento.xml">
+		<dropTable tableName="TB_FATURAMENTOTRANSPORTE"/>
 		<dropTable tableName="TB_FATURAMENTOPAGAMENTO" />
 		<dropTable tableName="TB_FATURAMENTOENTRADAPAGAMENTO" />
 		<dropTable tableName="TB_FATURAMENTO" />
@@ -75,5 +75,5 @@
 		<dropSequence sequenceName="GEN_FATURAMENTO" />
 		<dropSequence sequenceName="GEN_FATURAMENTOENTRADA" />
 
-	</changeSet>
+	</changeSet> -->
 </databaseChangeLog>

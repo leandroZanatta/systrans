@@ -1,57 +1,36 @@
 package br.com.lar.service.sincronizacao;
 
+import static br.com.sysdesc.util.enumeradores.SincronizacaoTabelaEnum.USUARIOS;
+
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 import br.com.sysdesc.pesquisa.repository.dao.impl.UsuarioDAO;
 import br.com.sysdesc.pesquisa.repository.model.Usuario;
 import br.com.systrans.util.dto.SincronizacaoTabelaDTO;
 import br.com.systrans.util.dto.UsuarioDTO;
 import br.com.systrans.util.sincronizacao.ServerEndpoints;
-import jakarta.ws.rs.client.Entity;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-public class SincronizacaoUsuarios implements Callable<Boolean> {
+public class SincronizacaoUsuarios extends AbstractSincronizacaoService<Usuario, UsuarioDTO> {
 
-	private Long versaoLocal;
-	private Long versaoRemota;
 	private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
 	public SincronizacaoUsuarios(List<SincronizacaoTabelaDTO> local, List<SincronizacaoTabelaDTO> remota) {
-
-		this.versaoLocal = local.stream().filter(sincronizacao -> sincronizacao.getCodigoTabela().equals(1L))
-				.map(SincronizacaoTabelaDTO::getVersaoSincronizacao).findFirst().orElse(0L);
-		this.versaoRemota = remota.stream().filter(sincronizacao -> sincronizacao.getCodigoTabela().equals(1L))
-				.map(SincronizacaoTabelaDTO::getVersaoSincronizacao).findFirst().orElse(0L);
+		super(USUARIOS, ServerEndpoints.getinstance().usuarios, local, remota);
 	}
 
 	@Override
-	public Boolean call() throws Exception {
+	protected UsuarioDTO mapToDTO(Usuario usuario) {
+		return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNomeUsuario(), usuario.getSenha(), usuario.getSincronizacaoVersao());
+	}
 
-		while (this.versaoRemota < this.versaoLocal) {
+	@Override
+	protected Long obterCodigoSincronizacao(Usuario objeto) {
+		return objeto.getSincronizacaoVersao();
+	}
 
-			try {
-
-				List<Usuario> usuariosSincronizar = usuarioDAO.obterPorVersao(versaoRemota, versaoLocal, 500L);
-
-				Boolean retornoServer = ServerEndpoints.getinstance().usuarios
-						.post(Entity.json(usuariosSincronizar.stream().map(usuario -> new UsuarioDTO(usuario.getIdUsuario(), usuario.getNomeUsuario(),
-								usuario.getSenha(), usuario.getSincronizacaoVersao())).collect(Collectors.toList())), Boolean.class);
-
-				if (retornoServer) {
-
-					this.versaoRemota = usuariosSincronizar.stream().mapToLong(Usuario::getSincronizacaoVersao).max().getAsLong();
-				}
-
-			} catch (Exception e) {
-
-				log.warn("Ocorreu um erro ao efetuar sincronização de usuários", e);
-			}
-		}
-
-		return true;
+	@Override
+	protected List<Usuario> obterPorVersaoBase(Long versaoLocal, Long versaoRemota, long limiteRegistros) {
+		return usuarioDAO.obterPorVersao(versaoLocal, versaoRemota, limiteRegistros);
 	}
 
 }

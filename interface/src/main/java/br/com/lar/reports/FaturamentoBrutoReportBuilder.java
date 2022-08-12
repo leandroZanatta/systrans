@@ -119,9 +119,10 @@ public class FaturamentoBrutoReportBuilder {
 
 			switch (tipoBalanco) {
 			case 0:
-				faturamentoItem.setPercentual(faturamentoItem.getParent() == null ? BigDecimal.valueOf(100d)
-						: faturamentoItem.getValorContabil().divide(faturamentoItem.getParent().getValorContabil(), 4, RoundingMode.HALF_EVEN)
-								.multiply(BigDecimal.valueOf(100d)));
+				faturamentoItem.setPercentual(faturamentoItem.getParent() == null ? BigDecimal.ZERO
+						: faturamentoItem.getParent().getValorContabil().equals(BigDecimal.ZERO) ? BigDecimal.ZERO
+								: faturamentoItem.getValorContabil().divide(faturamentoItem.getParent().getValorContabil(), 4, RoundingMode.HALF_EVEN)
+										.multiply(BigDecimal.valueOf(100d)));
 				break;
 			case 1:
 				faturamentoItem.setPercentual(faturamentoItem.getParent() == null ? BigDecimal.valueOf(100d)

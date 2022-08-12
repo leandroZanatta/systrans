@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<changeSet id="20220219_195000" author="Leandro Zanatta"
+		logicalFilePath="20220219_195000_tb_configuracaoabastecimento.xml">
+		<preConditions onFail="CONTINUE">
+			<not>
+				<tableExists tableName="tb_configuracaoabastecimento" />
+			</not>
+		</preConditions>
+		<createTable tableName="tb_configuracaoabastecimento">
+
+			<column name="id_configuracaoabastecimento"
+				type="${numeric.18x0}" remarks="CÓDIGO INDENTIFICADOR">
+				<constraints primaryKey="true"
+					primaryKeyName="configuracaoabastecimento_pk" nullable="false" />
+			</column>
+
+			<column name="cd_veiculo" type="${numeric.18x0}"
+				remarks="CÓDIGO DO VEÍCULO">
+				<constraints nullable="false"
+					foreignKeyName="configuracaoabastecimento_veiculo_fk"
+					references="tb_veiculo(id_veiculo)" />
+			</column>
+
+			<column name="cd_operacao" type="${numeric.18x0}"
+				remarks="CÓDIGO DA OPERAÇÃO">
+				<constraints nullable="false"
+					foreignKeyName="configuracaoabastecimento_operacao_fk"
+					references="tb_operacao(id_operacao)" />
+			</column>
+
+			<column name="cd_centrocusto" type="${numeric.18x0}"
+				remarks="CÓDIGO DDO CENTRO DE CUSTOS">
+				<constraints nullable="false"
+					foreignKeyName="configuracaoabastecimento_centrocusto_fk"
+					references="tb_centrocusto(id_centrocusto)" />
+			</column>
+
+			<column name="nr_sincronizacaoversao" type="${numeric.18x0}"
+				remarks="VERSÃO DE SINCRONIZAÇÃO" />
+
+		</createTable>
+
+		<createSequence
+			sequenceName="gen_configuracaoabastecimento" />
+
+		<createSequence
+			sequenceName="gen_sinc_configuracaoabastecimento" />
+	</changeSet>
+
+	<changeSet id="20220219_195000_2" author="leandro" dbms="h2">
+
+		<sql splitStatements="false" stripComments="true">
+			CREATE OR
+			REPLACE
+			TRIGGER trg_configuracaoabastecimento_befinsert BEFORE INSERT
+			ON
+			tb_configuracaoabastecimento FOR EACH ROW CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoConfiguracaoAbastecimento";
+
+			CREATE OR REPLACE TRIGGER
+			trg_configuracaoabastecimento_befupdate
+			BEFORE UPDATE ON tb_configuracaoabastecimento FOR EACH
+			ROW
+			CALL
+			"br.com.sysdesc.h2.trigger.TriggerSincronizacaoConfiguracaoAbastecimento";
+		</sql>
+	</changeSet>
+</databaseChangeLog>

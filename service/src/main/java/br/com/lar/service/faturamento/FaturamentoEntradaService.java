@@ -64,58 +64,19 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 	}
 
 	@Override
-	public void validar(FaturamentoEntradasCabecalho objetoPersistir) {
+	public void salvar(FaturamentoEntradasCabecalho objetoPersistir) {
+		EntityManager entityManager = this.faturamentoEntradaDAO.getEntityManager();
 
-		if (objetoPersistir.getHistorico() == null) {
+		try {
+			entityManager.getTransaction().begin();
 
-			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
+			integrarFaturamento(entityManager, objetoPersistir);
+		} finally {
+			entityManager.getTransaction().commit();
 		}
-
-		if (objetoPersistir.getCentroCusto() == null) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_CENTRO_CUSTO);
-		}
-
-		if (objetoPersistir.getCaixaCabecalho() == null) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_NAO_ENCONTRADO);
-		}
-
-		if (objetoPersistir.getCliente() == null) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORNECEDOR);
-		}
-
-		if (ListUtil.isNullOrEmpty(objetoPersistir.getFaturamentoEntradaPagamentos())) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_PAGAMENTOS);
-		}
-
-		if (objetoPersistir.getDataMovimento() == null) {
-			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
-		}
-
-		if (!historicoCustoDAO.existeHistorico(objetoPersistir.getHistorico())) {
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_CUSTO_NAO_CONFIGURADO, objetoPersistir.getHistorico().getDescricao());
-		}
-
-		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoEntradaPagamentos().stream().map(FaturamentoEntradaPagamentos::getValorParcela)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-
-		if (valorPagamentos.compareTo(objetoPersistir.getValorBruto()) != 0) {
-
-			DecimalFormat decimalFormat = new DecimalFormat("0.00");
-
-			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO,
-					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()), decimalFormat.format(valorPagamentos.doubleValue()),
-					decimalFormat.format(objetoPersistir.getValorBruto().subtract(valorPagamentos).doubleValue()));
-		}
-
 	}
 
-	@Override
-	public void salvar(FaturamentoEntradasCabecalho objetoPersistir) {
+	public void integrarFaturamento(EntityManager entityManager, FaturamentoEntradasCabecalho objetoPersistir) {
 
 		caixaService.verificarCaixaAberto(objetoPersistir.getCaixaCabecalho());
 
@@ -226,62 +187,103 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 					.forEach(detalhe -> criarVinculosContasPagarVeiculo(contasPagars, detalhe, detalhe.getVeiculo()));
 		}
 
-		EntityManager entityManager = faturamentoEntradaDAO.getEntityManager();
+		entityManager.persist(objetoPersistir);
 
-		try {
+		entityManager.persist(diarioCabecalho);
 
-			entityManager.getTransaction().begin();
+		if (!ListUtil.isNullOrEmpty(contasPagars)) {
+			contasPagars.forEach(conta -> {
 
-			entityManager.persist(objetoPersistir);
+				entityManager.persist(conta);
 
-			entityManager.persist(diarioCabecalho);
+				if (!ListUtil.isNullOrEmpty(conta.getContasPagarVeiculos())) {
 
-			if (!ListUtil.isNullOrEmpty(contasPagars)) {
-				contasPagars.forEach(conta -> {
+					conta.getContasPagarVeiculos().forEach(entityManager::persist);
+				}
+			});
 
-					entityManager.persist(conta);
-
-					if (!ListUtil.isNullOrEmpty(conta.getContasPagarVeiculos())) {
-
-						conta.getContasPagarVeiculos().forEach(entityManager::persist);
-					}
-				});
-
-			}
-
-			if (!ListUtil.isNullOrEmpty(alocacaoCustos)) {
-
-				alocacaoCustos.forEach(entityManager::persist);
-			}
-
-			caixaDetalhes.forEach(entityManager::persist);
-
-			VinculoEntrada vinculoEntrada = new VinculoEntrada();
-			vinculoEntrada.setDiarioCabecalho(diarioCabecalho);
-			vinculoEntrada.setFaturamentoEntrada(objetoPersistir);
-			entityManager.persist(vinculoEntrada);
-
-			caixaDetalhes.stream().map(detalhe -> {
-				VinculoEntradaCaixa vinculoEntradaCaixa = new VinculoEntradaCaixa();
-				vinculoEntradaCaixa.setCaixaDetalhe(detalhe);
-				vinculoEntradaCaixa.setFaturamentoEntrada(objetoPersistir);
-
-				return vinculoEntradaCaixa;
-			}).forEach(entityManager::persist);
-
-			if (!ListUtil.isNullOrEmpty(contasPagars)) {
-
-				contasPagars.stream().map(detalhe -> {
-					VinculoEntradaContasPagar vinculoEntradaContasPagar = new VinculoEntradaContasPagar();
-					vinculoEntradaContasPagar.setContasPagar(detalhe);
-					vinculoEntradaContasPagar.setFaturamentoEntrada(objetoPersistir);
-					return vinculoEntradaContasPagar;
-				}).forEach(entityManager::persist);
-			}
-
-		} finally {
-			entityManager.getTransaction().commit();
 		}
+
+		if (!ListUtil.isNullOrEmpty(alocacaoCustos)) {
+
+			alocacaoCustos.forEach(entityManager::persist);
+		}
+
+		caixaDetalhes.forEach(entityManager::persist);
+
+		VinculoEntrada vinculoEntrada = new VinculoEntrada();
+		vinculoEntrada.setDiarioCabecalho(diarioCabecalho);
+		vinculoEntrada.setFaturamentoEntrada(objetoPersistir);
+		entityManager.persist(vinculoEntrada);
+
+		caixaDetalhes.stream().map(detalhe -> {
+			VinculoEntradaCaixa vinculoEntradaCaixa = new VinculoEntradaCaixa();
+			vinculoEntradaCaixa.setCaixaDetalhe(detalhe);
+			vinculoEntradaCaixa.setFaturamentoEntrada(objetoPersistir);
+
+			return vinculoEntradaCaixa;
+		}).forEach(entityManager::persist);
+
+		if (!ListUtil.isNullOrEmpty(contasPagars)) {
+
+			contasPagars.stream().map(detalhe -> {
+				VinculoEntradaContasPagar vinculoEntradaContasPagar = new VinculoEntradaContasPagar();
+				vinculoEntradaContasPagar.setContasPagar(detalhe);
+				vinculoEntradaContasPagar.setFaturamentoEntrada(objetoPersistir);
+				return vinculoEntradaContasPagar;
+			}).forEach(entityManager::persist);
+		}
+	}
+
+	@Override
+	public void validar(FaturamentoEntradasCabecalho objetoPersistir) {
+
+		if (objetoPersistir.getHistorico() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_HISTORICO);
+		}
+
+		if (objetoPersistir.getCentroCusto() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_CENTRO_CUSTO);
+		}
+
+		if (objetoPersistir.getCaixaCabecalho() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_CAIXA_NAO_ENCONTRADO);
+		}
+
+		if (objetoPersistir.getCliente() == null) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_SELECIONE_FORNECEDOR);
+		}
+
+		if (ListUtil.isNullOrEmpty(objetoPersistir.getFaturamentoEntradaPagamentos())) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_INSIRA_PAGAMENTOS);
+		}
+
+		if (objetoPersistir.getDataMovimento() == null) {
+			throw new SysDescException(MensagemConstants.MENSAGEM_DATA_MOVIMENTO_INVALIDA);
+		}
+
+		if (!historicoCustoDAO.existeHistorico(objetoPersistir.getHistorico())) {
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_HISTORICO_CUSTO_NAO_CONFIGURADO, objetoPersistir.getHistorico().getDescricao());
+		}
+
+		BigDecimal valorPagamentos = objetoPersistir.getFaturamentoEntradaPagamentos().stream().map(FaturamentoEntradaPagamentos::getValorParcela)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		if (valorPagamentos.compareTo(objetoPersistir.getValorBruto()) != 0) {
+
+			DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+			throw new SysDescException(MensagemConstants.MENSAGEM_DIVERGENCIA_VALORES_PAGAMENTO,
+					decimalFormat.format(objetoPersistir.getValorBruto().doubleValue()), decimalFormat.format(valorPagamentos.doubleValue()),
+					decimalFormat.format(objetoPersistir.getValorBruto().subtract(valorPagamentos).doubleValue()));
+		}
+
 	}
 
 	public List<FaturamentoProjection> filtrarFaturamento(PesquisaFaturamentoVO pesquisaFaturamentoVO) {
@@ -347,4 +349,5 @@ public class FaturamentoEntradaService extends AbstractPesquisableServiceImpl<Fa
 
 		return contasPagarVeiculo;
 	}
+
 }

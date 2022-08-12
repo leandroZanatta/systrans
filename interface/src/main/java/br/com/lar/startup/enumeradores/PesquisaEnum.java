@@ -5,10 +5,12 @@ import java.util.Map;
 
 import com.mysema.query.types.path.EntityPathBase;
 
+import br.com.lar.repository.model.QAbastecimentoVeiculo;
 import br.com.lar.repository.model.QCaixa;
 import br.com.lar.repository.model.QCentroCusto;
 import br.com.lar.repository.model.QCidade;
 import br.com.lar.repository.model.QCliente;
+import br.com.lar.repository.model.QConfiguracaoAbastecimento;
 import br.com.lar.repository.model.QContasPagar;
 import br.com.lar.repository.model.QContasReceber;
 import br.com.lar.repository.model.QEstado;
@@ -72,7 +74,11 @@ public enum PesquisaEnum {
 
 	PES_FATURAMENTO_ENTRADA(22L, "Faturamento - Entradas", QFaturamentoEntradasCabecalho.class),
 
-	PES_PARAMETRO_OPERACAO_FINANCEIRA(23L, "Parâmetro de operação Financeira", QParametroOperacaoFinanceira.class);
+	PES_PARAMETRO_OPERACAO_FINANCEIRA(23L, "Parâmetro de operação Financeira", QParametroOperacaoFinanceira.class),
+
+	PES_CONFIGURACAO_ABASTECIMENTO(24L, "Configuração de abastecimentos", QConfiguracaoAbastecimento.class),
+
+	PES_ABASTECIMENTO_VEICULO(25L, "Abastecimento de Veículos", QAbastecimentoVeiculo.class);
 
 	private static Map<Long, PesquisaEnum> map = new HashMap<>();
 

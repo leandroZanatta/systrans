@@ -17,10 +17,13 @@
 	<property name="varchar.50" value="varchar(50)" dbms="postgresql,h2" />
 	<property name="varchar.100" value="varchar(100)" dbms="postgresql,h2" />
 	<property name="varchar.255" value="varchar(255)" dbms="postgresql,h2" />
-	
+
 
 	<property name="numeric.18x0" value="numeric(18,0)" dbms="postgresql" />
 	<property name="numeric.18x2" value="numeric(18,2)" dbms="postgresql" />
+	<property name="numeric.18x3" value="numeric(18,3)" dbms="postgresql" />
+	<property name="numeric.18x4" value="numeric(18,4)" dbms="postgresql" />
+	<property name="numeric.18x8" value="numeric(18,8)" dbms="postgresql" />
 	<property name="numeric.2x0" value="numeric(2,0)" dbms="postgresql" />
 	<property name="numeric.3x0" value="numeric(3,0)" dbms="postgresql" />
 	<property name="numeric.5x0" value="numeric(5,0)" dbms="postgresql" />
@@ -30,10 +33,13 @@
 
 	<property name="numeric.18x0" value="decimal(18,0)" dbms="h2" />
 	<property name="numeric.18x2" value="decimal(18,2)" dbms="h2" />
+	<property name="numeric.18x3" value="numeric(18,3)" dbms="h2" />
+	<property name="numeric.18x4" value="numeric(18,4)" dbms="h2" />
+	<property name="numeric.18x8" value="numeric(18,8)" dbms="h2" />
 	<property name="numeric.2x0" value="decimal(2,0)" dbms="h2" />
 	<property name="numeric.3x0" value="decimal(3,0)" dbms="h2" />
 	<property name="numeric.5x0" value="decimal(5,0)" dbms="h2" />
-	
+
 	<property name="blob.binary" value="binary" dbms="h2" />
 	<property name="blob.text" value="varchar(5000)" dbms="h2" />
 

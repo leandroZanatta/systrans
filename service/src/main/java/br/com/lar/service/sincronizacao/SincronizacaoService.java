@@ -44,7 +44,8 @@ public class SincronizacaoService {
 
 				List<Future<Boolean>> futures = executorService.invokeAll(Arrays.asList(new SincronizacaoVeiculo(dadosLocais, dadosRemotos),
 						new SincronizacaoFormasPagamento(dadosLocais, dadosRemotos), new SincronizacaoUsuarios(dadosLocais, dadosRemotos),
-						new SincronizacaoClientes(dadosLocais, dadosRemotos)));
+						new SincronizacaoClientes(dadosLocais, dadosRemotos), new SincronizacaoConfiguracaoAbastecimentos(dadosLocais, dadosRemotos),
+						new SincronizacaoAbastecimentosMediaVeiculos(dadosLocais, dadosRemotos)));
 
 				for (Future<Boolean> future : futures) {
 

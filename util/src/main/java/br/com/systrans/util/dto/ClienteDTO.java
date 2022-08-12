@@ -14,6 +14,7 @@ public class ClienteDTO implements Serializable {
 	private long id;
 	private String nome;
 	private String cgc;
+	private long situacao;
 	private Long versao;
 
 }

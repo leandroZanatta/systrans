@@ -56,6 +56,12 @@
 		<class>br.com.lar.repository.model.ParametroOperacaoFinanceira</class>
 		<class>br.com.lar.repository.model.VinculoEntradaCusto</class>
 		<class>br.com.lar.repository.model.VinculoEntradaContasPagarVeiculo</class>
+		<class>br.com.lar.repository.model.Abastecimento</class>
+		<class>br.com.lar.repository.model.ConfiguracaoAbastecimento</class>
+		<class>br.com.lar.repository.model.AbastecimentoVeiculo</class>
+		<class>br.com.lar.repository.model.HistoricoAbastecimento</class>
+		<class>br.com.lar.repository.model.AbastecimentoPagamento</class>
+		<class>br.com.lar.repository.model.AbastecimentoMediaVeiculo</class>
 		<properties>
 			<property name="eclipselink.logging.level" value="INFO" />
 			<property name="eclipselink.logging.parameters" value="false" />

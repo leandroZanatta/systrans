@@ -123,7 +123,7 @@
 			UPDATE TB_CLIENTE SET NR_SINCRONIZACAOVERSAO=NEXTVAL('gen_sinc_cliente');
 			
 			INSERT INTO TB_SINCRONIZACAOITEM
-			SELECT NEXTVAL('gen_sincronizacaoitem'),2,max(NR_SINCRONIZACAOVERSAO) FROM TB_CLIENTE;
+			SELECT NEXTVAL('gen_sincronizacaoitem'),2,coalesce(max(NR_SINCRONIZACAOVERSAO),0) FROM TB_CLIENTE;
 			]]>
 		</sql>
 	</changeSet>
